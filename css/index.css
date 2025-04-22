@@ -1,0 +1,203 @@
+/* Dashboard Specific Styles */
+.status-table tbody tr {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.status-table tbody tr:hover {
+    background-color: rgba(59, 130, 246, 0.05);
+}
+
+.status-table tbody tr.selected-row td {
+    background-color: #EFF6FF !important;
+}
+
+.dashboard-stats {
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.stat-card {
+    padding: 0.75rem;
+}
+
+.stat-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+}
+
+.stat-content h3 {
+    font-size: 1.25rem;
+    margin-bottom: 0.25rem;
+}
+
+.stat-content p {
+    font-size: 0.875rem;
+    margin-bottom: 0;
+}
+
+.dashboard-widget {
+    margin-bottom: 1rem;
+}
+
+.widget-header {
+    padding: 0.75rem 1rem;
+}
+
+.widget-header h2 {
+    font-size: 1rem;
+    margin-bottom: 0;
+}
+
+.widget-body {
+    padding: 0.75rem;
+}
+
+.metrics-summary {
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.metrics-summary-item {
+    padding: 0.25rem;
+}
+
+.metrics-icon {
+    width: 28px;
+    height: 28px;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    margin-bottom: 0.25rem;
+}
+
+.metrics-content h4 {
+    font-size: 0.85rem;
+    margin-bottom: 0.25rem;
+}
+
+.metrics-content p {
+    font-size: 0.75rem;
+    margin-bottom: 0;
+}
+
+.metrics-chart-container {
+    height: 200px;
+}
+
+.status-table {
+    font-size: 0.875rem;
+}
+
+.status-table th, .status-table td {
+    padding: 0.5rem;
+}
+
+.table-footer {
+    padding: 0.5rem 1rem;
+}
+
+.pagination {
+    margin-bottom: 0;
+}
+
+.page-link {
+    padding: 0.2rem 0.35rem;
+    font-size: 0.8rem;
+}
+
+.metric-detail-item,
+.status-indicator-item {
+    padding: 0.25rem;
+    border-radius: 4px;
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.metric-detail-item .badge,
+.invoice-status-table .badge {
+    font-size: 0.7rem;
+    padding: 0.15rem 0.3rem;
+}
+
+.progress-container {
+    margin-bottom: 0.25rem;
+}
+
+.progress-label {
+    margin-top: 0.15rem;
+}
+
+.invoice-status-table th,
+.invoice-status-table td {
+    font-size: 0.8rem;
+}
+
+.table-info {
+    font-size: 0.8rem;
+}
+
+.status-icon {
+    width: 24px;
+    height: 24px;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    margin-bottom: 0.25rem;
+}
+
+.status-content h4 {
+    font-size: 0.75rem;
+}
+
+.status-content p {
+    font-size: 0.65rem;
+}
+
+.metrics-summary-item,
+.status-indicator-item {
+    padding: 0.25rem;
+}
+
+.metrics-icon,
+.status-icon {
+    width: 28px;
+    height: 28px;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    margin-bottom: 0.25rem;
+}
+
+.metrics-content h4,
+.status-content h4 {
+    font-size: 0.85rem;
+}
+
+.metrics-content p,
+.status-content p {
+    font-size: 0.75rem;
+}
+
+.invoice-status-table td {
+    vertical-align: middle;
+}
+
+.invoice-status-table .badge {
+    margin-left: 0.25rem;
+}
+
+.widget-header h2 {
+    font-size: 1rem;
+}
+
+.metric-detail-item span,
+.status-indicator-item span {
+    font-size: 0.8rem;
+} 

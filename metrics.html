@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warranty Metrics | Genpact</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="css/styles.css" rel="stylesheet">
+    <link href="css/metrics.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <span class="logo-text">WCA</span>
+                </div>
+                <button class="sidebar-close d-md-none" id="sidebar-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="sidebar-divider">
+                <span>MAIN MENU</span>
+            </div>
+            
+            <ul class="sidebar-menu">
+                <li>
+                    <a href="index.html">
+                        <i class="fas fa-th-large"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="active">
+                    <a href="metrics.html">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Warranty Metrics</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="invoice-status.html">
+                        <i class="fas fa-file-invoice"></i>
+                        <span>Final Invoice Status</span>
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="sidebar-footer">
+                <a href="#" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+                <span class="version">v1.0.0</span>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Enhanced Header -->
+            <header class="header">
+                <button class="sidebar-toggle d-lg-none" id="sidebar-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="breadcrumb-wrapper">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Metrics</li>
+                        </ol>
+                    </nav>
+                    <h1 class="page-title">Warranty Metrics</h1>
+                </div>
+                <div class="header-actions">
+                    <button class="action-btn" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Search">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <button class="action-btn" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Notifications">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </button>
+                    <button class="action-btn" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Settings">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                    <div class="user-dropdown">
+                        <button class="user-btn" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="https://ui-avatars.com/api/?name=John+Doe&background=0066FF&color=fff" alt="User" class="user-avatar-small">
+                            <span class="d-none d-md-inline">John Doe</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li>
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-user me-2"></i>My Profile
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-cog me-2"></i>Account Settings
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-wrapper">
+                <!-- Summary Cards -->
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: rgba(59, 130, 246, 0.1); color: #3B82F6;">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>$1.41B</h3>
+                            <p>Total Credits Paid</p>
+                            <small class="text-muted">Across all models</small>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: rgba(239, 68, 68, 0.1); color: #EF4444;">
+                            <i class="fas fa-ban"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>$1.38B</h3>
+                            <p>Total Disallowed Amount</p>
+                            <small class="text-muted">49.5% of total claims</small>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: rgba(245, 158, 11, 0.1); color: #F59E0B;">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>27 Days</h3>
+                            <p>Avg. Claim Closure</p>
+                            <small class="text-muted">35 days avg. open time</small>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: rgba(16, 185, 129, 0.1); color: #10B981;">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>112,158</h3>
+                            <p>Total Transactions</p>
+                            <small class="text-muted">Across 9 models</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Charts Section -->
+                <div class="row g-4">
+                    <!-- Warranty Trends Chart -->
+                    <div class="col-lg-8">
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h2>Warranty Claims Trend</h2>
+                                <div class="chart-actions">
+                                    <div class="filter-wrapper">
+                                        <div class="multiselect-dropdown">
+                                            <div class="dropdown-toggle" id="modelFilter">
+                                                <span class="selected-count">4 selected</span>
+                                                <i class="fas fa-chevron-down"></i>
+                                            </div>
+                                            <div class="dropdown-menu">
+                                                <div class="search-box">
+                                                    <input type="text" placeholder="Search" class="search-input">
+                                                    <i class="fas fa-search"></i>
+                                                </div>
+                                                <div class="dropdown-divider"></div>
+                                                <div class="options-container">
+                                                    <label class="option-item">
+                                                        <input type="checkbox" value="Model1" checked>
+                                                        <span class="option-label">Model 1</span>
+                                                        <span class="option-value">152M</span>
+                                                    </label>
+                                                    <label class="option-item">
+                                                        <input type="checkbox" value="Model2" checked>
+                                                        <span class="option-label">Model 2</span>
+                                                        <span class="option-value">22M</span>
+                                                    </label>
+                                                    <label class="option-item">
+                                                        <input type="checkbox" value="Model3" checked>
+                                                        <span class="option-label">Model 3</span>
+                                                        <span class="option-value">139M</span>
+                                                    </label>
+                                                    <label class="option-item">
+                                                        <input type="checkbox" value="Model4" checked>
+                                                        <span class="option-label">Model 4</span>
+                                                        <span class="option-value">474M</span>
+                                                    </label>
+                                                    <label class="option-item">
+                                                        <input type="checkbox" value="Model5">
+                                                        <span class="option-label">Model 5</span>
+                                                        <span class="option-value">116M</span>
+                                                    </label>
+                                                    <label class="option-item">
+                                                        <input type="checkbox" value="Model6">
+                                                        <span class="option-label">Model 6</span>
+                                                        <span class="option-value">36M</span>
+                                                    </label>
+                                                    <label class="option-item">
+                                                        <input type="checkbox" value="Model7">
+                                                        <span class="option-label">Model 7</span>
+                                                        <span class="option-value">2M</span>
+                                                    </label>
+                                                    <label class="option-item">
+                                                        <input type="checkbox" value="Model8">
+                                                        <span class="option-label">Model 8</span>
+                                                        <span class="option-value">462M</span>
+                                                    </label>
+                                                    <label class="option-item">
+                                                        <input type="checkbox" value="Model9">
+                                                        <span class="option-label">Model 9</span>
+                                                        <span class="option-value">4M</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="btn-group" role="group">
+                                        <button type="button" class="btn btn-outline-secondary btn-sm active">W</button>
+                                        <button type="button" class="btn btn-outline-secondary btn-sm">M</button>
+                                        <button type="button" class="btn btn-outline-secondary btn-sm">Y</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="chart-body">
+                                <canvas id="warrantyTrendsChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Distribution Chart -->
+                    <div class="col-lg-4">
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h2>Claims Distribution</h2>
+                                <div class="chart-actions">
+                                    <button class="btn btn-sm btn-outline-secondary">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="chart-body">
+                                <canvas id="claimsDistributionChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Shop Performance -->
+                    <div class="col-lg-6">
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h2>Shop Performance</h2>
+                                <div class="chart-actions">
+                                    <select class="form-select form-select-sm">
+                                        <option>Last 7 Days</option>
+                                        <option>Last 30 Days</option>
+                                        <option>Last 90 Days</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="chart-body">
+                                <canvas id="shopPerformanceChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Processing Time Analysis -->
+                    <div class="col-lg-6">
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h2>Processing Time Analysis</h2>
+                                <div class="chart-actions">
+                                    <button class="btn btn-sm btn-outline-secondary">
+                                        <i class="fas fa-filter"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="chart-body">
+                                <canvas id="processingTimeChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Metrics Table -->
+                <div class="table-container mt-4">
+                    <div class="table-header">
+                        <h2>Model-wise Metrics</h2>
+                        <div class="table-actions">
+                            <button class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-filter me-1"></i>Filter
+                            </button>
+                            <button class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-download me-1"></i>Export
+                            </button>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Model</th>
+                                    <th>Credits Paid</th>
+                                    <th>Disallowed Amount</th>
+                                    <th>Transactions</th>
+                                    <th>Claim Closure</th>
+                                    <th>Claim Open</th>
+                                    <th>Hold Time</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Model1</td>
+                                    <td>$152.2M</td>
+                                    <td>$80.70M</td>
+                                    <td>9,650</td>
+                                    <td>20 days</td>
+                                    <td>30 days</td>
+                                    <td>45 days</td>
+                                </tr>
+                                <tr>
+                                    <td>Model2</td>
+                                    <td>$21.6M</td>
+                                    <td>$67.40M</td>
+                                    <td>1,249</td>
+                                    <td>22 days</td>
+                                    <td>28 days</td>
+                                    <td>44 days</td>
+                                </tr>
+                                <tr>
+                                    <td>Model3</td>
+                                    <td>$139.0M</td>
+                                    <td>$65.41M</td>
+                                    <td>6,042</td>
+                                    <td>30 days</td>
+                                    <td>36 days</td>
+                                    <td>30 days</td>
+                                </tr>
+                                <tr>
+                                    <td>Model4</td>
+                                    <td>$473.8M</td>
+                                    <td>$371.06M</td>
+                                    <td>17,457</td>
+                                    <td>28 days</td>
+                                    <td>37 days</td>
+                                    <td>63 days</td>
+                                </tr>
+                                <tr>
+                                    <td>Model5</td>
+                                    <td>$115.8M</td>
+                                    <td>$237.88M</td>
+                                    <td>8,649</td>
+                                    <td>29 days</td>
+                                    <td>49 days</td>
+                                    <td>72 days</td>
+                                </tr>
+                                <tr>
+                                    <td>Model6</td>
+                                    <td>$35.5M</td>
+                                    <td>$10.62M</td>
+                                    <td>344</td>
+                                    <td>23 days</td>
+                                    <td>30 days</td>
+                                    <td>64 days</td>
+                                </tr>
+                                <tr>
+                                    <td>Model7</td>
+                                    <td>$1.8M</td>
+                                    <td>$1.11K</td>
+                                    <td>2,609</td>
+                                    <td>5 days</td>
+                                    <td>6 days</td>
+                                    <td>37 days</td>
+                                </tr>
+                                <tr>
+                                    <td>Model8</td>
+                                    <td>$462.2M</td>
+                                    <td>$543.52M</td>
+                                    <td>71,331</td>
+                                    <td>43 days</td>
+                                    <td>56 days</td>
+                                    <td>58 days</td>
+                                </tr>
+                                <tr>
+                                    <td>Model9</td>
+                                    <td>$3.6M</td>
+                                    <td>$1.67M</td>
+                                    <td>827</td>
+                                    <td>41 days</td>
+                                    <td>47 days</td>
+                                    <td>66 days</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Select2 with search-style configuration
+            $('.model-filter').select2({
+                width: '100%',
+                placeholder: 'Search and select models...',
+                allowClear: true,
+                closeOnSelect: false,
+                selectionCssClass: 'select2--large',
+                dropdownCssClass: 'select2--large',
+                templateResult: formatOption,
+                templateSelection: formatSelection
+            });
+
+            // Custom formatting for dropdown options
+            function formatOption(option) {
+                if (!option.id) return option.text;
+                return $('<span class="select2-option">' + option.text + '</span>');
+            }
+
+            // Custom formatting for selected items
+            function formatSelection(option) {
+                if (!option.id) return option.text;
+                return $('<span class="select2-selection-text">' + option.text + '</span>');
+            }
+
+            // Chart data
+            const chartData = {
+                Model1: { creditsPaid: 152.2, disallowed: 80.70 },
+                Model2: { creditsPaid: 21.6, disallowed: 67.40 },
+                Model3: { creditsPaid: 139.0, disallowed: 65.41 },
+                Model4: { creditsPaid: 473.8, disallowed: 371.06 },
+                Model5: { creditsPaid: 115.8, disallowed: 237.88 },
+                Model6: { creditsPaid: 35.5, disallowed: 10.62 },
+                Model7: { creditsPaid: 1.8, disallowed: 0.00111 },
+                Model8: { creditsPaid: 462.2, disallowed: 543.52 },
+                Model9: { creditsPaid: 3.6, disallowed: 1.67 }
+            };
+
+            // Initialize the charts
+            // Warranty Trends Chart
+            const trendsCtx = document.getElementById('warrantyTrendsChart').getContext('2d');
+            let trendsChart = new Chart(trendsCtx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(chartData),
+                    datasets: [{
+                        label: 'Credits Paid',
+                        data: Object.values(chartData).map(d => d.creditsPaid),
+                        backgroundColor: '#10B981',
+                        borderColor: '#10B981',
+                        borderWidth: 1
+                    }, {
+                        label: 'Disallowed Amount',
+                        data: Object.values(chartData).map(d => d.disallowed),
+                        backgroundColor: '#EF4444',
+                        borderColor: '#EF4444',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                boxWidth: 12,
+                                padding: 15
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Credits Paid vs Disallowed Amount by Model (in Millions $)',
+                            padding: 10
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': $' + context.parsed.y.toFixed(2) + 'M';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Amount in Millions ($)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Claims Distribution Chart
+            const distributionCtx = document.getElementById('claimsDistributionChart').getContext('2d');
+            new Chart(distributionCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['Model1', 'Model2', 'Model3', 'Model4', 'Model5', 'Model6', 'Model7', 'Model8', 'Model9'],
+                    datasets: [{
+                        data: [9650, 1249, 6042, 17457, 8649, 344, 2609, 71331, 827],
+                        backgroundColor: [
+                            '#3B82F6', '#10B981', '#F59E0B', '#EF4444', 
+                            '#8B5CF6', '#EC4899', '#6366F1', '#14B8A6', '#F97316'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                boxWidth: 12,
+                                padding: 10
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Transaction Distribution by Model',
+                            padding: 10
+                        }
+                    }
+                }
+            });
+
+            // Shop Performance Chart
+            const performanceCtx = document.getElementById('shopPerformanceChart').getContext('2d');
+            new Chart(performanceCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Model1', 'Model2', 'Model3', 'Model4', 'Model5', 'Model6', 'Model7', 'Model8', 'Model9'],
+                    datasets: [{
+                        label: 'Claim Closure (Days)',
+                        data: [20, 22, 30, 28, 29, 23, 5, 43, 41],
+                        backgroundColor: '#3B82F6'
+                    }, {
+                        label: 'Claim Open (Days)',
+                        data: [30, 28, 36, 37, 49, 30, 6, 56, 47],
+                        backgroundColor: '#F59E0B'
+                    }, {
+                        label: 'Hold Time (Days)',
+                        data: [45, 44, 30, 63, 72, 64, 37, 58, 66],
+                        backgroundColor: '#EF4444'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                boxWidth: 12,
+                                padding: 15
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Processing Times by Model',
+                            padding: 10
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Days'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Processing Time Chart
+            const timeCtx = document.getElementById('processingTimeChart').getContext('2d');
+            new Chart(timeCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Model1', 'Model2', 'Model3', 'Model4', 'Model5', 'Model6', 'Model7', 'Model8', 'Model9'],
+                    datasets: [{
+                        label: 'Claim Closure Time',
+                        data: [20, 22, 30, 28, 29, 23, 5, 43, 41],
+                        borderColor: '#8B5CF6',
+                        tension: 0.4,
+                        fill: false,
+                        pointBackgroundColor: '#8B5CF6',
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }, {
+                        label: 'Claim Open Time',
+                        data: [30, 28, 36, 37, 49, 30, 6, 56, 47],
+                        borderColor: '#F59E0B',
+                        tension: 0.4,
+                        fill: false,
+                        pointBackgroundColor: '#F59E0B',
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                boxWidth: 12,
+                                padding: 15
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Claim Processing Time Analysis',
+                            padding: 10
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Days'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Dropdown toggle
+            const dropdownToggle = document.getElementById('modelFilter');
+            const dropdownMenu = dropdownToggle.nextElementSibling;
+            const searchInput = dropdownMenu.querySelector('.search-input');
+            const optionItems = dropdownMenu.querySelectorAll('.option-item');
+            const selectedCount = dropdownToggle.querySelector('.selected-count');
+
+            dropdownToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                dropdownMenu.classList.toggle('show');
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!dropdownToggle.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                    dropdownMenu.classList.remove('show');
+                }
+            });
+
+            // Search functionality
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                optionItems.forEach(item => {
+                    const text = item.querySelector('.option-label').textContent.toLowerCase();
+                    item.style.display = text.includes(searchTerm) ? '' : 'none';
+                });
+            });
+
+            // Handle checkbox changes
+            optionItems.forEach(item => {
+                const checkbox = item.querySelector('input[type="checkbox"]');
+                checkbox.addEventListener('change', function() {
+                    updateSelectedCount();
+                    updateChart();
+                });
+            });
+
+            function updateSelectedCount() {
+                const checkedCount = dropdownMenu.querySelectorAll('input[type="checkbox"]:checked').length;
+                selectedCount.textContent = `${checkedCount} selected`;
+            }
+
+            function updateChart() {
+                const selectedModels = Array.from(dropdownMenu.querySelectorAll('input[type="checkbox"]:checked'))
+                    .map(checkbox => checkbox.value);
+
+                const filteredLabels = selectedModels;
+                const filteredCreditsPaid = selectedModels.map(model => chartData[model].creditsPaid);
+                const filteredDisallowed = selectedModels.map(model => chartData[model].disallowed);
+
+                trendsChart.data.labels = filteredLabels;
+                trendsChart.data.datasets[0].data = filteredCreditsPaid;
+                trendsChart.data.datasets[1].data = filteredDisallowed;
+                trendsChart.update();
+            }
+
+            // Initialize selected count
+            updateSelectedCount();
+
+            // Initialize tooltips
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
+    </script>
+</body>
+</html>

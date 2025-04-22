@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warranty Claim Assist | Genpact</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="css/styles.css" rel="stylesheet">
+    <link href="css/index.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Enhanced Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <!-- <img src="https://www.genpact.com/design/images/logo.svg" alt="Genpact Logo" class="logo"> -->
+                    <span class="logo-text">WCA</span>
+                </div>
+                <button class="sidebar-close d-md-none" id="sidebar-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <!-- <div class="user-profile-sidebar">
+                <div class="user-avatar">
+                    <img src="https://ui-avatars.com/api/?name=John+Doe&background=0066FF&color=fff" alt="User">
+                </div>
+                <div class="user-info">
+                    <h5>John Doe</h5>
+                    <p>Administrator</p>
+                </div>
+            </div> -->
+            
+            <div class="sidebar-divider">
+                <span>MAIN MENU</span>
+            </div>
+            
+            <ul class="sidebar-menu">
+                <li class="active">
+                    <a href="index.html">
+                        <i class="fas fa-th-large"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="metrics.html">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Warranty Metrics</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="invoice-status.html">
+                        <i class="fas fa-file-invoice"></i>
+                        <span>Final Invoice Status</span>
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="sidebar-footer">
+                <a href="#" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+                <span class="version">v1.0.0</span>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+           <!-- Enhanced Header -->
+           <header class="header">
+            <button class="sidebar-toggle d-lg-none" id="sidebar-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="breadcrumb-wrapper">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+                    </ol>
+                </nav>
+                <h1 class="page-title">WCA Dashboard</h1>
+            </div>
+            <div class="header-actions">
+                <button class="action-btn" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Search">
+                    <i class="fas fa-search"></i>
+                </button>
+                <button class="action-btn" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Notifications">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge">3</span>
+                </button>
+                <button class="action-btn" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Settings">
+                    <i class="fas fa-cog"></i>
+                </button>
+                <div class="user-dropdown">
+                    <button class="user-btn" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="https://ui-avatars.com/api/?name=John+Doe&background=0066FF&color=fff" alt="User" class="user-avatar-small">
+                        <span class="d-none d-md-inline">John Doe</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <li>
+                            <a class="dropdown-item" href="#">
+                                <i class="fas fa-user me-2"></i>My Profile
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#">
+                                <i class="fas fa-cog me-2"></i>Account Settings
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item" href="#">
+                                <i class="fas fa-sign-out-alt me-2"></i>Logout
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </header>
+
+            <div class="content-wrapper">
+                <!-- Dashboard Stats -->
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: rgba(239, 68, 68, 0.1); color: #EF4444;">
+                            <i class="fas fa-exclamation-circle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>16</h3>
+                            <p>Due Claims</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: rgba(16, 185, 129, 0.1); color: #10B981;">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>5</h3>
+                            <p>Issued Claims</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: rgba(245, 158, 11, 0.1); color: #F59E0B;">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>2</h3>
+                            <p>Upcoming Claims</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: rgba(59, 130, 246, 0.1); color: #3B82F6;">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>$1.4B</h3>
+                            <p>Total Credits Paid</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dashboard Widgets Row -->
+                <div class="dashboard-widgets">
+                    <!-- Warranty Metrics Widget -->
+                    <div class="dashboard-widget">
+                        <div class="widget-header">
+                            <h2>Warranty Metrics</h2>
+                            <div class="widget-actions">
+                                <a href="metrics.html" class="btn btn-sm btn-outline-primary">View Details</a>
+                            </div>
+                        </div>
+                        <div class="widget-body p-2">
+                            <div class="metrics-summary mb-1">
+                                <div class="metrics-summary-item">
+                                    <div class="metrics-icon" style="background-color: rgba(26, 58, 143, 0.1);">
+                                        <i class="fas fa-dollar-sign" style="color: #1a3a8f;"></i>
+                                    </div>
+                                    <div class="metrics-content">
+                                        <h4 class="mb-0 small">$1.4B <span class="text-success">↑12.5%</span></h4>
+                                        <p class="small mb-0 text-muted">Credits Paid</p>
+                                    </div>
+                                </div>
+                                <div class="metrics-summary-item">
+                                    <div class="metrics-icon" style="background-color: rgba(0, 179, 227, 0.1);">
+                                        <i class="fas fa-ban" style="color: #00b3e3;"></i>
+                                    </div>
+                                    <div class="metrics-content">
+                                        <h4 class="mb-0 small">$1.3B <span class="text-danger">↑8.3%</span></h4>
+                                        <p class="small mb-0 text-muted">Disallowed</p>
+                                    </div>
+                                </div>
+                                <div class="metrics-summary-item">
+                                    <div class="metrics-icon" style="background-color: rgba(255, 79, 89, 0.1);">
+                                        <i class="fas fa-percentage" style="color: #ff4f59;"></i>
+                                    </div>
+                                    <div class="metrics-content">
+                                        <h4 class="mb-0 small">48.1% <span class="text-warning">↑2.1%</span></h4>
+                                        <p class="small mb-0 text-muted">Disallowance Rate</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="metrics-chart-container mb-1" style="height: 120px;">
+                                <canvas id="warrantyMetricsChart"></canvas>
+                            </div>
+                            <div class="metrics-details">
+                                <div class="row g-1">
+                                    <div class="col-6">
+                                        <div class="metric-detail-item">
+                                            <span class="small text-muted">Processing Time</span>
+                                            <div class="d-flex align-items-center">
+                                                <span class="small me-1">48hrs</span>
+                                                <span class="badge bg-success">-2hrs</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="metric-detail-item">
+                                            <span class="small text-muted">Success Rate</span>
+                                            <div class="d-flex align-items-center">
+                                                <span class="small me-1">85.7%</span>
+                                                <span class="badge bg-success">+2.3%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="metric-detail-item">
+                                            <span class="small text-muted">Pending Reviews</span>
+                                            <div class="d-flex align-items-center">
+                                                <span class="small me-1">23</span>
+                                                <span class="badge bg-danger">+5</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="metric-detail-item">
+                                            <span class="small text-muted">Claim Value</span>
+                                            <div class="d-flex align-items-center">
+                                                <span class="small me-1">$245K</span>
+                                                <span class="badge bg-success">+$12.5K</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="table-footer small py-1">
+                                <div class="row align-items-center">
+                                    <div class="col-md-6">
+                                        <div class="table-info">
+                                            Last Updated: <span id="lastUpdated">Today</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <nav aria-label="Table navigation">
+                                            <ul class="pagination pagination-sm justify-content-end mb-0">
+                                                <li class="page-item">
+                                                    <button class="page-link" id="prevPeriod">
+                                                        <i class="fas fa-chevron-left"></i>
+                                                    </button>
+                                                </li>
+                                                <li class="page-item active">
+                                                    <span class="page-link">Q4 2023</span>
+                                                </li>
+                                                <li class="page-item">
+                                                    <button class="page-link" id="nextPeriod">
+                                                        <i class="fas fa-chevron-right"></i>
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </nav>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Final Invoice Status Widget -->
+                    <div class="dashboard-widget">
+                        <div class="widget-header">
+                            <h2>Final Invoice Status</h2>
+                            <div class="widget-actions">
+                                <a href="invoice-status.html" class="btn btn-sm btn-outline-primary">View Details</a>
+                            </div>
+                        </div>
+                        <div class="widget-body p-2">
+                            <div class="invoice-status-summary">
+                                <div class="status-indicators mb-1">
+                                    <div class="row g-1">
+                                        <div class="col-4">
+                                            <div class="status-indicator-item">
+                                                <div class="status-icon" style="background-color: rgba(239, 68, 68, 0.1);">
+                                                    <i class="fas fa-exclamation-circle" style="color: #EF4444;"></i>
+                                                </div>
+                                                <div class="status-content">
+                                                    <h4 class="mb-0 small">16 <span class="text-danger">Due</span></h4>
+                                                    <p class="small mb-0 text-muted">69% of total</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="status-indicator-item">
+                                                <div class="status-icon" style="background-color: rgba(16, 185, 129, 0.1);">
+                                                    <i class="fas fa-check-circle" style="color: #10B981;"></i>
+                                                </div>
+                                                <div class="status-content">
+                                                    <h4 class="mb-0 small">5 <span class="text-success">Issued</span></h4>
+                                                    <p class="small mb-0 text-muted">22% of total</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="status-indicator-item">
+                                                <div class="status-icon" style="background-color: rgba(245, 158, 11, 0.1);">
+                                                    <i class="fas fa-clock" style="color: #F59E0B;"></i>
+                                                </div>
+                                                <div class="status-content">
+                                                    <h4 class="mb-0 small">2 <span class="text-warning">Upcoming</span></h4>
+                                                    <p class="small mb-0 text-muted">9% of total</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="status-table-container">
+                                    <table class="table table-sm invoice-status-table mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th class="py-1 small">Shop</th>
+                                                <th class="py-1 small">Due</th>
+                                                <th class="py-1 small">Issued</th>
+                                                <th class="py-1 small">Upcoming</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr data-shop="Shop1" data-due="10" data-issued="1" data-upcoming="1">
+                                                <td class="py-1 small">Shop1</td>
+                                                <td class="py-1 small">10</td>
+                                                <td class="py-1 small">1</td>
+                                                <td class="py-1 small">1</td>
+                                            </tr>
+                                            <tr data-shop="Shop2" data-due="5" data-issued="1" data-upcoming="1">
+                                                <td class="py-1 small">Shop2</td>
+                                                <td class="py-1 small">5</td>
+                                                <td class="py-1 small">1</td>
+                                                <td class="py-1 small">1</td>
+                                            </tr>
+                                            <tr data-shop="Shop3" data-due="1" data-issued="3" data-upcoming="0">
+                                                <td class="py-1 small">Shop3</td>
+                                                <td class="py-1 small">1</td>
+                                                <td class="py-1 small">3</td>
+                                                <td class="py-1 small">0</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="table-footer small py-1">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-6">
+                                            <div class="table-info">
+                                                Last Updated: <span id="lastUpdated">Today</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <nav aria-label="Table navigation">
+                                                <ul class="pagination pagination-sm justify-content-end mb-0">
+                                                    <li class="page-item disabled" id="prevPage">
+                                                        <a class="page-link" href="#" tabindex="-1">
+                                                            <i class="fas fa-chevron-left"></i>
+                                                        </a>
+                                                    </li>
+                                                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                                    <li class="page-item" id="nextPage">
+                                                        <a class="page-link" href="#">
+                                                            <i class="fas fa-chevron-right"></i>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </nav>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Original tables can remain below but hidden initially -->
+                <div id="table1-container" class="table-container fade-in" style="display: none;">
+                    <!-- Original table content -->
+                </div>
+                
+                <!-- Other tables remain unchanged -->
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize tooltips
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+
+            // Initialize warranty metrics chart
+            const ctx = document.getElementById('warrantyMetricsChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+                    datasets: [{
+                        label: 'Credits Paid',
+                        data: [350, 400, 450, 500],
+                        backgroundColor: 'rgba(26, 58, 143, 0.2)',
+                        borderColor: '#1a3a8f',
+                        borderWidth: 1
+                    }, {
+                        label: 'Disallowed',
+                        data: [300, 350, 400, 450],
+                        backgroundColor: 'rgba(0, 179, 227, 0.2)',
+                        borderColor: '#00b3e3',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + value + 'M';
+                                },
+                                font: {
+                                    size: 8
+                                }
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                font: {
+                                    size: 8
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                boxWidth: 8,
+                                padding: 5,
+                                font: {
+                                    size: 8
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Initialize status table
+            const statusTable = document.querySelector('.status-table');
+            let selectedRow = null;
+
+            function highlightRow(row) {
+                if (selectedRow) {
+                    selectedRow.querySelectorAll('td').forEach(cell => {
+                        cell.style.backgroundColor = '';
+                    });
+                }
+                row.querySelectorAll('td').forEach(cell => {
+                    cell.style.backgroundColor = '#EFF6FF';
+                });
+                selectedRow = row;
+            }
+
+            // Add click event listeners to rows
+            statusTable.querySelectorAll('tbody tr').forEach(row => {
+                row.style.cursor = 'pointer';
+                row.addEventListener('click', function() {
+                    highlightRow(this);
+                });
+            });
+
+            // Initialize pagination
+            const rows = Array.from(statusTable.querySelectorAll('tbody tr'));
+            const rowsPerPage = 2;
+            let currentPage = 1;
+            const totalPages = Math.ceil(rows.length / rowsPerPage);
+
+            function updateTable() {
+                const start = (currentPage - 1) * rowsPerPage;
+                const end = start + rowsPerPage;
+                
+                rows.forEach((row, index) => {
+                    row.style.display = (index >= start && index < end) ? '' : 'none';
+                });
+
+                // Update showing count
+                document.getElementById('showingCount').textContent = Math.min(end, rows.length);
+                document.getElementById('totalCount').textContent = rows.length;
+
+                // Update pagination
+                updatePagination();
+            }
+
+            function updatePagination() {
+                const pagination = document.querySelector('.pagination');
+                const pageItems = pagination.querySelectorAll('.page-item:not(#prevPage):not(#nextPage)');
+                pageItems.forEach(item => item.remove());
+
+                for (let i = 1; i <= totalPages; i++) {
+                    const pageItem = document.createElement('li');
+                    pageItem.className = `page-item ${i === currentPage ? 'active' : ''}`;
+                    pageItem.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+                    pagination.insertBefore(pageItem, document.getElementById('nextPage'));
+                }
+
+                document.getElementById('prevPage').classList.toggle('disabled', currentPage === 1);
+                document.getElementById('nextPage').classList.toggle('disabled', currentPage === totalPages);
+            }
+
+            // Add pagination event listeners
+            document.querySelector('.pagination').addEventListener('click', function(e) {
+                e.preventDefault();
+                if (e.target.classList.contains('page-link')) {
+                    const target = e.target.closest('.page-item');
+                    if (target.id === 'prevPage' && currentPage > 1) {
+                        currentPage--;
+                    } else if (target.id === 'nextPage' && currentPage < totalPages) {
+                        currentPage++;
+                    } else if (!target.id) {
+                        currentPage = parseInt(e.target.textContent);
+                    }
+                    updateTable();
+                }
+            });
+
+            // Initialize table
+            updateTable();
+        });
+    </script>
+</body>
+</html>
