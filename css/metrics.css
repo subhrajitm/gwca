@@ -4,6 +4,9 @@
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 1.5rem;
     margin-bottom: 2rem;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
 }
 
 .metric-card {
@@ -925,5 +928,118 @@
 
     .multiselect-dropdown .option-value {
         font-size: 0.6875rem;
+    }
+}
+
+.metrics-summary,
+.status-indicators {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+@media (max-width: 1200px) {
+    .metrics-summary,
+    .status-indicators {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 576px) {
+    .metrics-summary,
+    .status-indicators {
+        grid-template-columns: 1fr;
+    }
+}
+
+.metrics-summary-item,
+.status-indicator-item {
+    padding: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background-color: #fff;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.warranty-metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.warranty-metric-item {
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background-color: #fff;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    height: 100%;
+}
+
+.warranty-metric-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background-color: rgba(26, 58, 143, 0.1);
+    color: #1a3a8f;
+    font-size: 1.25rem;
+}
+
+.warranty-metric-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.warranty-metric-value {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 0.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.warranty-metric-label {
+    font-size: 0.875rem;
+    color: #64748b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@media (min-width: 1400px) {
+    .warranty-metrics {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (min-width: 992px) and (max-width: 1399px) {
+    .warranty-metrics {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+    .warranty-metrics {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 767px) {
+    .warranty-metrics {
+        grid-template-columns: 1fr;
     }
 }

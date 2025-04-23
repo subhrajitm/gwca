@@ -115,45 +115,53 @@
 
             <div class="content-wrapper">
                 <!-- Summary Cards -->
-                <div class="dashboard-stats">
-                    <div class="stat-card">
-                        <div class="stat-icon" style="background-color: rgba(59, 130, 246, 0.1); color: #3B82F6;">
-                            <i class="fas fa-dollar-sign"></i>
-                        </div>
-                        <div class="stat-content">
-                            <h3>$1.41B</h3>
-                            <p>Total Credits Paid</p>
-                            <small class="text-muted">Across all models</small>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon" style="background-color: rgba(239, 68, 68, 0.1); color: #EF4444;">
-                            <i class="fas fa-ban"></i>
-                        </div>
-                        <div class="stat-content">
-                            <h3>$1.38B</h3>
-                            <p>Total Disallowed Amount</p>
-                            <small class="text-muted">49.5% of total claims</small>
+                <div class="row g-3">
+                    <!-- Credits Paid -->
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+                        <div class="warranty-metric-item">
+                            <div class="warranty-metric-icon">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                            <div class="warranty-metric-content">
+                                <div class="warranty-metric-value">$1.41B</div>
+                                <div class="warranty-metric-label">Total Credits Paid</div>
+                            </div>
                         </div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-icon" style="background-color: rgba(245, 158, 11, 0.1); color: #F59E0B;">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                        <div class="stat-content">
-                            <h3>27 Days</h3>
-                            <p>Avg. Claim Closure</p>
-                            <small class="text-muted">35 days avg. open time</small>
+                    <!-- Disallowed Amount -->
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+                        <div class="warranty-metric-item">
+                            <div class="warranty-metric-icon" style="background-color: rgba(239, 68, 68, 0.1); color: #EF4444;">
+                                <i class="fas fa-ban"></i>
+                            </div>
+                            <div class="warranty-metric-content">
+                                <div class="warranty-metric-value">$1.38B</div>
+                                <div class="warranty-metric-label">Total Disallowed Amount</div>
+                            </div>
                         </div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-icon" style="background-color: rgba(16, 185, 129, 0.1); color: #10B981;">
-                            <i class="fas fa-chart-line"></i>
+                    <!-- Claim Closure -->
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+                        <div class="warranty-metric-item">
+                            <div class="warranty-metric-icon" style="background-color: rgba(245, 158, 11, 0.1); color: #F59E0B;">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="warranty-metric-content">
+                                <div class="warranty-metric-value">27 Days</div>
+                                <div class="warranty-metric-label">Avg. Claim Closure</div>
+                            </div>
                         </div>
-                        <div class="stat-content">
-                            <h3>112,158</h3>
-                            <p>Total Transactions</p>
-                            <small class="text-muted">Across 9 models</small>
+                    </div>
+                    <!-- Total Transactions -->
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+                        <div class="warranty-metric-item">
+                            <div class="warranty-metric-icon" style="background-color: rgba(16, 185, 129, 0.1); color: #10B981;">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="warranty-metric-content">
+                                <div class="warranty-metric-value">112,158</div>
+                                <div class="warranty-metric-label">Total Transactions</div>
+                            </div>
                         </div>
                     </div>
                 </div>

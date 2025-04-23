@@ -875,61 +875,51 @@
 
             <div class="content-wrapper">
                 <!-- Dashboard Stats -->
-                <div class="dashboard-stats">
-                    <div class="stat-card">
-                        <div class="stat-icon" style="background-color: rgba(239, 68, 68, 0.1); color: #EF4444;">
-                            <i class="fas fa-exclamation-circle"></i>
-                        </div>
-                        <div class="stat-content">
-                            <div class="stat-header">
-                                <h3>16</h3>
-                                <span class="trend up">
-                                    <i class="fas fa-arrow-up"></i> 12%
-                                </span>
+                <div class="dashboard-stats mb-4">
+                    <div class="row g-3">
+                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+                            <div class="stat-card">
+                                <div class="stat-icon" style="background-color: rgba(26, 58, 143, 0.1);">
+                                    <i class="fas fa-clock" style="color: #1a3a8f;"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <h4 class="mb-0">245</h4>
+                                    <p class="mb-0 text-muted">Due Claims</p>
+                                </div>
                             </div>
-                            <p>Due Claims</p>
                         </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon" style="background-color: rgba(16, 185, 129, 0.1); color: #10B981;">
-                            <i class="fas fa-check-circle"></i>
-                        </div>
-                        <div class="stat-content">
-                            <div class="stat-header">
-                                <h3>5</h3>
-                                <span class="trend up">
-                                    <i class="fas fa-arrow-up"></i> 8%
-                                </span>
+                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+                            <div class="stat-card">
+                                <div class="stat-icon" style="background-color: rgba(0, 179, 227, 0.1);">
+                                    <i class="fas fa-check-circle" style="color: #00b3e3;"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <h4 class="mb-0">1,876</h4>
+                                    <p class="mb-0 text-muted">Issued Claims</p>
+                                </div>
                             </div>
-                            <p>Issued Claims</p>
                         </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon" style="background-color: rgba(245, 158, 11, 0.1); color: #F59E0B;">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                        <div class="stat-content">
-                            <div class="stat-header">
-                                <h3>2</h3>
-                                <span class="trend down">
-                                    <i class="fas fa-arrow-down"></i> 5%
-                                </span>
+                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+                            <div class="stat-card">
+                                <div class="stat-icon" style="background-color: rgba(255, 79, 89, 0.1);">
+                                    <i class="fas fa-calendar" style="color: #ff4f59;"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <h4 class="mb-0">328</h4>
+                                    <p class="mb-0 text-muted">Upcoming Claims</p>
+                                </div>
                             </div>
-                            <p>Upcoming Claims</p>
                         </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon" style="background-color: rgba(59, 130, 246, 0.1); color: #3B82F6;">
-                            <i class="fas fa-dollar-sign"></i>
-                        </div>
-                        <div class="stat-content">
-                            <div class="stat-header">
-                                <h3>$45K</h3>
-                                <span class="trend up">
-                                    <i class="fas fa-arrow-up"></i> 15%
-                                </span>
+                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+                            <div class="stat-card">
+                                <div class="stat-icon" style="background-color: rgba(40, 167, 69, 0.1);">
+                                    <i class="fas fa-dollar-sign" style="color: #28a745;"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <h4 class="mb-0">$2.4M</h4>
+                                    <p class="mb-0 text-muted">Total Value</p>
+                                </div>
                             </div>
-                            <p>Total Value</p>
                         </div>
                     </div>
                 </div>
@@ -950,35 +940,7 @@
                                 <input type="text" class="form-control border-start-0" id="searchInput" placeholder="Search...">
                             </div>
                         </div>
-                        <div class="row g-2">
-                            <div class="col-md-3">
-                                <div class="filter-group">
-                                    <label>Shop:</label>
-                                    <select class="form-select" id="shopFilter">
-                                        <option value="">All Shops</option>
-                                        <option value="Shop1">Shop1</option>
-                                        <option value="Shop2">Shop2</option>
-                                        <option value="Shop3">Shop3</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="filter-group">
-                                    <label>Status:</label>
-                                    <select class="form-select" id="statusFilter">
-                                        <option value="">All Status</option>
-                                        <option value="due">Due</option>
-                                        <option value="issued">Issued</option>
-                                        <option value="upcoming">Upcoming</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="filter-group">
-                                    <label>Min Engines:</label>
-                                    <input type="number" class="form-control" id="engineFilter" placeholder="Min Engines">
-                                </div>
-                            </div>
+                        <div class="row g-3">
                             <div class="col-md-3">
                                 <div class="filter-group">
                                     <label>Actions:</label>
@@ -1031,14 +993,11 @@
                                     </td>
                                     <td>
                                         <div class="row-actions">
-                                            <button class="row-action-btn" title="View Details">
+                                            <button class="btn btn-sm btn-outline-primary view-details">
                                                 <i class="fas fa-eye"></i>
                                             </button>
-                                            <button class="row-action-btn" title="Edit">
+                                            <button class="btn btn-sm btn-outline-secondary">
                                                 <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button class="row-action-btn" title="Delete">
-                                                <i class="fas fa-trash"></i>
                                             </button>
                                         </div>
                                     </td>
@@ -1072,14 +1031,11 @@
                                     </td>
                                     <td>
                                         <div class="row-actions">
-                                            <button class="row-action-btn" title="View Details">
+                                            <button class="btn btn-sm btn-outline-primary view-details">
                                                 <i class="fas fa-eye"></i>
                                             </button>
-                                            <button class="row-action-btn" title="Edit">
+                                            <button class="btn btn-sm btn-outline-secondary">
                                                 <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button class="row-action-btn" title="Delete">
-                                                <i class="fas fa-trash"></i>
                                             </button>
                                         </div>
                                     </td>
@@ -1113,154 +1069,10 @@
                                     </td>
                                     <td>
                                         <div class="row-actions">
-                                            <button class="row-action-btn" title="View Details">
+                                            <button class="btn btn-sm btn-outline-primary view-details">
                                                 <i class="fas fa-eye"></i>
                                             </button>
-                                            <button class="row-action-btn" title="Edit">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button class="row-action-btn" title="Delete">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="table-summary">
-                        <div class="table-info">
-                            Showing <span id="showingCount">0</span> of <span id="totalCount">0</span> entries
-                        </div>
-                        <nav aria-label="Table navigation">
-                            <ul class="pagination pagination-compact justify-content-end mb-0">
-                                <li class="page-item disabled" id="prevPage">
-                                    <a class="page-link" href="#" tabindex="-1">
-                                        <i class="fas fa-chevron-left"></i>
-                                    </a>
-                                </li>
-                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                <li class="page-item" id="nextPage">
-                                    <a class="page-link" href="#">
-                                        <i class="fas fa-chevron-right"></i>
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
-                    </div>
-                    <div class="table-footer">
-                        <button id="proceed-btn-1" class="btn btn-primary">Proceed</button>
-                    </div>
-                </div>
-
-                <!-- Table 2: Warranty Claim Status - Issued -->
-                <div class="table-container fade-in" id="warranty-claim-container" style="display: none;">
-                    <div class="table-header">
-                        <h2>Warranty Claim Status - Issued</h2>
-                        <div class="table-actions">
-                            <button class="btn btn-outline-secondary btn-sm" id="back-to-invoice">
-                                <i class="fas fa-arrow-left me-1"></i> Back
-                            </button>
-                        </div>
-                    </div>
-                    <div class="advanced-filters">
-                        <div class="row g-2">
-                            <div class="col-md-3">
-                                <div class="filter-group">
-                                    <label>Shop:</label>
-                                    <select class="form-select" id="warrantyShopFilter">
-                                        <option value="">All Shops</option>
-                                        <option value="Shop1">Shop1</option>
-                                        <option value="Shop2">Shop2</option>
-                                        <option value="Shop3">Shop3</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="filter-group">
-                                    <label>Date Range:</label>
-                                    <select class="form-select" id="warrantyDateFilter">
-                                        <option value="">All Time</option>
-                                        <option value="week">Last Week</option>
-                                        <option value="month">Last Month</option>
-                                        <option value="quarter">Last Quarter</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="filter-group">
-                                    <label>Min Amount:</label>
-                                    <input type="number" class="form-control" id="warrantyAmountFilter" placeholder="Min Amount">
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="filter-group">
-                                    <label>Actions:</label>
-                                    <button class="btn btn-sm btn-outline-secondary w-100" id="warrantyClearFilters">
-                                        <i class="fas fa-times me-1"></i> Clear
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table table-compact invoice-status-table table-advanced" id="warranty-claim-table">
-                            <thead>
-                                <tr>
-                                    <th class="sortable">Engine ID</th>
-                                    <th class="sortable">Shop</th>
-                                    <th class="sortable">Status</th>
-                                    <th class="sortable">Date Issued</th>
-                                    <th class="sortable">Amount</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr data-engine-id="ENG001" data-shop="Shop1" data-status="Issued" data-date="2024-03-15" data-amount="5000">
-                                    <td>ENG001</td>
-                                    <td>Shop1</td>
-                                    <td>
-                                        <div class="progress-indicator">
-                                            <div class="progress">
-                                                <div class="progress-bar issued" style="width: 100%"></div>
-                                            </div>
-                                            <span class="value">Issued</span>
-                                        </div>
-                                    </td>
-                                    <td>2024-03-15</td>
-                                    <td>$5,000</td>
-                                    <td>
-                                        <div class="row-actions">
-                                            <button class="btn btn-sm btn-outline-primary view-btn">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-secondary edit-btn">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr data-engine-id="ENG002" data-shop="Shop2" data-status="Issued" data-date="2024-03-16" data-amount="7500">
-                                    <td>ENG002</td>
-                                    <td>Shop2</td>
-                                    <td>
-                                        <div class="progress-indicator">
-                                            <div class="progress">
-                                                <div class="progress-bar issued" style="width: 100%"></div>
-                                            </div>
-                                            <span class="value">Issued</span>
-                                        </div>
-                                    </td>
-                                    <td>2024-03-16</td>
-                                    <td>$7,500</td>
-                                    <td>
-                                        <div class="row-actions">
-                                            <button class="btn btn-sm btn-outline-primary view-btn">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-secondary edit-btn">
+                                            <button class="btn btn-sm btn-outline-secondary">
                                                 <i class="fas fa-edit"></i>
                                             </button>
                                         </div>
@@ -1269,437 +1081,27 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="table-summary">
+                    <div class="table-footer d-flex justify-content-between align-items-center">
                         <div class="table-info">
-                            Showing <span id="warrantyShowingCount">2</span> of <span id="warrantyTotalCount">2</span> entries
+                            Showing <span id="showingCount">3</span> of <span id="totalCount">3</span> entries
                         </div>
-                        <nav aria-label="Table navigation">
-                            <ul class="pagination pagination-compact justify-content-end mb-0">
-                                <li class="page-item disabled" id="warrantyPrevPage">
-                                    <a class="page-link" href="#" tabindex="-1">
-                                        <i class="fas fa-chevron-left"></i>
-                                    </a>
-                                </li>
-                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                <li class="page-item" id="warrantyNextPage">
-                                    <a class="page-link" href="#">
-                                        <i class="fas fa-chevron-right"></i>
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
-                    </div>
-                    <div class="table-footer">
-                        <button id="proceed-btn-2" class="btn btn-primary">Proceed</button>
-                    </div>
-                </div>
-
-                <!-- Table 3: Opportunity Assessment -->
-                <div class="table-container fade-in" id="opportunity-container" style="display: none;">
-                    <div class="table-header">
-                        <h2>Opportunity Assessment</h2>
-                        <div class="table-actions">
-                            <button class="btn btn-outline-secondary btn-sm" id="back-to-warranty">
-                                <i class="fas fa-arrow-left me-1"></i> Back
-                            </button>
+                        <div class="pagination-wrapper">
+                            <nav aria-label="Table navigation">
+                                <ul class="pagination pagination-sm">
+                                    <li class="page-item disabled">
+                                        <a class="page-link" href="#" aria-label="Previous">
+                                            <i class="fas fa-chevron-left"></i>
+                                        </a>
+                                    </li>
+                                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                    <li class="page-item disabled">
+                                        <a class="page-link" href="#" aria-label="Next">
+                                            <i class="fas fa-chevron-right"></i>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
                         </div>
-                    </div>
-                    <div class="advanced-filters">
-                        <div class="row g-2">
-                            <div class="col-md-3">
-                                <div class="filter-group">
-                                    <label>Shop:</label>
-                                    <select class="form-select" id="opportunityShopFilter">
-                                        <option value="">All Shops</option>
-                                        <option value="Shop1">Shop1</option>
-                                        <option value="Shop2">Shop2</option>
-                                        <option value="Shop3">Shop3</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="filter-group">
-                                    <label>Risk Level:</label>
-                                    <select class="form-select" id="opportunityRiskFilter">
-                                        <option value="">All Levels</option>
-                                        <option value="low">Low</option>
-                                        <option value="medium">Medium</option>
-                                        <option value="high">High</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="filter-group">
-                                    <label>Min Savings:</label>
-                                    <input type="number" class="form-control" id="opportunitySavingsFilter" placeholder="Min Savings">
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="filter-group">
-                                    <label>Actions:</label>
-                                    <button class="btn btn-sm btn-outline-secondary w-100" id="opportunityClearFilters">
-                                        <i class="fas fa-times me-1"></i> Clear
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table table-compact invoice-status-table table-advanced" id="opportunity-table">
-                            <thead>
-                                <tr>
-                                    <th class="sortable">Engine ID</th>
-                                    <th class="sortable">Shop</th>
-                                    <th class="sortable">Potential Savings</th>
-                                    <th class="sortable">Risk Level</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr data-engine-id="ENG001" data-shop="Shop1" data-savings="2000" data-risk="Medium">
-                                    <td>ENG001</td>
-                                    <td>Shop1</td>
-                                    <td>
-                                        <div class="progress-indicator">
-                                            <div class="progress">
-                                                <div class="progress-bar issued" style="width: 67%"></div>
-                                            </div>
-                                            <span class="value">$2,000</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="progress-indicator">
-                                            <div class="progress">
-                                                <div class="progress-bar upcoming" style="width: 50%"></div>
-                                            </div>
-                                            <span class="value">Medium</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="row-actions">
-                                            <button class="btn btn-sm btn-primary analyze-btn">
-                                                <i class="fas fa-chart-line me-1"></i>Analyze
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr data-engine-id="ENG002" data-shop="Shop2" data-savings="3000" data-risk="Low">
-                                    <td>ENG002</td>
-                                    <td>Shop2</td>
-                                    <td>
-                                        <div class="progress-indicator">
-                                            <div class="progress">
-                                                <div class="progress-bar issued" style="width: 100%"></div>
-                                            </div>
-                                            <span class="value">$3,000</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="progress-indicator">
-                                            <div class="progress">
-                                                <div class="progress-bar issued" style="width: 25%"></div>
-                                            </div>
-                                            <span class="value">Low</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="row-actions">
-                                            <button class="btn btn-sm btn-primary analyze-btn">
-                                                <i class="fas fa-chart-line me-1"></i>Analyze
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="table-summary">
-                        <div class="table-info">
-                            Showing <span id="opportunityShowingCount">2</span> of <span id="opportunityTotalCount">2</span> entries
-                        </div>
-                        <nav aria-label="Table navigation">
-                            <ul class="pagination pagination-compact justify-content-end mb-0">
-                                <li class="page-item disabled" id="opportunityPrevPage">
-                                    <a class="page-link" href="#" tabindex="-1">
-                                        <i class="fas fa-chevron-left"></i>
-                                    </a>
-                                </li>
-                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                <li class="page-item" id="opportunityNextPage">
-                                    <a class="page-link" href="#">
-                                        <i class="fas fa-chevron-right"></i>
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
-                    </div>
-                    <div class="table-footer">
-                        <button id="proceed-btn-3" class="btn btn-primary">Proceed</button>
-                    </div>
-                </div>
-
-                <!-- Table 4: Recommendations -->
-                <div class="table-container fade-in" id="recommendations-container" style="display: none;">
-                    <div class="table-header">
-                        <h2>Recommendations</h2>
-                        <div class="table-actions">
-                            <button class="btn btn-outline-secondary btn-sm" id="back-to-opportunity">
-                                <i class="fas fa-arrow-left me-1"></i> Back
-                            </button>
-                        </div>
-                    </div>
-                    <div class="advanced-filters">
-                        <div class="row g-2">
-                            <div class="col-md-3">
-                                <div class="filter-group">
-                                    <label>Shop:</label>
-                                    <select class="form-select" id="recommendationsShopFilter">
-                                        <option value="">All Shops</option>
-                                        <option value="Shop1">Shop1</option>
-                                        <option value="Shop2">Shop2</option>
-                                        <option value="Shop3">Shop3</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="filter-group">
-                                    <label>Confidence:</label>
-                                    <select class="form-select" id="recommendationsConfidenceFilter">
-                                        <option value="">All Levels</option>
-                                        <option value="high">High (80-100%)</option>
-                                        <option value="medium">Medium (60-79%)</option>
-                                        <option value="low">Low (0-59%)</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="filter-group">
-                                    <label>Actions:</label>
-                                    <button class="btn btn-sm btn-outline-secondary w-100" id="recommendationsClearFilters">
-                                        <i class="fas fa-times me-1"></i> Clear
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table table-compact invoice-status-table table-advanced" id="recommendations-table">
-                            <thead>
-                                <tr>
-                                    <th class="sortable">Engine ID</th>
-                                    <th class="sortable">Shop</th>
-                                    <th class="sortable">Recommendation</th>
-                                    <th class="sortable">Confidence Score</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr data-engine-id="ENG001" data-shop="Shop1" data-confidence="85">
-                                    <td>ENG001</td>
-                                    <td>Shop1</td>
-                                    <td>High potential for warranty claim</td>
-                                    <td>
-                                        <div class="progress-indicator">
-                                            <div class="progress">
-                                                <div class="progress-bar issued" style="width: 85%"></div>
-                                            </div>
-                                            <span class="value">85%</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="row-actions">
-                                            <button class="btn btn-sm btn-primary proceed-btn">
-                                                <i class="fas fa-check me-1"></i>Proceed
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr data-engine-id="ENG002" data-shop="Shop2" data-confidence="92">
-                                    <td>ENG002</td>
-                                    <td>Shop2</td>
-                                    <td>Strong evidence for warranty claim</td>
-                                    <td>
-                                        <div class="progress-indicator">
-                                            <div class="progress">
-                                                <div class="progress-bar issued" style="width: 92%"></div>
-                                            </div>
-                                            <span class="value">92%</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="row-actions">
-                                            <button class="btn btn-sm btn-primary proceed-btn">
-                                                <i class="fas fa-check me-1"></i>Proceed
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="table-summary">
-                        <div class="table-info">
-                            Showing <span id="recommendationsShowingCount">2</span> of <span id="recommendationsTotalCount">2</span> entries
-                        </div>
-                        <nav aria-label="Table navigation">
-                            <ul class="pagination pagination-compact justify-content-end mb-0">
-                                <li class="page-item disabled" id="recommendationsPrevPage">
-                                    <a class="page-link" href="#" tabindex="-1">
-                                        <i class="fas fa-chevron-left"></i>
-                                    </a>
-                                </li>
-                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                <li class="page-item" id="recommendationsNextPage">
-                                    <a class="page-link" href="#">
-                                        <i class="fas fa-chevron-right"></i>
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
-                    </div>
-                </div>
-
-                <!-- Table 5: Prioritize Engines -->
-                <div class="table-container fade-in" id="prioritize-container" style="display: none;">
-                    <div class="table-header">
-                        <h2>Prioritize the Engines</h2>
-                        <div class="table-actions">
-                            <button class="btn btn-outline-secondary btn-sm" id="back-to-recommendations">
-                                <i class="fas fa-arrow-left me-1"></i> Back
-                            </button>
-                        </div>
-                    </div>
-                    <div class="advanced-filters">
-                        <div class="row g-2">
-                            <div class="col-md-3">
-                                <div class="filter-group">
-                                    <label>Shop:</label>
-                                    <select class="form-select" id="prioritizeShopFilter">
-                                        <option value="">All Shops</option>
-                                        <option value="Shop1">Shop1</option>
-                                        <option value="Shop2">Shop2</option>
-                                        <option value="Shop3">Shop3</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="filter-group">
-                                    <label>Priority:</label>
-                                    <select class="form-select" id="prioritizeLevelFilter">
-                                        <option value="">All Levels</option>
-                                        <option value="high">High</option>
-                                        <option value="medium">Medium</option>
-                                        <option value="low">Low</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="filter-group">
-                                    <label>Min Value:</label>
-                                    <input type="number" class="form-control" id="prioritizeValueFilter" placeholder="Min Value">
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="filter-group">
-                                    <label>Actions:</label>
-                                    <button class="btn btn-sm btn-outline-secondary w-100" id="prioritizeClearFilters">
-                                        <i class="fas fa-times me-1"></i> Clear
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table table-compact invoice-status-table table-advanced" id="prioritize-table">
-                            <thead>
-                                <tr>
-                                    <th class="sortable">Engine ID</th>
-                                    <th class="sortable">Shop</th>
-                                    <th class="sortable">Priority Level</th>
-                                    <th class="sortable">Estimated Value</th>
-                                    <th class="sortable">Timeline</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr data-engine-id="ENG001" data-shop="Shop1" data-priority="High" data-value="2000">
-                                    <td>ENG001</td>
-                                    <td>Shop1</td>
-                                    <td>
-                                        <div class="progress-indicator">
-                                            <div class="progress">
-                                                <div class="progress-bar due" style="width: 100%"></div>
-                                            </div>
-                                            <span class="value">High</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="progress-indicator">
-                                            <div class="progress">
-                                                <div class="progress-bar issued" style="width: 67%"></div>
-                                            </div>
-                                            <span class="value">$2,000</span>
-                                        </div>
-                                    </td>
-                                    <td>2 weeks</td>
-                                    <td>
-                                        <div class="row-actions">
-                                            <button class="btn btn-sm btn-primary prioritize-btn">
-                                                <i class="fas fa-flag me-1"></i>Prioritize
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr data-engine-id="ENG002" data-shop="Shop2" data-priority="Medium" data-value="1500">
-                                    <td>ENG002</td>
-                                    <td>Shop2</td>
-                                    <td>
-                                        <div class="progress-indicator">
-                                            <div class="progress">
-                                                <div class="progress-bar upcoming" style="width: 50%"></div>
-                                            </div>
-                                            <span class="value">Medium</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="progress-indicator">
-                                            <div class="progress">
-                                                <div class="progress-bar issued" style="width: 50%"></div>
-                                            </div>
-                                            <span class="value">$1,500</span>
-                                        </div>
-                                    </td>
-                                    <td>3 weeks</td>
-                                    <td>
-                                        <div class="row-actions">
-                                            <button class="btn btn-sm btn-primary prioritize-btn">
-                                                <i class="fas fa-flag me-1"></i>Prioritize
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="table-summary">
-                        <div class="table-info">
-                            Showing <span id="prioritizeShowingCount">2</span> of <span id="prioritizeTotalCount">2</span> entries
-                        </div>
-                        <nav aria-label="Table navigation">
-                            <ul class="pagination pagination-compact justify-content-end mb-0">
-                                <li class="page-item disabled" id="prioritizePrevPage">
-                                    <a class="page-link" href="#" tabindex="-1">
-                                        <i class="fas fa-chevron-left"></i>
-                                    </a>
-                                </li>
-                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                <li class="page-item" id="prioritizeNextPage">
-                                    <a class="page-link" href="#">
-                                        <i class="fas fa-chevron-right"></i>
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
                     </div>
                 </div>
             </div>
@@ -1708,118 +1110,5 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/invoice-status.js"></script>
-    <div class="modal fade" id="engineDetailsModal" tabindex="-1" aria-labelledby="engineDetailsModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="engineDetailsModalLabel">Engine Details</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row mb-4">
-                        <div class="col-md-6">
-                            <div class="detail-item">
-                                <label>Engine ID</label>
-                                <p id="modalEngineId">-</p>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="detail-item">
-                                <label>Shop</label>
-                                <p id="modalShop">-</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row mb-4">
-                        <div class="col-md-6">
-                            <div class="detail-item">
-                                <label>Priority Level</label>
-                                <p id="modalPriority">-</p>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="detail-item">
-                                <label>Estimated Value</label>
-                                <p id="modalValue">-</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row mb-4">
-                        <div class="col-md-6">
-                            <div class="detail-item">
-                                <label>Timeline</label>
-                                <p id="modalTimeline">-</p>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="detail-item">
-                                <label>Status</label>
-                                <p id="modalStatus">-</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="detail-item">
-                                <label>Additional Notes</label>
-                                <p id="modalNotes">No additional notes available.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="confirmPrioritize">Confirm Prioritization</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // ... existing code ...
-
-            // Initialize Bootstrap modal
-            const engineDetailsModal = new bootstrap.Modal(document.getElementById('engineDetailsModal'));
-
-            // Add event listeners for Prioritize buttons
-            function setupPrioritizeButtons() {
-                const prioritizeButtons = document.querySelectorAll('#prioritize-table .prioritize-btn');
-                prioritizeButtons.forEach(button => {
-                    button.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        
-                        // Get the row data
-                        const row = this.closest('tr');
-                        const engineId = row.dataset.engineId;
-                        const shop = row.dataset.shop;
-                        const priority = row.dataset.priority;
-                        const value = row.dataset.value;
-                        const timeline = row.querySelector('td:nth-child(5)').textContent;
-                        
-                        // Update modal content
-                        document.getElementById('modalEngineId').textContent = engineId;
-                        document.getElementById('modalShop').textContent = shop;
-                        document.getElementById('modalPriority').textContent = priority;
-                        document.getElementById('modalValue').textContent = `$${value}`;
-                        document.getElementById('modalTimeline').textContent = timeline;
-                        
-                        // Show the modal
-                        engineDetailsModal.show();
-                    });
-                });
-            }
-
-            // Handle confirm prioritization
-            document.getElementById('confirmPrioritize').addEventListener('click', function() {
-                // Add your confirmation logic here
-                engineDetailsModal.hide();
-                // Show success message or update UI
-            });
-
-            // ... rest of the existing code ...
-        });
-    </script>
 </body>
 </html>
