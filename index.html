@@ -176,13 +176,13 @@
                             </div>
                         </div>
                         <div class="widget-body p-2">
-                            <div class="metrics-summary mb-1">
+                            <div class="metrics-summary mb-3">
                                 <div class="metrics-summary-item">
                                     <div class="metrics-icon" style="background-color: rgba(26, 58, 143, 0.1);">
                                         <i class="fas fa-dollar-sign" style="color: #1a3a8f;"></i>
                                     </div>
                                     <div class="metrics-content">
-                                        <h4 class="mb-0 small">$1.4B <span class="text-success">↑12.5%</span></h4>
+                                        <h4 class="mb-0 small">$1.41B <span class="text-success">↑12.5%</span></h4>
                                         <p class="small mb-0 text-muted">Credits Paid</p>
                                     </div>
                                 </div>
@@ -191,7 +191,7 @@
                                         <i class="fas fa-ban" style="color: #00b3e3;"></i>
                                     </div>
                                     <div class="metrics-content">
-                                        <h4 class="mb-0 small">$1.3B <span class="text-danger">↑8.3%</span></h4>
+                                        <h4 class="mb-0 small">$1.38B <span class="text-danger">↑8.3%</span></h4>
                                         <p class="small mb-0 text-muted">Disallowed</p>
                                     </div>
                                 </div>
@@ -200,79 +200,18 @@
                                         <i class="fas fa-percentage" style="color: #ff4f59;"></i>
                                     </div>
                                     <div class="metrics-content">
-                                        <h4 class="mb-0 small">48.1% <span class="text-warning">↑2.1%</span></h4>
-                                        <p class="small mb-0 text-muted">Disallowance Rate</p>
+                                        <h4 class="mb-0 small">27 Days <span class="text-success">↓5.2%</span></h4>
+                                        <p class="small mb-0 text-muted">Avg. Closure</p>
                                     </div>
                                 </div>
                             </div>
-                            <div class="metrics-chart-container mb-1" style="height: 120px;">
-                                <canvas id="warrantyMetricsChart"></canvas>
-                            </div>
-                            <div class="metrics-details">
-                                <div class="row g-1">
-                                    <div class="col-6">
-                                        <div class="metric-detail-item">
-                                            <span class="small text-muted">Processing Time</span>
-                                            <div class="d-flex align-items-center">
-                                                <span class="small me-1">48hrs</span>
-                                                <span class="badge bg-success">-2hrs</span>
-                                            </div>
+                            <div class="charts-container">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="chart-wrapper">
+                                            <h6 class="chart-title">Credits & Disallowed by Model</h6>
+                                            <canvas id="creditsChart"></canvas>
                                         </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="metric-detail-item">
-                                            <span class="small text-muted">Success Rate</span>
-                                            <div class="d-flex align-items-center">
-                                                <span class="small me-1">85.7%</span>
-                                                <span class="badge bg-success">+2.3%</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="metric-detail-item">
-                                            <span class="small text-muted">Pending Reviews</span>
-                                            <div class="d-flex align-items-center">
-                                                <span class="small me-1">23</span>
-                                                <span class="badge bg-danger">+5</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="metric-detail-item">
-                                            <span class="small text-muted">Claim Value</span>
-                                            <div class="d-flex align-items-center">
-                                                <span class="small me-1">$245K</span>
-                                                <span class="badge bg-success">+$12.5K</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="table-footer small py-1">
-                                <div class="row align-items-center">
-                                    <div class="col-md-6">
-                                        <div class="table-info">
-                                            Last Updated: <span id="lastUpdated">Today</span>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <nav aria-label="Table navigation">
-                                            <ul class="pagination pagination-sm justify-content-end mb-0">
-                                                <li class="page-item">
-                                                    <button class="page-link" id="prevPeriod">
-                                                        <i class="fas fa-chevron-left"></i>
-                                                    </button>
-                                                </li>
-                                                <li class="page-item active">
-                                                    <span class="page-link">Q4 2023</span>
-                                                </li>
-                                                <li class="page-item">
-                                                    <button class="page-link" id="nextPeriod">
-                                                        <i class="fas fa-chevron-right"></i>
-                                                    </button>
-                                                </li>
-                                            </ul>
-                                        </nav>
                                     </div>
                                 </div>
                             </div>
@@ -401,70 +340,13 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/script.js"></script>
+    <script src="js/index.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Initialize tooltips
             const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
             tooltipTriggerList.map(function (tooltipTriggerEl) {
                 return new bootstrap.Tooltip(tooltipTriggerEl);
-            });
-
-            // Initialize warranty metrics chart
-            const ctx = document.getElementById('warrantyMetricsChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['Q1', 'Q2', 'Q3', 'Q4'],
-                    datasets: [{
-                        label: 'Credits Paid',
-                        data: [350, 400, 450, 500],
-                        backgroundColor: 'rgba(26, 58, 143, 0.2)',
-                        borderColor: '#1a3a8f',
-                        borderWidth: 1
-                    }, {
-                        label: 'Disallowed',
-                        data: [300, 350, 400, 450],
-                        backgroundColor: 'rgba(0, 179, 227, 0.2)',
-                        borderColor: '#00b3e3',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return '$' + value + 'M';
-                                },
-                                font: {
-                                    size: 8
-                                }
-                            }
-                        },
-                        x: {
-                            ticks: {
-                                font: {
-                                    size: 8
-                                }
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                boxWidth: 8,
-                                padding: 5,
-                                font: {
-                                    size: 8
-                                }
-                            }
-                        }
-                    }
-                }
             });
 
             // Initialize status table
