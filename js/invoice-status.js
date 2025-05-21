@@ -1,128 +1,139 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Table containers
-    const containers = {
-        invoice: document.getElementById('final-invoice-container'),
-        warranty: document.getElementById('warranty-claim-container'),
-        opportunity: document.getElementById('opportunity-container'),
-        recommendations: document.getElementById('recommendations-container'),
-        prioritize: document.getElementById('prioritize-container')
-    };
+    // Initialize tooltips
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
 
-    // Tables
-    const tables = {
-        invoice: document.getElementById('final-invoice-table'),
-        warranty: document.getElementById('warranty-claim-table'),
-        opportunity: document.getElementById('opportunity-table'),
-        recommendations: document.getElementById('recommendations-table'),
-        prioritize: document.getElementById('prioritize-table')
-    };
+    // Sidebar toggle functionality
+    const sidebarToggle = document.getElementById('sidebar-toggle');
+    const sidebar = document.querySelector('.sidebar');
+    const sidebarClose = document.getElementById('sidebar-close');
 
-    // Buttons
-    const buttons = {
-        proceed1: document.getElementById('proceed-btn-1'),
-        proceed2: document.getElementById('proceed-btn-2'),
-        backToInvoice: document.getElementById('back-to-invoice'),
-        backToWarranty: document.getElementById('back-to-warranty'),
-        backToOpportunity: document.getElementById('back-to-opportunity'),
-        backToRecommendations: document.getElementById('back-to-recommendations')
-    };
-
-    // Initialize selection tracking
-    let selectedRows = {
-        invoice: [],
-        warranty: [],
-        opportunity: [],
-        recommendations: [],
-        prioritize: []
-    };
-
-    // Function to show a specific container and hide others
-    function showContainer(containerId) {
-        Object.values(containers).forEach(container => {
-            container.style.display = 'none';
+    if (sidebarToggle && sidebar) {
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
         });
-        containers[containerId].style.display = 'block';
     }
 
-    // Function to update selected rows and button state
-    function updateSelectedRows(tableId) {
-        selectedRows[tableId] = Array.from(tables[tableId].querySelectorAll('tbody tr.selected-row'));
+    if (sidebarClose && sidebar) {
+        sidebarClose.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+        });
+    }
+
+    // Get DOM elements
+    const searchInput = document.getElementById('searchInput');
+    const clearFiltersBtn = document.getElementById('clearFilters');
+    const finalInvoiceTable = document.getElementById('final-invoice-table');
+    const warrantyClaimTable = document.getElementById('warranty-claim-table');
+    const finalInvoiceContainer = document.getElementById('final-invoice-container');
+    const warrantyClaimContainer = document.getElementById('warranty-claim-container');
+    const warrantySearchInput = document.getElementById('warrantySearchInput');
+    const clearWarrantyFiltersBtn = document.getElementById('clearWarrantyFilters');
+
+    // Add click event listeners to action links
+    const actionLinks = document.querySelectorAll('.action-link');
+    actionLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const shopName = this.closest('tr').querySelector('td:first-child').textContent;
+            showWarrantyClaimTable(shopName);
+        });
+    });
+
+    // Function to show warranty claim table
+    function showWarrantyClaimTable(shopName) {
+        finalInvoiceContainer.style.display = 'none';
+        warrantyClaimContainer.style.display = 'block';
         
-        // Update proceed button state
-        const proceedButton = document.getElementById(`proceed-btn-${tableId === 'invoice' ? '1' : '2'}`);
-        if (proceedButton) {
-            proceedButton.disabled = selectedRows[tableId].length === 0;
-        }
+        // Update the table header to show which shop's claims are being displayed
+        const warrantyTableHeader = warrantyClaimContainer.querySelector('.table-header h2');
+        warrantyTableHeader.textContent = `Warranty Claim Status - ${shopName}`;
     }
 
-    // Add click event to each row for selection
-    function setupTableSelection(tableId) {
-        const rows = tables[tableId].querySelectorAll('tbody tr');
-        rows.forEach(row => {
-            row.addEventListener('click', function(e) {
-                // Don't toggle if clicking on a button
-                if (e.target.tagName === 'BUTTON') {
-                    return;
-                }
-                
-                // Toggle selection
-                this.classList.toggle('selected-row');
-                
-                // Update selected rows array
-                updateSelectedRows(tableId);
+    // Function to show final invoice table
+    function showFinalInvoiceTable() {
+        warrantyClaimContainer.style.display = 'none';
+        finalInvoiceContainer.style.display = 'block';
+    }
+
+    // Add back button to warranty claim table header
+    const warrantyTableHeader = warrantyClaimContainer.querySelector('.table-header');
+    const backButton = document.createElement('button');
+    backButton.className = 'btn btn-link text-decoration-none me-2';
+    backButton.innerHTML = '<i class="fas fa-arrow-left"></i> Back';
+    backButton.addEventListener('click', showFinalInvoiceTable);
+    warrantyTableHeader.insertBefore(backButton, warrantyTableHeader.firstChild);
+
+    // Search functionality for final invoice table
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const rows = finalInvoiceTable.querySelectorAll('tbody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
             });
+            
+            updateTableInfo(finalInvoiceTable, 'showingCount', 'totalCount');
         });
     }
 
-    // Setup all tables
-    Object.keys(tables).forEach(tableId => {
-        setupTableSelection(tableId);
-    });
-
-    // Initialize button states
-    Object.keys(tables).forEach(tableId => {
-        updateSelectedRows(tableId);
-    });
-
-    // Back button functionality
-    buttons.backToInvoice.addEventListener('click', () => showContainer('invoice'));
-    buttons.backToWarranty.addEventListener('click', () => showContainer('warranty'));
-    buttons.backToOpportunity.addEventListener('click', () => showContainer('opportunity'));
-    buttons.backToRecommendations.addEventListener('click', () => showContainer('recommendations'));
-
-    // Proceed button functionality
-    buttons.proceed1.addEventListener('click', function() {
-        if (selectedRows.invoice.length === 0) {
-            alert('Please select at least one shop to proceed');
-            return;
-        }
-        showContainer('warranty');
-    });
-
-    buttons.proceed2.addEventListener('click', function() {
-        if (selectedRows.warranty.length === 0) {
-            alert('Please select at least one warranty claim to proceed');
-            return;
-        }
-        showContainer('opportunity');
-    });
-
-    // Analyze button functionality
-    document.querySelectorAll('.analyze-btn').forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.stopPropagation(); // Prevent row selection
-            showContainer('recommendations');
+    // Search functionality for warranty claim table
+    if (warrantySearchInput) {
+        warrantySearchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const rows = warrantyClaimTable.querySelectorAll('tbody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+            
+            updateTableInfo(warrantyClaimTable, 'warrantyShowingCount', 'warrantyTotalCount');
         });
-    });
+    }
 
-    // Recommendations proceed button functionality
-    document.querySelectorAll('.proceed-btn').forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.stopPropagation(); // Prevent row selection
-            showContainer('prioritize');
+    // Clear filters for final invoice table
+    if (clearFiltersBtn) {
+        clearFiltersBtn.addEventListener('click', function() {
+            if (searchInput) {
+                searchInput.value = '';
+                const rows = finalInvoiceTable.querySelectorAll('tbody tr');
+                rows.forEach(row => row.style.display = '');
+                updateTableInfo(finalInvoiceTable, 'showingCount', 'totalCount');
+            }
         });
-    });
+    }
 
-    // Initialize with first table visible
-    showContainer('invoice');
+    // Clear filters for warranty claim table
+    if (clearWarrantyFiltersBtn) {
+        clearWarrantyFiltersBtn.addEventListener('click', function() {
+            if (warrantySearchInput) {
+                warrantySearchInput.value = '';
+                const rows = warrantyClaimTable.querySelectorAll('tbody tr');
+                rows.forEach(row => row.style.display = '');
+                updateTableInfo(warrantyClaimTable, 'warrantyShowingCount', 'warrantyTotalCount');
+            }
+        });
+    }
+
+    // Function to update table info
+    function updateTableInfo(table, showingId, totalId) {
+        const showingCount = table.querySelectorAll('tbody tr:not([style*="display: none"])').length;
+        const totalCount = table.querySelectorAll('tbody tr').length;
+        
+        document.getElementById(showingId).textContent = showingCount;
+        document.getElementById(totalId).textContent = totalCount;
+    }
+
+    // Initialize table info
+    if (finalInvoiceTable) {
+        updateTableInfo(finalInvoiceTable, 'showingCount', 'totalCount');
+    }
+    if (warrantyClaimTable) {
+        updateTableInfo(warrantyClaimTable, 'warrantyShowingCount', 'warrantyTotalCount');
+    }
 });

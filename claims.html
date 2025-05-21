@@ -19,38 +19,6 @@
                         0 4px 8px rgba(26, 58, 143, 0.1);
             overflow: hidden;
             margin-bottom: 1.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .table-container:hover {
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1),
-                        0 8px 16px rgba(26, 58, 143, 0.15);
-        }
-
-        .table-header {
-            padding: 1rem 1.5rem;
-            background-color: #ffffff;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .table-header h2 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #1e293b;
-            margin: 0;
-        }
-
-        .table-actions {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .table-actions .badge {
-            font-size: 0.875rem;
-            font-weight: 500;
-            padding: 0.5rem 0.75rem;
-            border-radius: 6px;
         }
 
         .table {
@@ -80,61 +48,91 @@
             border-bottom: 1px solid #e2e8f0;
             color: #4b5563;
             font-size: 0.875rem;
-            transition: all 0.2s ease;
+            background-color: #ffffff;
         }
 
         .table tbody tr {
-            transition: all 0.2s ease;
-            cursor: pointer;
-        }
-
-        .table tbody tr:hover {
-            background-color: #f1f5f9;
-        }
-
-        .table tbody tr:hover td {
-            color: #1a3a8f;
-        }
-
-        .table tbody tr.selected-row {
-            background-color: #eff6ff;
-            border-left: 3px solid #3b82f6;
+            background-color: #ffffff;
         }
 
         .table tbody tr:last-child td {
             border-bottom: none;
         }
 
+        /* Remove all hover effects from table rows */
+        .table tbody tr:hover {
+            background-color: #ffffff;
+        }
+
+        .table tbody tr:hover td {
+            color: #4b5563;
+        }
+
         /* Status Badges */
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 0.35rem 0.75rem;
-            border-radius: 9999px;
+        .badge {
             font-size: 0.75rem;
             font-weight: 500;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            transition: all 0.2s ease;
+            padding: 0.35rem 0.75rem;
+            border-radius: 9999px;
         }
 
-        .status-badge:hover {
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transform: translateY(-1px);
+        /* Modern Action Link Styles */
+        .action-link {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            color: #3b82f6;
+            padding: 6px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
         }
 
-        .status-badge.pending {
-            background-color: #fef3c7;
-            color: #92400e;
+        .action-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 7px;
+            transform: scale(0);
+            transition: transform 0.3s ease;
         }
 
-        .status-badge.completed {
-            background-color: #d1fae5;
-            color: #065f46;
+        .action-link:hover {
+            color: #2563eb;
+            transform: translateX(2px);
+            border-color: #3b82f6;
+            box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1);
         }
 
-        .status-badge.rejected {
-            background-color: #fee2e2;
-            color: #991b1b;
+        .action-link:hover::before {
+            transform: scale(1);
+        }
+
+        .action-link:active {
+            transform: translateX(0);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .action-link i {
+            font-size: 14px;
+            position: relative;
+            z-index: 1;
+            transition: transform 0.3s ease;
+        }
+
+        .action-link:hover i {
+            transform: translateX(2px);
         }
 
         /* Table Actions */
@@ -557,12 +555,6 @@
             margin: 0;
         }
 
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
         /* Table Header Styles */
         .table-header {
             display: flex;
@@ -758,6 +750,16 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* Action Button */
+        .btn-link {
+            text-decoration: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .btn-link:hover {
+            opacity: 0.8;
+        }
     </style>
 </head>
 <body>
@@ -795,16 +797,10 @@
                         <span>Dashboard</span>
                     </a>
                 </li>
-                <li>
-                    <a href="metrics.html">
-                        <i class="fas fa-chart-line"></i>
-                        <span>Warranty Metrics</span>
-                    </a>
-                </li>
                 <li class="active">
-                    <a href="invoice-status.html">
+                    <a href="claims.html">
                         <i class="fas fa-file-invoice"></i>
-                        <span>Final Invoice Status</span>
+                        <span>Claims</span>
                     </a>
                 </li>
             </ul>
@@ -829,47 +825,10 @@
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Final Invoice Status</li>
+                            <li class="breadcrumb-item active" aria-current="page">Claims</li>
                         </ol>
                     </nav>
-                    <h1 class="page-title">Final Invoice Status</h1>
-                </div>
-                <div class="header-actions">
-                    <button class="action-btn" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Search">
-                        <i class="fas fa-search"></i>
-                    </button>
-                    <button class="action-btn" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Notifications">
-                        <i class="fas fa-bell"></i>
-                        <span class="notification-badge">3</span>
-                    </button>
-                    <button class="action-btn" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Settings">
-                        <i class="fas fa-cog"></i>
-                    </button>
-                    <div class="user-dropdown">
-                        <button class="user-btn" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                            <img src="https://ui-avatars.com/api/?name=John+Doe&background=0066FF&color=fff" alt="User" class="user-avatar-small">
-                            <span class="d-none d-md-inline">John Doe</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                            <li>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-user me-2"></i>My Profile
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-cog me-2"></i>Account Settings
-                                </a>
-                            </li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
+                    <h1 class="page-title">Claims</h1>
                 </div>
             </header>
 
@@ -931,22 +890,19 @@
                         <span class="badge bg-primary">Total Shops: 3</span>
                     </div>
                     <div class="advanced-filters">
-                        <div class="filter-group">
-                            <label>Search:</label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-white border-end-0">
-                                    <i class="fas fa-search text-muted"></i>
-                                </span>
-                                <input type="text" class="form-control border-start-0" id="searchInput" placeholder="Search...">
-                            </div>
-                        </div>
                         <div class="row g-3">
-                            <div class="col-md-3">
+                            <div class="col-12">
                                 <div class="filter-group">
-                                    <label>Actions:</label>
-                                    <button class="btn btn-sm btn-outline-secondary w-100" id="clearFilters">
-                                        <i class="fas fa-times me-1"></i> Clear
-                                    </button>
+                                    <label>Search:</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white border-end-0">
+                                            <i class="fas fa-search text-muted"></i>
+                                        </span>
+                                        <input type="text" class="form-control border-start-0" id="searchInput" placeholder="Search...">
+                                        <button class="btn btn-outline-secondary" type="button" id="clearFilters">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -960,7 +916,6 @@
                                     <th class="sortable due-column">Due</th>
                                     <th class="sortable issued-column">Issued</th>
                                     <th class="sortable upcoming-column">Upcoming</th>
-                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -968,114 +923,54 @@
                                     <td>Shop1</td>
                                     <td>12</td>
                                     <td>
-                                        <div class="progress-indicator">
-                                            <div class="progress">
-                                                <div class="progress-bar due" style="width: 83%"></div>
-                                            </div>
-                                            <span class="value">10</span>
-                                        </div>
+                                        <span class="badge bg-danger">10</span>
                                     </td>
                                     <td>
-                                        <div class="progress-indicator">
-                                            <div class="progress">
-                                                <div class="progress-bar issued" style="width: 8%"></div>
-                                            </div>
-                                            <span class="value">1</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="progress-indicator">
-                                            <div class="progress">
-                                                <div class="progress-bar upcoming" style="width: 8%"></div>
-                                            </div>
-                                            <span class="value">1</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="row-actions">
-                                            <button class="btn btn-sm btn-outline-primary view-details">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-secondary">
-                                                <i class="fas fa-edit"></i>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="badge bg-success">1</span>
+                                            <button class="action-link" title="View Details">
+                                                <i class="fas fa-arrow-right"></i>
                                             </button>
                                         </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-warning">1</span>
                                     </td>
                                 </tr>
                                 <tr data-shop="Shop2" data-engines="7" data-due="5" data-issued="1" data-upcoming="1">
                                     <td>Shop2</td>
                                     <td>7</td>
                                     <td>
-                                        <div class="progress-indicator">
-                                            <div class="progress">
-                                                <div class="progress-bar due" style="width: 71%"></div>
-                                            </div>
-                                            <span class="value">5</span>
-                                        </div>
+                                        <span class="badge bg-danger">5</span>
                                     </td>
                                     <td>
-                                        <div class="progress-indicator">
-                                            <div class="progress">
-                                                <div class="progress-bar issued" style="width: 14%"></div>
-                                            </div>
-                                            <span class="value">1</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="progress-indicator">
-                                            <div class="progress">
-                                                <div class="progress-bar upcoming" style="width: 15%"></div>
-                                            </div>
-                                            <span class="value">1</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="row-actions">
-                                            <button class="btn btn-sm btn-outline-primary view-details">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-secondary">
-                                                <i class="fas fa-edit"></i>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="badge bg-success">1</span>
+                                            <button class="action-link" title="View Details">
+                                                <i class="fas fa-arrow-right"></i>
                                             </button>
                                         </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-warning">1</span>
                                     </td>
                                 </tr>
                                 <tr data-shop="Shop3" data-engines="4" data-due="1" data-issued="3" data-upcoming="0">
                                     <td>Shop3</td>
                                     <td>4</td>
                                     <td>
-                                        <div class="progress-indicator">
-                                            <div class="progress">
-                                                <div class="progress-bar due" style="width: 25%"></div>
-                                            </div>
-                                            <span class="value">1</span>
-                                        </div>
+                                        <span class="badge bg-danger">1</span>
                                     </td>
                                     <td>
-                                        <div class="progress-indicator">
-                                            <div class="progress">
-                                                <div class="progress-bar issued" style="width: 75%"></div>
-                                            </div>
-                                            <span class="value">3</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="progress-indicator">
-                                            <div class="progress">
-                                                <div class="progress-bar upcoming" style="width: 0%"></div>
-                                            </div>
-                                            <span class="value">0</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="row-actions">
-                                            <button class="btn btn-sm btn-outline-primary view-details">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-secondary">
-                                                <i class="fas fa-edit"></i>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="badge bg-success">3</span>
+                                            <button class="action-link" title="View Details">
+                                                <i class="fas fa-arrow-right"></i>
                                             </button>
                                         </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-warning">0</span>
                                     </td>
                                 </tr>
                             </tbody>
@@ -1083,21 +978,107 @@
                     </div>
                     <div class="table-footer d-flex justify-content-between align-items-center">
                         <div class="table-info">
-                            Showing <span id="showingCount">3</span> of <span id="totalCount">3</span> entries
+                            <span class="text-muted">Showing</span> <span id="showingCount" class="fw-medium">3</span> <span class="text-muted">of</span> <span id="totalCount" class="fw-medium">3</span> <span class="text-muted">entries</span>
                         </div>
                         <div class="pagination-wrapper">
                             <nav aria-label="Table navigation">
-                                <ul class="pagination pagination-sm">
+                                <ul class="pagination pagination-sm mb-0">
                                     <li class="page-item disabled">
-                                        <a class="page-link" href="#" aria-label="Previous">
+                                        <span class="page-link">
                                             <i class="fas fa-chevron-left"></i>
-                                        </a>
+                                        </span>
                                     </li>
-                                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                    <li class="page-item active"><span class="page-link">1</span></li>
                                     <li class="page-item disabled">
-                                        <a class="page-link" href="#" aria-label="Next">
+                                        <span class="page-link">
                                             <i class="fas fa-chevron-right"></i>
-                                        </a>
+                                        </span>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Table 2: Warranty Claim Status -->
+                <div class="table-container fade-in" id="warranty-claim-container" style="display: none;">
+                    <div class="table-header">
+                        <h2>Warranty Claim Status</h2>
+                        <span class="badge bg-primary">Total Claims: 5</span>
+                    </div>
+                    <div class="advanced-filters">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <div class="filter-group">
+                                    <label>Search:</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white border-end-0">
+                                            <i class="fas fa-search text-muted"></i>
+                                        </span>
+                                        <input type="text" class="form-control border-start-0" id="warrantySearchInput" placeholder="Search...">
+                                        <button class="btn btn-outline-secondary" type="button" id="clearWarrantyFilters">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-compact invoice-status-table table-advanced" id="warranty-claim-table">
+                            <thead>
+                                <tr>
+                                    <th><i class="fas fa-store"></i> Shop</th>
+                                    <th>To be assessed</th>
+                                    <th>No Opportunity</th>
+                                    <th>In Progress</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Shop1</td>
+                                    <td>1</td>
+                                    <td>2</td>
+                                    <td>1</td>
+                                </tr>
+                                <tr>
+                                    <td>Shop2</td>
+                                    <td>1</td>
+                                    <td>0</td>
+                                    <td>2</td>
+                                </tr>
+                                <tr>
+                                    <td>Shop3</td>
+                                    <td>3</td>
+                                    <td>1</td>
+                                    <td>0</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Total</strong></td>
+                                    <td><strong>5</strong></td>
+                                    <td><strong>3</strong></td>
+                                    <td><strong>3</strong></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="table-footer d-flex justify-content-between align-items-center">
+                        <div class="table-info">
+                            <span class="text-muted">Showing</span> <span id="warrantyShowingCount" class="fw-medium">4</span> <span class="text-muted">of</span> <span id="warrantyTotalCount" class="fw-medium">4</span> <span class="text-muted">entries</span>
+                        </div>
+                        <div class="pagination-wrapper">
+                            <nav aria-label="Table navigation">
+                                <ul class="pagination pagination-sm mb-0">
+                                    <li class="page-item disabled">
+                                        <span class="page-link">
+                                            <i class="fas fa-chevron-left"></i>
+                                        </span>
+                                    </li>
+                                    <li class="page-item active"><span class="page-link">1</span></li>
+                                    <li class="page-item disabled">
+                                        <span class="page-link">
+                                            <i class="fas fa-chevron-right"></i>
+                                        </span>
                                     </li>
                                 </ul>
                             </nav>
