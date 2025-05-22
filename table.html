@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warranty Claims Table</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="css/styles.css" rel="stylesheet">
+    <style>
+        body {
+            background: #f8fafc;
+            font-family: 'Inter', Arial, sans-serif;
+        }
+        .dashboard {
+            display: flex;
+            min-height: 100vh;
+        }
+        .sidebar {
+            background: #fff;
+            border-right: 1px solid #e2e8f0;
+            min-width: 220px;
+            max-width: 250px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .sidebar-header {
+            padding: 1.5rem 1rem 1rem 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #2563eb;
+            letter-spacing: 0.05em;
+        }
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 1rem 0;
+        }
+        .sidebar-menu li {
+            margin-bottom: 0.5rem;
+        }
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 0.75em;
+            padding: 0.75em 1.5em;
+            color: #374151;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: background 0.15s;
+        }
+        .sidebar-menu li.active a, .sidebar-menu a:hover {
+            background: #e0e7ef;
+            color: #2563eb;
+        }
+        .sidebar-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid #e2e8f0;
+            font-size: 0.95em;
+            color: #64748b;
+        }
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+        .header {
+            background: #fff;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .breadcrumb-wrapper {
+            display: flex;
+            flex-direction: column;
+        }
+        .page-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 0;
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .header-actions .dropdown-toggle {
+            display: flex;
+            align-items: center;
+            border: none;
+            background: none;
+            padding: 0;
+        }
+        .header-actions img {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .header-actions .text-start {
+            margin-left: 0.5em;
+        }
+        .table-container {
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 2px 8px rgba(30,41,59,0.07);
+            margin: 2rem auto;
+            max-width: 98vw;
+            padding: 2rem;
+        }
+        .table {
+            font-size: 0.95rem;
+        }
+        th {
+            background: #f1f5f9;
+            font-weight: 700;
+            color: #1e293b;
+            text-transform: uppercase;
+            font-size: 0.92em;
+        }
+        td, th {
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+        .badge {
+            font-size: 0.85em;
+            font-weight: 600;
+            border-radius: 6px;
+            padding: 0.4em 0.7em;
+        }
+        .badge.approved {
+            background: #d1fae5;
+            color: #047857;
+        }
+        .badge.disallowed {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+        .table-responsive {
+            overflow-x: auto;
+        }
+        .filter-row input, .filter-row select {
+            font-size: 0.92em;
+            padding: 0.2em 0.5em;
+            border-radius: 4px;
+            border: 1px solid #e2e8f0;
+            width: 100%;
+        }
+        .search-bar {
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        .search-bar input {
+            max-width: 300px;
+        }
+        @media (max-width: 991px) {
+            .header, .table-container { padding: 1rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard">
+    <!-- Enhanced Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-container">
+                <span class="logo-text">WCA</span>
+            </div>
+            <button class="sidebar-close d-md-none" id="sidebar-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="sidebar-divider">
+            <span>MAIN MENU</span>
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li>
+                <a href="index.html">
+                    <i class="fas fa-th-large"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="claims.html">
+                    <i class="fas fa-file-invoice"></i>
+                    <span>Claims</span>
+                </a>
+            </li>
+            <li class="active">
+                <a href="table.html">
+                    <i class="fas fa-table"></i>
+                    <span>Claims Table</span>
+                </a>
+            </li>
+        </ul>
+        
+        <div class="sidebar-footer">
+            <a href="#" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+            <span class="version">v1.0.0</span>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Enhanced Header -->
+        <header class="header d-flex align-items-center justify-content-between gap-2">
+            <div class="breadcrumb-wrapper">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-1">
+                        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Claims Table</li>
+                    </ol>
+                </nav>
+                <h1 class="page-title mb-0">Warranty Claims Table</h1>
+            </div>
+            <div class="header-actions d-flex align-items-center gap-2 ms-auto">
+                <!-- Profile Section -->
+                <div class="dropdown">
+                    <button class="d-flex align-items-center border-0 bg-transparent dropdown-toggle p-0" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="https://ui-avatars.com/api/?name=John+Doe&background=0066FF&color=fff" alt="User" class="rounded-circle" width="36" height="36">
+                        <div class="d-none d-md-block text-start ms-2">
+                            <div class="fw-semibold" style="font-size:1em;line-height:1.1;">John Doe</div>
+                            <div class="text-muted" style="font-size:0.85em;line-height:1;">Administrator</div>
+                        </div>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>My Profile</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Account Settings</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </header>
+
+        <div class="table-container">
+            <div class="search-bar">
+                <input type="text" id="globalSearch" class="form-control" placeholder="Search claims...">
+                <select id="statusFilter" class="form-select" style="max-width:180px;">
+                    <option value="">All Statuses</option>
+                    <option value="Approved">Approved</option>
+                    <option value="Disallowed">Disallowed</option>
+                </select>
+                <select id="warrantyTypeFilter" class="form-select" style="max-width:200px;">
+                    <option value="">All Warranty Types</option>
+                    <option value="Ultimate Life Warranty">Ultimate Life Warranty</option>
+                    <option value="Commitment Letter">Commitment Letter</option>
+                </select>
+                <select id="customerFilter" class="form-select" style="max-width:200px;">
+                    <option value="">All Customers</option>
+                    <option value="WRNTCUST908">WRNTCUST908</option>
+                    <option value="WRNTCUST100">WRNTCUST100</option>
+                </select>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle" id="claimsTable">
+                    <thead>
+                        <tr>
+                            <th>Claim Number</th>
+                            <th>Customer Name</th>
+                            <th>Credit to Customer</th>
+                            <th>Claim Submission Date</th>
+                            <th>Incident Date</th>
+                            <th>Claim Close Date</th>
+                            <th>TAT</th>
+                            <th>ESN</th>
+                            <th>Product Line</th>
+                            <th>Claim Eng Tsn</th>
+                            <th>Warranty Cost Type</th>
+                            <th>Part Number</th>
+                            <th>Part Keyword</th>
+                            <th>Part Serial Num</th>
+                            <th>Claim Part CSN</th>
+                            <th>Claim Part TSN</th>
+                            <th>Req Labor Rate</th>
+                            <th>Req Percent</th>
+                            <th>Req Quantity</th>
+                            <th>Req Unit Price</th>
+                            <th>Requested Credits</th>
+                            <th>Credited Amount</th>
+                            <th>S/B Concession Number</th>
+                            <th>Disallowed Item Comment</th>
+                            <th>Claim Status</th>
+                            <th>Warranty Category</th>
+                            <th>Warranty Type</th>
+                            <th>Final Concession Number</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Table rows will be inserted by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// Data from user message
+const claimsData = [
+{"Claim Number":"ZOOVZP00660537706006","Customer Name":"WRNTCUST908","Credit to Customer":"WRNTCUST908","Claim Submission Date":"6/19/2024","Incident Date":"8/17/2020","Claim Close Date":"7/8/2024","TAT":"19","ESN":"0001122","Product Line":"9Z","Claim Eng Tsn":"11772","Warranty Cost Type":"Labor","Part Number":"BCD1291","Part Keyword":"-","Part Serial Num":"GLHTW1NP","Claim Part CSN":"-","Claim Part TSN":"-","Req Labor Rate":"72%","Req Percent":"-","Req Quantity":"-","Req Unit Price":"-","Requested Credits":"$343,251.52","Credited Amount":"$0.00","S/B Concession Number":"BP016","Disallowed Item Comment":"it doesn't fall under GTA warranty, hence denied","Claim Status":"Disallowed","Warranty Category":"Standard Warranty","Warranty Type":"Ultimate Life Warranty","Final Concession Number":"-"},
+{"Claim Number":"ZOOVZP00678695778979","Customer Name":"WRNTCUST908","Credit to Customer":"WRNTCUST908","Claim Submission Date":"7/23/2024","Incident Date":"8/18/2024","Claim Close Date":"10/7/2024","TAT":"14","ESN":"0001122","Product Line":"9Z","Claim Eng Tsn":"18976","Warranty Cost Type":"Material","Part Number":"BCD1289","Part Keyword":"-","Part Serial Num":"N/A","Claim Part CSN":"-","Claim Part TSN":"-","Req Labor Rate":"100%","Req Percent":"-","Req Quantity":"-","Req Unit Price":"-","Requested Credits":"$150.00","Credited Amount":"$150.00","S/B Concession Number":"BP016","Disallowed Item Comment":"-","Claim Status":"Approved","Warranty Category":"Commitment Letter","Warranty Type":"Commitment Letter","Final Concession Number":"BP016"},
+{"Claim Number":"ZOOVZP7000807097979","Customer Name":"WRNTCUST908","Credit to Customer":"WRNTCUST908","Claim Submission Date":"7/29/2024","Incident Date":"8/18/2024","Claim Close Date":"10/8/2024","TAT":"10","ESN":"0001122","Product Line":"9Z","Claim Eng Tsn":"18976","Warranty Cost Type":"Material","Part Number":"BCD1290","Part Keyword":"-","Part Serial Num":"N/A","Claim Part CSN":"-","Claim Part TSN":"-","Req Labor Rate":"70%","Req Percent":"-","Req Quantity":"-","Req Unit Price":"-","Requested Credits":"$13,244.00","Credited Amount":"$13,244.00","S/B Concession Number":"BP005","Disallowed Item Comment":"-","Claim Status":"Approved","Warranty Category":"Commitment Letter","Warranty Type":"Commitment Letter","Final Concession Number":"BP005"},
+{"Claim Number":"ZOOVZP7000807097979","Customer Name":"WRNTCUST908","Credit to Customer":"WRNTCUST908","Claim Submission Date":"7/29/2024","Incident Date":"8/18/2024","Claim Close Date":"10/8/2024","TAT":"10","ESN":"0001122","Product Line":"9Z","Claim Eng Tsn":"18976","Warranty Cost Type":"Labor","Part Number":"-","Part Keyword":"-","Part Serial Num":"-","Claim Part CSN":"-","Claim Part TSN":"-","Req Labor Rate":"100%","Req Percent":"-","Req Quantity":"-","Req Unit Price":"-","Requested Credits":"$3,000.00","Credited Amount":"$3,000.00","S/B Concession Number":"BP005","Disallowed Item Comment":"-","Claim Status":"Approved","Warranty Category":"Commitment Letter","Warranty Type":"Commitment Letter","Final Concession Number":"BP005"},
+{"Claim Number":"OOTOVZP069785868666","Customer Name":"WRNTCUST100","Credit to Customer":"WRNTCUST100","Claim Submission Date":"8/20/2024","Incident Date":"8/11/2024","Claim Close Date":"9/13/2024","TAT":"24","ESN":"0001123","Product Line":"9Z","Claim Eng Tsn":"69001","Warranty Cost Type":"Others","Part Number":"ABC1234","Part Keyword":"-","Part Serial Num":"-","Claim Part CSN":"-","Claim Part TSN":"-","Req Labor Rate":"100%","Req Percent":"-","Req Quantity":"-","Req Unit Price":"-","Requested Credits":"$47,386.00","Credited Amount":"$47,386.00","S/B Concession Number":"BP008","Disallowed Item Comment":"-","Claim Status":"Approved","Warranty Category":"Commitment Letter","Warranty Type":"Commitment Letter","Final Concession Number":"BP008"},
+{"Claim Number":"ZOOVZP6768078693789","Customer Name":"WRNTCUST908","Claim Submission Date":"2/20/2024","Incident Date":"8/11/2024","Claim Close Date":"6/25/2024","Warranty Cost Type":"Others","Part Number":"BCD1292","Requested Credits":"$150.00","Credited Amount":"$150.00","S/B Concession Number":"BP016","Claim Status":"Approved","Warranty Category":"Commitment Letter","Warranty Type":"Commitment Letter","Final Concession Number":"BP016"},
+{"Claim Number":"ZOOVZP6768078693789","Customer Name":"WRNTCUST908","Claim Submission Date":"2/20/2024","Incident Date":"8/11/2024","Claim Close Date":"6/25/2024","Warranty Cost Type":"Others","Part Number":"BCD1292","Requested Credits":"$99,603.45","Credited Amount":"$0.00","S/B Concession Number":"BP016","Claim Status":"Disallowed","Warranty Category":"Standard Warranty","Warranty Type":"Ultimate Life Warranty","Final Concession Number":"-"},
+{"Claim Number":"ZOOVZP6768078693789","Customer Name":"WRNTCUST908","Claim Submission Date":"2/20/2024","Incident Date":"8/11/2024","Claim Close Date":"6/25/2024","Warranty Cost Type":"Others","Part Number":"BCD1293","Requested Credits":"$244,681.38","Credited Amount":"$0.00","S/B Concession Number":"-","Claim Status":"Disallowed","Warranty Category":"Standard Warranty","Warranty Type":"Ultimate Life Warranty","Final Concession Number":"-"},
+{"Claim Number":"ZOOVZP6768078693789","Customer Name":"WRNTCUST908","Claim Submission Date":"2/20/2024","Incident Date":"8/11/2024","Claim Close Date":"6/25/2024","Warranty Cost Type":"Others","Part Number":"BCD1294","Requested Credits":"$204,430.32","Credited Amount":"$0.00","S/B Concession Number":"-","Claim Status":"Disallowed","Warranty Category":"Standard Warranty","Warranty Type":"Ultimate Life Warranty","Final Concession Number":"-"},
+{"Claim Number":"ZOOVZP6768078693789","Customer Name":"WRNTCUST908","Claim Submission Date":"2/20/2024","Incident Date":"8/11/2024","Claim Close Date":"6/25/2024","Warranty Cost Type":"Others","Part Number":"BCD1295","Requested Credits":"$172,782.54","Credited Amount":"$0.00","S/B Concession Number":"-","Claim Status":"Disallowed","Warranty Category":"Standard Warranty","Warranty Type":"Ultimate Life Warranty","Final Concession Number":"-"},
+{"Claim Number":"ZOOVZP6768078693789","Customer Name":"WRNTCUST908","Claim Submission Date":"2/20/2024","Incident Date":"8/11/2024","Claim Close Date":"6/25/2024","Warranty Cost Type":"Others","Part Number":"BCD1296","Requested Credits":"$191,883.87","Credited Amount":"$0.00","S/B Concession Number":"-","Claim Status":"Disallowed","Warranty Category":"Standard Warranty","Warranty Type":"Ultimate Life Warranty","Final Concession Number":"-"},
+{"Claim Number":"ZOOVZP6768078693789","Customer Name":"WRNTCUST908","Claim Submission Date":"2/20/2024","Incident Date":"8/11/2024","Claim Close Date":"6/25/2024","Warranty Cost Type":"Others","Part Number":"BCD1297","Requested Credits":"$192,205.01","Credited Amount":"$0.00","S/B Concession Number":"-","Claim Status":"Disallowed","Warranty Category":"Standard Warranty","Warranty Type":"Ultimate Life Warranty","Final Concession Number":"-"},
+{"Claim Number":"ZOOVZP6768078693789","Customer Name":"WRNTCUST908","Claim Submission Date":"2/20/2024","Incident Date":"8/11/2024","Claim Close Date":"6/25/2024","Warranty Cost Type":"Others","Part Number":"BCD1298","Requested Credits":"$126,111.19","Credited Amount":"$0.00","S/B Concession Number":"-","Claim Status":"Disallowed","Warranty Category":"Standard Warranty","Warranty Type":"Ultimate Life Warranty","Final Concession Number":"-"},
+{"Claim Number":"ZOOVZP6768078666093","Customer Name":"WRNTCUST908","Claim Submission Date":"6/19/2024","Incident Date":"8/11/2024","Claim Close Date":"6/25/2024","Warranty Cost Type":"Material","Part Number":"BCD1289","Requested Credits":"$370,760.40","Credited Amount":"$0.00","S/B Concession Number":"-","Claim Status":"Disallowed","Warranty Category":"Standard Warranty","Warranty Type":"Ultimate Life Warranty","Final Concession Number":"-"},
+{"Claim Number":"OOTOVZP069786663077","Customer Name":"WRNTCUST100","Claim Submission Date":"9/17/2024","Incident Date":"9/24/2024","Claim Close Date":"-","Warranty Cost Type":"Others","Part Number":"ABC1234","Requested Credits":"$79,363.00","Credited Amount":"$79,363.00","S/B Concession Number":"BP008","Claim Status":"Approved","Warranty Category":"Commitment Letter","Warranty Type":"Commitment Letter","Final Concession Number":"BP008"},
+{"Claim Number":"ZOOVZP6868697786979","Customer Name":"WRNTCUST908","Claim Submission Date":"8/13/2024","Incident Date":"8/13/2024","Claim Close Date":"8/29/2024","Warranty Cost Type":"Labor","Part Number":"BCD1293","Requested Credits":"$150.00","Credited Amount":"$150.00","S/B Concession Number":"BP016","Claim Status":"Approved","Warranty Category":"Commitment Letter","Warranty Type":"Commitment Letter","Final Concession Number":"BP016"},
+{"Claim Number":"ZOOVZP7008088790678","Customer Name":"WRNTCUST908","Claim Submission Date":"2/20/2024","Incident Date":"6/27/2024","Claim Close Date":"31","Warranty Cost Type":"Others","Part Number":"BCD1296","Requested Credits":"$201,755.68","Credited Amount":"$0.00","S/B Concession Number":"-","Claim Status":"Disallowed","Warranty Category":"Standard Warranty","Warranty Type":"Ultimate Life Warranty","Final Concession Number":"-"},
+{"Claim Number":"ZOOVZP7008088790678","Customer Name":"WRNTCUST908","Claim Submission Date":"2/20/2024","Incident Date":"6/27/2024","Claim Close Date":"31","Warranty Cost Type":"Others","Part Number":"BCD1291","Requested Credits":"$90,011.74","Credited Amount":"$0.00","S/B Concession Number":"-","Claim Status":"Disallowed","Warranty Category":"Standard Warranty","Warranty Type":"Ultimate Life Warranty","Final Concession Number":"-"},
+{"Claim Number":"ZOOVZP7008088790678","Customer Name":"WRNTCUST908","Claim Submission Date":"2/20/2024","Incident Date":"6/27/2024","Claim Close Date":"31","Warranty Cost Type":"Others","Part Number":"BCD1300","Requested Credits":"$241,480.12","Credited Amount":"$0.00","S/B Concession Number":"-","Claim Status":"Disallowed","Warranty Category":"Standard Warranty","Warranty Type":"Ultimate Life Warranty","Final Concession Number":"-"},
+{"Claim Number":"ZOOVZP7008088790678","Customer Name":"WRNTCUST908","Claim Submission Date":"2/20/2024","Incident Date":"6/27/2024","Claim Close Date":"31","Warranty Cost Type":"Others","Part Number":"BCD1234","Requested Credits":"$94,004.40","Credited Amount":"$0.00","S/B Concession Number":"BP008","Claim Status":"Approved","Warranty Category":"Commitment Letter","Warranty Type":"Commitment Letter","Final Concession Number":"BP008"},
+{"Claim Number":"OOTOVZP068877006698","Customer Name":"WRNTCUST100","Claim Submission Date":"8/14/2023","Incident Date":"9/13/2024","Claim Close Date":"30","Warranty Cost Type":"Others","Part Number":"ABC1234","Requested Credits":"$47,386.00","Credited Amount":"$47,386.00","S/B Concession Number":"BP008","Claim Status":"Approved","Warranty Category":"Commitment Letter","Warranty Type":"Commitment Letter","Final Concession Number":"BP008"},
+{"Claim Number":"ZOOVZP7000087097123","Customer Name":"WRNTCUST908","Claim Submission Date":"3/18/2023","Incident Date":"6/19/2024","Claim Close Date":"20","Warranty Cost Type":"Material","Part Number":"POP5678","Requested Credits":"$162,890.00","Credited Amount":"$4,169,984.00","S/B Concession Number":"BP001","Claim Status":"Approved","Warranty Category":"Commitment Letter","Warranty Type":"Commitment Letter","Final Concession Number":"BP001"},
+{"Claim Number":"ZOOVZP7000087098456","Customer Name":"WRNTCUST908","Claim Submission Date":"4/9/2020","Incident Date":"12/23/2022","Claim Close Date":"64","Warranty Cost Type":"Material","Part Number":"ARU1234","Requested Credits":"$162,890.00","Credited Amount":"$4,169,984.00","S/B Concession Number":"BP001","Claim Status":"Approved","Warranty Category":"Commitment Letter","Warranty Type":"Commitment Letter","Final Concession Number":"BP001"},
+{"Claim Number":"ZOOVZP7000087099234","Customer Name":"WRNTCUST908","Claim Submission Date":"5/15/2022","Incident Date":"6/15/2023","Claim Close Date":"64","Warranty Cost Type":"Material","Part Number":"JUY1284","Requested Credits":"$45,675.00","Credited Amount":"$274,050.00","S/B Concession Number":"BP001","Claim Status":"Approved","Warranty Category":"Commitment Letter","Warranty Type":"Commitment Letter","Final Concession Number":"BP001"},
+{"Claim Number":"ZOOVZP7000087099482","Customer Name":"WRNTCUST908","Claim Submission Date":"30/05/2020","Incident Date":"1/6/2021","Claim Close Date":"64","Warranty Cost Type":"Material","Part Number":"HUG5678","Requested Credits":"$7,200.00","Credited Amount":"$4,169,984.00","S/B Concession Number":"BP001","Claim Status":"Approved","Warranty Category":"Commitment Letter","Warranty Type":"Commitment Letter","Final Concession Number":"BP001"}
+];
+
+function renderTable(data) {
+    const tbody = document.querySelector('#claimsTable tbody');
+    tbody.innerHTML = '';
+    data.forEach(row => {
+        tbody.innerHTML += `<tr>
+            <td>${row["Claim Number"]}</td>
+            <td>${row["Customer Name"]}</td>
+            <td>${row["Credit to Customer"]}</td>
+            <td>${row["Claim Submission Date"]}</td>
+            <td>${row["Incident Date"]}</td>
+            <td>${row["Claim Close Date"]}</td>
+            <td>${row["TAT"]}</td>
+            <td>${row["ESN"]}</td>
+            <td>${row["Product Line"]}</td>
+            <td>${row["Claim Eng Tsn"]}</td>
+            <td>${row["Warranty Cost Type"]}</td>
+            <td>${row["Part Number"]}</td>
+            <td>${row["Part Keyword"]}</td>
+            <td>${row["Part Serial Num"]}</td>
+            <td>${row["Claim Part CSN"]}</td>
+            <td>${row["Claim Part TSN"]}</td>
+            <td>${row["Req Labor Rate"]}</td>
+            <td>${row["Req Percent"]}</td>
+            <td>${row["Req Quantity"]}</td>
+            <td>${row["Req Unit Price"]}</td>
+            <td>${row["Requested Credits"]}</td>
+            <td>${row["Credited Amount"]}</td>
+            <td>${row["S/B Concession Number"]}</td>
+            <td>${row["Disallowed Item Comment"]}</td>
+            <td><span class="badge ${row["Claim Status"] === 'Approved' ? 'approved' : 'disallowed'}">${row["Claim Status"]}</span></td>
+            <td>${row["Warranty Category"]}</td>
+            <td>${row["Warranty Type"]}</td>
+            <td>${row["Final Concession Number"]}</td>
+        </tr>`;
+    });
+}
+
+function filterTable() {
+    const search = document.getElementById('globalSearch').value.toLowerCase();
+    const status = document.getElementById('statusFilter').value;
+    const warrantyType = document.getElementById('warrantyTypeFilter').value;
+    const customer = document.getElementById('customerFilter').value;
+    let filtered = claimsData.filter(row => {
+        let match = true;
+        if (search) {
+            match = Object.values(row).some(val => String(val).toLowerCase().includes(search));
+        }
+        if (status && row["Claim Status"] !== status) match = false;
+        if (warrantyType && row["Warranty Type"] !== warrantyType) match = false;
+        if (customer && row["Customer Name"] !== customer) match = false;
+        return match;
+    });
+    renderTable(filtered);
+}
+
+document.getElementById('globalSearch').addEventListener('input', filterTable);
+document.getElementById('statusFilter').addEventListener('change', filterTable);
+document.getElementById('warrantyTypeFilter').addEventListener('change', filterTable);
+document.getElementById('customerFilter').addEventListener('change', filterTable);
+
+// Initial render
+renderTable(claimsData);
+</script>
+</body>
+</html>

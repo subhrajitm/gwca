@@ -66,18 +66,33 @@
         <!-- Main Content -->
         <main class="main-content">
            <!-- Enhanced Header -->
-           <header class="header">
-            <button class="sidebar-toggle d-lg-none" id="sidebar-toggle">
-                <i class="fas fa-bars"></i>
-            </button>
+           <header class="header d-flex align-items-center justify-content-between gap-2">
             <div class="breadcrumb-wrapper">
                 <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
+                    <ol class="breadcrumb mb-1">
                         <li class="breadcrumb-item"><a href="index.html">Home</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
                     </ol>
                 </nav>
-                <h1 class="page-title">WCA Dashboard</h1>
+                <h1 class="page-title mb-0">WCA Dashboard</h1>
+            </div>
+            <div class="header-actions d-flex align-items-center gap-2 ms-auto">
+                <!-- Profile Section -->
+                <div class="dropdown">
+                    <button class="d-flex align-items-center border-0 bg-transparent dropdown-toggle p-0" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="https://ui-avatars.com/api/?name=John+Doe&background=0066FF&color=fff" alt="User" class="rounded-circle" width="36" height="36">
+                        <div class="d-none d-md-block text-start ms-2">
+                            <div class="fw-semibold" style="font-size:1em;line-height:1.1;">John Doe</div>
+                            <div class="text-muted" style="font-size:0.85em;line-height:1;">Administrator</div>
+                        </div>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>My Profile</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Account Settings</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                    </ul>
+                </div>
             </div>
         </header>
 
@@ -89,7 +104,7 @@
                             <i class="fas fa-file-invoice"></i>
                         </div>
                         <div class="stat-content">
-                            <h3>20</h3>
+                            <h3>25</h3>
                             <p>Total Claims</p>
                             <small class="text-muted">2 Unique Customers</small>
                         </div>
@@ -99,9 +114,19 @@
                             <i class="fas fa-check-circle"></i>
                         </div>
                         <div class="stat-content">
-                            <h3>18</h3>
+                            <h3>13</h3>
                             <p>Approved Claims</p>
-                            <small class="text-muted">90% Approval Rate</small>
+                            <small class="text-muted">52% Approval Rate</small>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: rgba(239, 68, 68, 0.1); color: #EF4444;">
+                            <i class="fas fa-times-circle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>12</h3>
+                            <p>Disallowed Claims</p>
+                            <small class="text-muted">48% Disallowed</small>
                         </div>
                     </div>
                     <div class="stat-card">
@@ -109,9 +134,9 @@
                             <i class="fas fa-clock"></i>
                         </div>
                         <div class="stat-content">
-                            <h3>31.5</h3>
+                            <h3>27.7</h3>
                             <p>Avg. TAT (Days)</p>
-                            <small class="text-muted">Range: 24-40 days</small>
+                            <small class="text-muted">Range: 7-64 days</small>
                         </div>
                     </div>
                     <div class="stat-card">
@@ -119,9 +144,9 @@
                             <i class="fas fa-dollar-sign"></i>
                         </div>
                         <div class="stat-content">
-                            <h3>$71.5K</h3>
+                            <h3>$9,073,022.00</h3>
                             <p>Total Credits</p>
-                            <small class="text-muted">Avg: $3,575 per claim</small>
+                            <small class="text-muted">Approved + Disallowed</small>
                         </div>
                     </div>
                 </div>
