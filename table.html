@@ -8,180 +8,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="css/styles.css" rel="stylesheet">
-    <style>
-        body {
-            background: #f8fafc;
-            font-family: 'Inter', Arial, sans-serif;
-        }
-        .dashboard {
-            display: flex;
-            min-height: 100vh;
-        }
-        .sidebar {
-            background: #fff;
-            border-right: 1px solid #e2e8f0;
-            min-width: 220px;
-            max-width: 250px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-        .sidebar-header {
-            padding: 1.5rem 1rem 1rem 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .logo-text {
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: #2563eb;
-            letter-spacing: 0.05em;
-        }
-        .sidebar-menu {
-            list-style: none;
-            padding: 0;
-            margin: 0 0 1rem 0;
-        }
-        .sidebar-menu li {
-            margin-bottom: 0.5rem;
-        }
-        .sidebar-menu a {
-            display: flex;
-            align-items: center;
-            gap: 0.75em;
-            padding: 0.75em 1.5em;
-            color: #374151;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 500;
-            transition: background 0.15s;
-        }
-        .sidebar-menu li.active a, .sidebar-menu a:hover {
-            background: #e0e7ef;
-            color: #2563eb;
-        }
-        .sidebar-footer {
-            padding: 1rem 1.5rem;
-            border-top: 1px solid #e2e8f0;
-            font-size: 0.95em;
-            color: #64748b;
-        }
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            min-width: 0;
-        }
-        .header {
-            background: #fff;
-            border-bottom: 1px solid #e2e8f0;
-            padding: 1rem 2rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            min-height: 64px;
-        }
-        .header .page-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: #1e293b;
-            margin: 0;
-        }
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        .header-actions .dropdown-toggle {
-            display: flex;
-            align-items: center;
-            border: none;
-            background: none;
-            padding: 0;
-        }
-        .header-actions img {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-        .header-actions .text-start {
-            margin-left: 0.5em;
-        }
-        .table-container {
-            background: #fff;
-            border-radius: 14px;
-            box-shadow: 0 2px 8px rgba(30,41,59,0.07);
-            margin: 2rem auto;
-            max-width: 98vw;
-            padding: 1.25rem 1rem;
-        }
-        .table-responsive {
-            overflow-x: auto;
-        }
-        .table {
-            font-size: 0.92rem;
-            border-collapse: separate;
-            border-spacing: 0;
-            background: #fff;
-        }
-        th, td {
-            vertical-align: middle;
-            white-space: nowrap;
-            padding: 0.35em 0.7em;
-        }
-        th {
-            background: #f1f5f9;
-            font-weight: 700;
-            color: #1e293b;
-            text-transform: uppercase;
-            font-size: 0.90em;
-            border-bottom: 2px solid #e2e8f0;
-        }
-        tr {
-            border-bottom: 1px solid #e2e8f0;
-        }
-        tr:last-child {
-            border-bottom: none;
-        }
-        .table tbody tr:hover {
-            background: #f3f6fa;
-            transition: background 0.15s;
-        }
-        .badge {
-            font-size: 0.82em;
-            font-weight: 600;
-            border-radius: 6px;
-            padding: 0.3em 0.7em;
-            letter-spacing: 0.02em;
-        }
-        .badge.approved {
-            background: #d1fae5;
-            color: #047857;
-        }
-        .badge.disallowed {
-            background: #fee2e2;
-            color: #b91c1c;
-        }
-        .search-bar {
-            margin-bottom: 1rem;
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-        .search-bar input, .search-bar select {
-            font-size: 0.92em;
-            padding: 0.25em 0.7em;
-            border-radius: 4px;
-            border: 1px solid #e2e8f0;
-            background: #f8fafc;
-        }
-        @media (max-width: 991px) {
-            .header, .table-container { padding: 1rem; }
-            th, td { padding: 0.25em 0.4em; }
-        }
-    </style>
+    <link href="css/table.css" rel="stylesheet">
 </head>
 <body>
 <div class="dashboard">
@@ -256,56 +83,59 @@
         </header>
 
         <div class="table-container">
-            <div class="search-bar">
-                <input type="text" id="globalSearch" class="form-control" placeholder="Search claims...">
-                <select id="statusFilter" class="form-select" style="max-width:180px;">
-                    <option value="">All Statuses</option>
-                    <option value="Approved">Approved</option>
-                    <option value="Disallowed">Disallowed</option>
-                </select>
-                <select id="warrantyTypeFilter" class="form-select" style="max-width:200px;">
-                    <option value="">All Warranty Types</option>
-                    <option value="Ultimate Life Warranty">Ultimate Life Warranty</option>
-                    <option value="Commitment Letter">Commitment Letter</option>
-                </select>
-                <select id="customerFilter" class="form-select" style="max-width:200px;">
-                    <option value="">All Customers</option>
-                    <option value="WRNTCUST908">WRNTCUST908</option>
-                    <option value="WRNTCUST100">WRNTCUST100</option>
-                </select>
+            <div class="table-controls">
+                <div class="search-bar">
+                    <input type="text" id="globalSearch" class="form-control" placeholder="Search claims...">
+                    <select id="statusFilter" class="form-select" style="max-width:180px;">
+                        <option value="">All Statuses</option>
+                        <option value="Approved">Approved</option>
+                        <option value="Disallowed">Disallowed</option>
+                    </select>
+                    <select id="warrantyTypeFilter" class="form-select" style="max-width:200px;">
+                        <option value="">All Warranty Types</option>
+                        <option value="Ultimate Life Warranty">Ultimate Life Warranty</option>
+                        <option value="Commitment Letter">Commitment Letter</option>
+                    </select>
+                    <select id="customerFilter" class="form-select" style="max-width:200px;">
+                        <option value="">All Customers</option>
+                        <option value="WRNTCUST908">WRNTCUST908</option>
+                        <option value="WRNTCUST100">WRNTCUST100</option>
+                    </select>
+                </div>
+                <button class="export-btn" id="exportCsvBtn"><i class="fas fa-download me-2"></i>Export CSV</button>
             </div>
             <div class="table-responsive">
                 <table class="table table-bordered table-hover align-middle" id="claimsTable">
                     <thead>
-                        <tr>
-                            <th>Claim Number</th>
-                            <th>Customer Name</th>
-                            <th>Credit to Customer</th>
-                            <th>Claim Submission Date</th>
-                            <th>Incident Date</th>
-                            <th>Claim Close Date</th>
-                            <th>TAT</th>
-                            <th>ESN</th>
-                            <th>Product Line</th>
-                            <th>Claim Eng Tsn</th>
-                            <th>Warranty Cost Type</th>
-                            <th>Part Number</th>
-                            <th>Part Keyword</th>
-                            <th>Part Serial Num</th>
-                            <th>Claim Part CSN</th>
-                            <th>Claim Part TSN</th>
-                            <th>Req Labor Rate</th>
-                            <th>Req Percent</th>
-                            <th>Req Quantity</th>
-                            <th>Req Unit Price</th>
-                            <th>Requested Credits</th>
-                            <th>Credited Amount</th>
-                            <th>S/B Concession Number</th>
-                            <th>Disallowed Item Comment</th>
-                            <th>Claim Status</th>
-                            <th>Warranty Category</th>
-                            <th>Warranty Type</th>
-                            <th>Final Concession Number</th>
+                        <tr id="claimsTableHeader">
+                            <th data-sort="Claim Number">Claim Number</th>
+                            <th data-sort="Customer Name">Customer Name</th>
+                            <th data-sort="Credit to Customer">Credit to Customer</th>
+                            <th data-sort="Claim Submission Date">Claim Submission Date</th>
+                            <th data-sort="Incident Date">Incident Date</th>
+                            <th data-sort="Claim Close Date">Claim Close Date</th>
+                            <th data-sort="TAT">TAT</th>
+                            <th data-sort="ESN">ESN</th>
+                            <th data-sort="Product Line">Product Line</th>
+                            <th data-sort="Claim Eng Tsn">Claim Eng Tsn</th>
+                            <th data-sort="Warranty Cost Type">Warranty Cost Type</th>
+                            <th data-sort="Part Number">Part Number</th>
+                            <th data-sort="Part Keyword">Part Keyword</th>
+                            <th data-sort="Part Serial Num">Part Serial Num</th>
+                            <th data-sort="Claim Part CSN">Claim Part CSN</th>
+                            <th data-sort="Claim Part TSN">Claim Part TSN</th>
+                            <th data-sort="Req Labor Rate">Req Labor Rate</th>
+                            <th data-sort="Req Percent">Req Percent</th>
+                            <th data-sort="Req Quantity">Req Quantity</th>
+                            <th data-sort="Req Unit Price">Req Unit Price</th>
+                            <th data-sort="Requested Credits">Requested Credits</th>
+                            <th data-sort="Credited Amount">Credited Amount</th>
+                            <th data-sort="S/B Concession Number">S/B Concession Number</th>
+                            <th data-sort="Disallowed Item Comment">Disallowed Item Comment</th>
+                            <th data-sort="Claim Status">Claim Status</th>
+                            <th data-sort="Warranty Category">Warranty Category</th>
+                            <th data-sort="Warranty Type">Warranty Type</th>
+                            <th data-sort="Final Concession Number">Final Concession Number</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -313,85 +143,11 @@
                     </tbody>
                 </table>
             </div>
+            <div class="pagination" id="tablePagination"></div>
         </div>
     </main>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-// Fetch data from data.json and render table
-let claimsData = [];
-
-function renderTable(data) {
-    const tbody = document.querySelector('#claimsTable tbody');
-    tbody.innerHTML = '';
-    data.forEach(row => {
-        tbody.innerHTML += `<tr>
-            <td>${row["Claim Number"]}</td>
-            <td>${row["Customer Name"]}</td>
-            <td>${row["Credit to Customer"]}</td>
-            <td>${row["Claim Submission Date"]}</td>
-            <td>${row["Incident Date"]}</td>
-            <td>${row["Claim Close Date"]}</td>
-            <td>${row["TAT"]}</td>
-            <td>${row["ESN"]}</td>
-            <td>${row["Product Line"]}</td>
-            <td>${row["Claim Eng Tsn"]}</td>
-            <td>${row["Warranty Cost Type"]}</td>
-            <td>${row["Part Number"]}</td>
-            <td>${row["Part Keyword"]}</td>
-            <td>${row["Part Serial Num"]}</td>
-            <td>${row["Claim Part CSN"]}</td>
-            <td>${row["Claim Part TSN"]}</td>
-            <td>${row["Req Labor Rate"]}</td>
-            <td>${row["Req Percent"]}</td>
-            <td>${row["Req Quantity"]}</td>
-            <td>${row["Req Unit Price"]}</td>
-            <td>${row["Requested Credits"]}</td>
-            <td>${row["Credited Amount"]}</td>
-            <td>${row["S/B Concession Number"]}</td>
-            <td>${row["Disallowed Item Comment"]}</td>
-            <td><span class="badge ${row["Claim Status"] === 'Approved' ? 'approved' : 'disallowed'}">${row["Claim Status"]}</span></td>
-            <td>${row["Warranty Category"]}</td>
-            <td>${row["Warranty Type"]}</td>
-            <td>${row["Final Concession Number"]}</td>
-        </tr>`;
-    });
-}
-
-function filterTable() {
-    const search = document.getElementById('globalSearch').value.toLowerCase();
-    const status = document.getElementById('statusFilter').value;
-    const warrantyType = document.getElementById('warrantyTypeFilter').value;
-    const customer = document.getElementById('customerFilter').value;
-    let filtered = claimsData.filter(row => {
-        let match = true;
-        if (search) {
-            match = Object.values(row).some(val => String(val).toLowerCase().includes(search));
-        }
-        if (status && row["Claim Status"] !== status) match = false;
-        if (warrantyType && row["Warranty Type"] !== warrantyType) match = false;
-        if (customer && row["Customer Name"] !== customer) match = false;
-        return match;
-    });
-    renderTable(filtered);
-}
-
-// Fetch data and initialize table and filters
-fetch('data.json')
-    .then(response => response.json())
-    .then(data => {
-        claimsData = data;
-        renderTable(claimsData);
-        // Attach event listeners after data is loaded
-        document.getElementById('globalSearch').addEventListener('input', filterTable);
-        document.getElementById('statusFilter').addEventListener('change', filterTable);
-        document.getElementById('warrantyTypeFilter').addEventListener('change', filterTable);
-        document.getElementById('customerFilter').addEventListener('change', filterTable);
-    })
-    .catch(error => {
-        document.querySelector('#claimsTable tbody').innerHTML = `<tr><td colspan="29">Failed to load data.json</td></tr>`;
-        console.error('Error loading data.json:', error);
-    });
-</script>
+<script src="js/table.js"></script>
 </body>
 </html>
