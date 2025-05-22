@@ -86,7 +86,7 @@ th {
     border-bottom: 1px solid #e5eaf2;
     position: sticky;
     top: 0;
-    z-index: 2;
+    z-index: 1;
 }
 .table tbody tr {
     border-bottom: 1px solid #f1f5f9;
@@ -149,4 +149,44 @@ th {
 @media (max-width: 991px) {
     .header, .table-container { padding: 1rem; }
     th, td { padding: 0.18em 0.22em; }
+}
+
+/* Columns Dropdown Styles */
+#columnsDropdownBtn {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+}
+#columnsDropdownMenu {
+    min-width: 220px;
+    max-height: 350px;
+    overflow-y: auto;
+    position: absolute;
+    top: 110%;
+    right: 0;
+    z-index: 1050;
+    display: none;
+    box-shadow: 0 2px 8px rgba(30,41,59,0.12);
+    background: #fff;
+    padding: 0.5em 1em;
+    border-radius: 8px;
+}
+#columnsDropdownMenu label {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    font-size: 0.93em;
+    font-weight: 500;
+    margin-bottom: 0.25em;
+    cursor: pointer;
+}
+#columnsDropdownMenu input[type="checkbox"] {
+    accent-color: #2563eb;
+    margin-right: 0.5em;
+}
+#columnsDropdownMenu label:last-child {
+    margin-bottom: 0;
+}
+#columnsDropdownMenu {
+    border: 1px solid #e5eaf2;
 } 

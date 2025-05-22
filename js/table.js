@@ -4,6 +4,10 @@ let filteredData = [];
 let currentPage = 1;
 const rowsPerPage = 10;
 let currentSort = { key: '', asc: true };
+let columnNames = [
+    "Claim Number", "Customer Name", "Credit to Customer", "Claim Submission Date", "Incident Date", "Claim Close Date", "TAT", "ESN", "Product Line", "Claim Eng Tsn", "Warranty Cost Type", "Part Number", "Part Keyword", "Part Serial Num", "Claim Part CSN", "Claim Part TSN", "Req Labor Rate", "Req Percent", "Req Quantity", "Req Unit Price", "Requested Credits", "Credited Amount", "S/B Concession Number", "Disallowed Item Comment", "Claim Status", "Warranty Category", "Warranty Type", "Final Concession Number"
+];
+let visibleColumns = [...columnNames];
 
 document.addEventListener('DOMContentLoaded', function() {
     function renderTable(data) {
@@ -46,6 +50,7 @@ document.addEventListener('DOMContentLoaded', function() {
             </tr>`;
         });
         renderPagination(data.length);
+        updateColumnVisibility();
     }
 
     function renderPagination(totalRows) {
@@ -149,6 +154,21 @@ document.addEventListener('DOMContentLoaded', function() {
         URL.revokeObjectURL(url);
     });
 
+    renderColumnsDropdown();
+    document.getElementById('columnsDropdownBtn').addEventListener('click', function(e) {
+        e.stopPropagation();
+        const menu = document.getElementById('columnsDropdownMenu');
+        menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+    });
+    document.addEventListener('click', function(e) {
+        const menu = document.getElementById('columnsDropdownMenu');
+        if (menu.style.display === 'block') menu.style.display = 'none';
+    });
+    document.getElementById('columnsDropdownMenu').addEventListener('click', function(e) {
+        e.stopPropagation();
+    });
+    attachColumnsDropdownEvents();
+
     // Fetch data and initialize table and filters
     fetch('data.json')
         .then(response => response.json())
@@ -161,4 +181,42 @@ document.addEventListener('DOMContentLoaded', function() {
             document.querySelector('#claimsTable tbody').innerHTML = `<tr><td colspan="29">Failed to load data.json</td></tr>`;
             console.error('Error loading data.json:', error);
         });
-}); 
+});
+
+function renderColumnsDropdown() {
+    const menu = document.getElementById('columnsDropdownMenu');
+    menu.innerHTML = '';
+    columnNames.forEach((col, idx) => {
+        menu.innerHTML += `<label><input type="checkbox" data-col-idx="${idx}" checked> ${col}</label>`;
+    });
+}
+
+function updateColumnVisibility() {
+    const table = document.getElementById('claimsTable');
+    const ths = table.querySelectorAll('thead th');
+    const rows = table.querySelectorAll('tbody tr');
+    columnNames.forEach((col, idx) => {
+        const show = visibleColumns.includes(col);
+        if (ths[idx]) ths[idx].style.display = show ? '' : 'none';
+        rows.forEach(row => {
+            const tds = row.querySelectorAll('td');
+            if (tds[idx]) tds[idx].style.display = show ? '' : 'none';
+        });
+    });
+}
+
+function attachColumnsDropdownEvents() {
+    const menu = document.getElementById('columnsDropdownMenu');
+    menu.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+        cb.addEventListener('change', function() {
+            const idx = parseInt(this.getAttribute('data-col-idx'));
+            const col = columnNames[idx];
+            if (this.checked) {
+                if (!visibleColumns.includes(col)) visibleColumns.push(col);
+            } else {
+                visibleColumns = visibleColumns.filter(c => c !== col);
+            }
+            updateColumnVisibility();
+        });
+    });
+} 

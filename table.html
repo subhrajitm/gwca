@@ -102,6 +102,12 @@
                         <option value="WRNTCUST100">WRNTCUST100</option>
                     </select>
                 </div>
+                <div class="dropdown" id="columnsDropdown" style="position:relative;">
+                    <button class="export-btn" type="button" id="columnsDropdownBtn"><i class="fas fa-columns me-2"></i>Columns</button>
+                    <div class="dropdown-menu" id="columnsDropdownMenu" style="min-width:220px;max-height:350px;overflow-y:auto;position:absolute;top:110%;right:0;z-index:10;display:none;box-shadow:0 2px 8px rgba(30,41,59,0.12);background:#fff;padding:0.5em 1em;border-radius:8px;">
+                        <!-- JS will populate checkboxes here -->
+                    </div>
+                </div>
                 <button class="export-btn" id="exportCsvBtn"><i class="fas fa-download me-2"></i>Export CSV</button>
             </div>
             <div class="table-responsive">
