@@ -21,6 +21,17 @@
             margin-bottom: 1.5rem;
         }
 
+        .main-content, .content-wrapper, .table-responsive {
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+        .main-content, .content-wrapper {
+            overflow-x: auto;
+        }
+        .table-responsive {
+            overflow-x: auto;
+        }
+
         .table {
             width: 100%;
             margin: 0;
@@ -635,119 +646,86 @@
             padding: 1rem 1.5rem;
         }
 
-        .dashboard-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
+        .dashboard-metrics-section {
+            background: #f8fafc;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(30,41,59,0.06);
+            padding: 1.1rem 1.1rem 0.7rem 1.1rem;
             margin-bottom: 1.5rem;
         }
-
-        .stat-card {
-            background: white;
+        .metrics-heading {
+            margin-bottom: 0.7rem;
+        }
+        .dashboard-stats.metrics-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.7rem;
+            margin: 0;
+            padding: 0;
+            justify-content: space-between;
+        }
+        .dashboard-stats.metrics-row .stat-card {
+            flex: 1 1 0;
+            min-width: 0;
+            max-width: none;
+            background: #fff;
             border-radius: 8px;
-            padding: 1rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05),
-                        0 2px 4px rgba(26, 58, 143, 0.1);
+            box-shadow: 0 1px 3px rgba(30,41,59,0.06);
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            transition: all 0.2s ease;
+            gap: 0.6rem;
+            padding: 0.7rem 0.9rem;
+            margin: 0;
+            border: 1px solid #e5e7eb;
+            transition: box-shadow 0.2s;
         }
-
-        .stat-card:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1),
-                        0 4px 8px rgba(26, 58, 143, 0.15);
+        .dashboard-stats.metrics-row .stat-card:hover {
+            box-shadow: 0 2px 8px rgba(30,41,59,0.10);
         }
-
-        .stat-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
+        .dashboard-stats.metrics-row .stat-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            font-size: 1.05rem;
             flex-shrink: 0;
         }
-
-        .stat-content {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .stat-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 0.5rem;
-        }
-
-        .stat-content h3 {
-            font-size: 1.5rem;
-            font-weight: 600;
+        .dashboard-stats.metrics-row .stat-content h4 {
+            font-size: 1.1rem;
+            font-weight: 800;
+            margin: 0 0 1px 0;
             color: #1e293b;
-            margin: 0;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            letter-spacing: 0.01em;
         }
-
-        .stat-content p {
-            font-size: 0.875rem;
+        .dashboard-stats.metrics-row .stat-content p {
+            font-size: 0.85rem;
             color: #64748b;
-            margin: 0.25rem 0 0 0;
-        }
-
-        .trend {
-            font-size: 0.875rem;
+            margin: 0;
             font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 0.125rem;
-            white-space: nowrap;
         }
-
-        .trend.up {
-            color: #10b981;
-        }
-
-        .trend.down {
-            color: #ef4444;
-        }
-
-        @media (max-width: 768px) {
-            .dashboard-stats {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 0.75rem;
+        @media (max-width: 900px) {
+            .dashboard-stats.metrics-row {
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 0.7rem;
             }
-
-            .stat-card {
-                padding: 0.875rem;
-            }
-
-            .stat-icon {
-                width: 36px;
-                height: 36px;
-                font-size: 1.25rem;
-            }
-
-            .stat-content h3 {
-                font-size: 1.375rem;
-            }
-
-            .stat-content p {
-                font-size: 0.8125rem;
-            }
-
-            .trend {
-                font-size: 0.8125rem;
+            .dashboard-stats.metrics-row .stat-card {
+                max-width: 48%;
+                min-width: 120px;
             }
         }
-
-        @media (max-width: 480px) {
-            .dashboard-stats {
-                grid-template-columns: 1fr;
+        @media (max-width: 600px) {
+            .dashboard-stats.metrics-row {
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+            .dashboard-stats.metrics-row .stat-card {
+                max-width: 100%;
+                min-width: 100px;
+                padding: 0.6rem 0.7rem;
             }
         }
 
@@ -854,169 +832,33 @@
 
             <div class="content-wrapper">
                 <!-- Dashboard Stats -->
-                <div class="dashboard-stats mb-4">
-                    <div class="row g-3">
-                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
-                            <div class="stat-card">
-                                <div class="stat-icon" style="background-color: rgba(26, 58, 143, 0.1);">
-                                    <i class="fas fa-clock" style="color: #1a3a8f;"></i>
-                                </div>
-                                <div class="stat-content">
-                                    <h4 class="mb-0">245</h4>
-                                    <p class="mb-0 text-muted">Due Claims</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
-                            <div class="stat-card">
-                                <div class="stat-icon" style="background-color: rgba(0, 179, 227, 0.1);">
-                                    <i class="fas fa-check-circle" style="color: #00b3e3;"></i>
-                                </div>
-                                <div class="stat-content">
-                                    <h4 class="mb-0">1,876</h4>
-                                    <p class="mb-0 text-muted">Issued Claims</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
-                            <div class="stat-card">
-                                <div class="stat-icon" style="background-color: rgba(255, 79, 89, 0.1);">
-                                    <i class="fas fa-calendar" style="color: #ff4f59;"></i>
-                                </div>
-                                <div class="stat-content">
-                                    <h4 class="mb-0">328</h4>
-                                    <p class="mb-0 text-muted">Upcoming Claims</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
-                            <div class="stat-card">
-                                <div class="stat-icon" style="background-color: rgba(40, 167, 69, 0.1);">
-                                    <i class="fas fa-dollar-sign" style="color: #28a745;"></i>
-                                </div>
-                                <div class="stat-content">
-                                    <h4 class="mb-0">$2.4M</h4>
-                                    <p class="mb-0 text-muted">Total Value</p>
-                                </div>
-                            </div>
-                        </div>
+                <section class="dashboard-metrics-section mb-4">
+                    <h3 class="metrics-heading" style="font-size:1.15rem;font-weight:600;color:#1a3a8f;margin-bottom:1rem;">Claims Metrics</h3>
+                    <div class="dashboard-stats metrics-row" id="dashboard-stats-container">
+                        <!-- Populated by JS -->
                     </div>
-                </div>
+                </section>
 
                 <!-- Table 1: Final Invoice Status -->
                 <div class="table-container fade-in" id="final-invoice-container">
                     <div class="table-header">
                         <h2>Final Invoice Status</h2>
-                        <span class="badge bg-primary">Total Shops: 3</span>
-                    </div>
-                    <div class="advanced-filters">
-                        <div class="row g-3">
-                            <div class="col-12">
-                                <div class="filter-group">
-                                    <label>Search:</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text bg-white border-end-0">
-                                            <i class="fas fa-search text-muted"></i>
-                                        </span>
-                                        <input type="text" class="form-control border-start-0" id="searchInput" placeholder="Search...">
-                                        <button class="btn btn-outline-secondary" type="button" id="clearFilters">
-                                            <i class="fas fa-times"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <span class="badge bg-primary" id="invoiceStatusCount"></span>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-compact invoice-status-table table-advanced" id="final-invoice-table">
                             <thead>
                                 <tr>
-                                    <th class="sortable">Shop</th>
-                                    <th class="sortable"># of Engines</th>
-                                    <th class="sortable due-column">Due</th>
-                                    <th class="sortable issued-column">Issued</th>
-                                    <th class="sortable upcoming-column">Upcoming</th>
+                                    <th>Invoice/ESN</th>
+                                    <th style="min-width:220px;color:#1a3a8f;background:#f8fafc;">Criteria/Logic Used</th>
+                                    <th>Potential Opportunity</th>
+                                    <th>Invoice with opportunity</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr data-shop="Shop1" data-engines="12" data-due="10" data-issued="1" data-upcoming="1">
-                                    <td>Shop1</td>
-                                    <td>12</td>
-                                    <td>
-                                        <span class="badge bg-danger">10</span>
-                                    </td>
-                                    <td>
-                                        <div class="d-flex align-items-center gap-2">
-                                            <span class="badge bg-success">1</span>
-                                            <button class="action-link" title="View Details">
-                                                <i class="fas fa-arrow-right"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span class="badge bg-warning">1</span>
-                                    </td>
-                                </tr>
-                                <tr data-shop="Shop2" data-engines="7" data-due="5" data-issued="1" data-upcoming="1">
-                                    <td>Shop2</td>
-                                    <td>7</td>
-                                    <td>
-                                        <span class="badge bg-danger">5</span>
-                                    </td>
-                                    <td>
-                                        <div class="d-flex align-items-center gap-2">
-                                            <span class="badge bg-success">1</span>
-                                            <button class="action-link" title="View Details">
-                                                <i class="fas fa-arrow-right"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span class="badge bg-warning">1</span>
-                                    </td>
-                                </tr>
-                                <tr data-shop="Shop3" data-engines="4" data-due="1" data-issued="3" data-upcoming="0">
-                                    <td>Shop3</td>
-                                    <td>4</td>
-                                    <td>
-                                        <span class="badge bg-danger">1</span>
-                                    </td>
-                                    <td>
-                                        <div class="d-flex align-items-center gap-2">
-                                            <span class="badge bg-success">3</span>
-                                            <button class="action-link" title="View Details">
-                                                <i class="fas fa-arrow-right"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span class="badge bg-warning">0</span>
-                                    </td>
-                                </tr>
+                                <!-- Populated by JS -->
                             </tbody>
                         </table>
-                    </div>
-                    <div class="table-footer d-flex justify-content-between align-items-center">
-                        <div class="table-info">
-                            <span class="text-muted">Showing</span> <span id="showingCount" class="fw-medium">3</span> <span class="text-muted">of</span> <span id="totalCount" class="fw-medium">3</span> <span class="text-muted">entries</span>
-                        </div>
-                        <div class="pagination-wrapper">
-                            <nav aria-label="Table navigation">
-                                <ul class="pagination pagination-sm mb-0">
-                                    <li class="page-item disabled">
-                                        <span class="page-link">
-                                            <i class="fas fa-chevron-left"></i>
-                                        </span>
-                                    </li>
-                                    <li class="page-item active"><span class="page-link">1</span></li>
-                                    <li class="page-item disabled">
-                                        <span class="page-link">
-                                            <i class="fas fa-chevron-right"></i>
-                                        </span>
-                                    </li>
-                                </ul>
-                            </nav>
-                        </div>
                     </div>
                 </div>
 
@@ -1024,25 +866,7 @@
                 <div class="table-container fade-in" id="warranty-claim-container" style="display: none;">
                     <div class="table-header">
                         <h2>Warranty Claim Status</h2>
-                        <span class="badge bg-primary">Total Claims: 5</span>
-                    </div>
-                    <div class="advanced-filters">
-                        <div class="row g-3">
-                            <div class="col-12">
-                                <div class="filter-group">
-                                    <label>Search:</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text bg-white border-end-0">
-                                            <i class="fas fa-search text-muted"></i>
-                                        </span>
-                                        <input type="text" class="form-control border-start-0" id="warrantySearchInput" placeholder="Search...">
-                                        <button class="btn btn-outline-secondary" type="button" id="clearWarrantyFilters">
-                                            <i class="fas fa-times"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <span class="badge bg-primary" id="warrantyClaimCount"></span>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-compact invoice-status-table table-advanced" id="warranty-claim-table">
@@ -1052,57 +876,31 @@
                                     <th>To be assessed</th>
                                     <th>No Opportunity</th>
                                     <th>In Progress</th>
+                                    <th style="min-width:220px;color:#1a3a8f;background:#f8fafc;">Criteria/Logic Used</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Shop1</td>
-                                    <td>1</td>
-                                    <td>2</td>
-                                    <td>1</td>
-                                </tr>
-                                <tr>
-                                    <td>Shop2</td>
-                                    <td>1</td>
-                                    <td>0</td>
-                                    <td>2</td>
-                                </tr>
-                                <tr>
-                                    <td>Shop3</td>
-                                    <td>3</td>
-                                    <td>1</td>
-                                    <td>0</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Total</strong></td>
-                                    <td><strong>5</strong></td>
-                                    <td><strong>3</strong></td>
-                                    <td><strong>3</strong></td>
-                                </tr>
+                                <!-- Populated by JS -->
                             </tbody>
                         </table>
                     </div>
-                    <div class="table-footer d-flex justify-content-between align-items-center">
-                        <div class="table-info">
-                            <span class="text-muted">Showing</span> <span id="warrantyShowingCount" class="fw-medium">4</span> <span class="text-muted">of</span> <span id="warrantyTotalCount" class="fw-medium">4</span> <span class="text-muted">entries</span>
-                        </div>
-                        <div class="pagination-wrapper">
-                            <nav aria-label="Table navigation">
-                                <ul class="pagination pagination-sm mb-0">
-                                    <li class="page-item disabled">
-                                        <span class="page-link">
-                                            <i class="fas fa-chevron-left"></i>
-                                        </span>
-                                    </li>
-                                    <li class="page-item active"><span class="page-link">1</span></li>
-                                    <li class="page-item disabled">
-                                        <span class="page-link">
-                                            <i class="fas fa-chevron-right"></i>
-                                        </span>
-                                    </li>
-                                </ul>
-                            </nav>
-                        </div>
+                </div>
+
+                <!-- Show all data from data.json -->
+                <div class="table-container fade-in" id="all-data-container">
+                    <div class="table-header">
+                        <h2>All Claims Data</h2>
+                        <span class="badge bg-primary" id="allDataCount"></span>
+                    </div>
+                    <div class="table-responsive" style="max-height:400px;overflow:auto;">
+                        <table class="table table-compact table-bordered" id="all-data-table">
+                            <thead>
+                                <!-- Populated by JS -->
+                            </thead>
+                            <tbody>
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -1111,5 +909,157 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/invoice-status.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', async function() {
+        const invoiceTableBody = document.querySelector('#final-invoice-table tbody');
+        const invoiceStatusCount = document.getElementById('invoiceStatusCount');
+        const warrantyTableBody = document.querySelector('#warranty-claim-table tbody');
+        const warrantyClaimCount = document.getElementById('warrantyClaimCount');
+        let data = [], bpData = [];
+        try {
+            const [claimsRes, bpRes] = await Promise.all([
+                fetch('data.json'),
+                fetch('bpData.json')
+            ]);
+            data = await claimsRes.json();
+            bpData = await bpRes.json();
+        } catch (e) {
+            invoiceTableBody.innerHTML = '<tr><td colspan="3" class="text-danger">Failed to load data</td></tr>';
+            warrantyTableBody.innerHTML = '<tr><td colspan="4" class="text-danger">Failed to load data</td></tr>';
+            return;
+        }
+
+        // --- Final Invoice Status Table ---
+        function findBP(esn, part) {
+            return bpData.find(bp => {
+                return (bp['ESN'] && esn && esn.replace(/^0+/, '') === bp['ESN'].replace(/^0+/, '')) &&
+                       (bp['Part #'] && part && part === bp['Part #']);
+            });
+        }
+        const esnMap = {};
+        data.forEach(claim => {
+            const esn = claim['ESN'];
+            if (!esn) return;
+            if (!esnMap[esn]) esnMap[esn] = [];
+            esnMap[esn].push(claim);
+        });
+        let invoiceRows = [];
+        Object.entries(esnMap).forEach(([esn, claims]) => {
+            let potential = 0, withOpportunity = 0;
+            claims.forEach(claim => {
+                const bp = findBP(esn, claim['Part Number']);
+                if (bp && claim['Claim Status'] !== 'Disallowed') {
+                    withOpportunity++;
+                } else if (bp) {
+                    potential++;
+                }
+            });
+            // Show logic used for this ESN
+            const logic = `Potential: Has BP & Disallowed; With Opportunity: Has BP & Not Disallowed`;
+            invoiceRows.push({ esn, logic, potential, withOpportunity });
+        });
+        invoiceTableBody.innerHTML = invoiceRows.length ? invoiceRows.map(row =>
+            `<tr><td>${row.esn}</td><td style="font-size:0.85em;color:#2563eb;background:#f1f5f9;">${row.logic}</td><td>${row.potential}</td><td>${row.withOpportunity}</td></tr>`
+        ).join('') : '<tr><td colspan="4">No data available</td></tr>';
+        invoiceStatusCount.textContent = `Total ESNs: ${invoiceRows.length}`;
+
+        // --- Warranty Claim Status Table ---
+        const shopMap = {};
+        data.forEach(claim => {
+            const shop = claim['Customer Name'] || 'Unknown';
+            if (!shopMap[shop]) shopMap[shop] = [];
+            shopMap[shop].push(claim);
+        });
+        function getStatusCounts(claims) {
+            let toBeAssessed = 0, noOpportunity = 0, inProgress = 0;
+            claims.forEach(claim => {
+                if (claim['Claim Status'] === 'Pending' || claim['Claim Status'] === 'Submitted') {
+                    toBeAssessed++;
+                } else if (claim['Claim Status'] === 'Disallowed') {
+                    noOpportunity++;
+                } else if (claim['Claim Status'] === 'Approved' || claim['Claim Status'] === 'In Progress') {
+                    inProgress++;
+                }
+            });
+            return { toBeAssessed, noOpportunity, inProgress };
+        }
+        let warrantyRows = [];
+        Object.entries(shopMap).forEach(([shop, claims]) => {
+            const { toBeAssessed, noOpportunity, inProgress } = getStatusCounts(claims);
+            // Show logic used for this row
+            const logic = `To be assessed: Pending/Submitted; No Opportunity: Disallowed; In Progress: Approved/In Progress`;
+            warrantyRows.push({ shop, toBeAssessed, noOpportunity, inProgress, logic });
+        });
+        warrantyTableBody.innerHTML = warrantyRows.length ? warrantyRows.map(row =>
+            `<tr><td>${row.shop}</td><td>${row.toBeAssessed}</td><td>${row.noOpportunity}</td><td>${row.inProgress}</td><td style="font-size:0.85em;color:#2563eb;background:#f1f5f9;">${row.logic}</td></tr>`
+        ).join('') : '<tr><td colspan="5">No data available</td></tr>';
+        warrantyClaimCount.textContent = `Total Shops: ${warrantyRows.length}`;
+
+        // --- Dashboard Stats ---
+        const statsContainer = document.getElementById('dashboard-stats-container');
+        if (statsContainer) {
+            // Calculate metrics
+            const totalClaims = data.length;
+            const approvedClaims = data.filter(d => d['Claim Status'] === 'Approved').length;
+            const disallowedClaims = data.filter(d => d['Claim Status'] === 'Disallowed').length;
+            const totalCredits = data.reduce((sum, d) => {
+                let val = d['Credited Amount'] || '';
+                return sum + (Number(val.replace(/[^\d.-]+/g, '')) || 0);
+            }, 0);
+            statsContainer.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-icon" style="background-color: rgba(26, 58, 143, 0.08);">
+                        <i class="fas fa-file-invoice" style="color: #1a3a8f;"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h4 class="mb-0">${totalClaims}</h4>
+                        <p class="mb-0 text-muted">Total Claims</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background-color: rgba(0, 179, 227, 0.08);">
+                        <i class="fas fa-check-circle" style="color: #00b3e3;"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h4 class="mb-0">${approvedClaims}</h4>
+                        <p class="mb-0 text-muted">Approved Claims</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background-color: rgba(255, 79, 89, 0.08);">
+                        <i class="fas fa-times-circle" style="color: #ff4f59;"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h4 class="mb-0">${disallowedClaims}</h4>
+                        <p class="mb-0 text-muted">Disallowed Claims</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background-color: rgba(40, 167, 69, 0.08);">
+                        <i class="fas fa-dollar-sign" style="color: #28a745;"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h4 class="mb-0">$${totalCredits.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</h4>
+                        <p class="mb-0 text-muted">Total Credits</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- All Data Table ---
+        const allDataTable = document.getElementById('all-data-table');
+        const allDataCount = document.getElementById('allDataCount');
+        if (allDataTable && data.length) {
+            // Table header
+            const columns = Object.keys(data[0]);
+            allDataTable.querySelector('thead').innerHTML = '<tr>' + columns.map(col => `<th>${col}</th>`).join('') + '</tr>';
+            // Table body
+            allDataTable.querySelector('tbody').innerHTML = data.map(row =>
+                '<tr>' + columns.map(col => `<td>${row[col]}</td>`).join('') + '</tr>'
+            ).join('');
+            allDataCount.textContent = `Total Rows: ${data.length}`;
+        }
+    });
+    </script>
 </body>
 </html>

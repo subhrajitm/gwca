@@ -169,10 +169,10 @@ document.addEventListener('DOMContentLoaded', async function() {
             lineMap[pl]++;
         });
         new Chart(ctx, {
-            type: 'bar',
-            data: {
+        type: 'bar',
+        data: {
                 labels: Object.keys(lineMap),
-                datasets: [{
+            datasets: [{
                     label: 'Number of Claims',
                     data: Object.values(lineMap),
                     backgroundColor: 'rgba(59, 130, 246, 0.8)',
@@ -224,18 +224,18 @@ document.addEventListener('DOMContentLoaded', async function() {
             if (idx !== null) creditsByMonth[idx] += parseAmount(d['Credited Amount']);
         });
         new Chart(ctx, {
-            type: 'line',
-            data: {
+        type: 'line',
+        data: {
                 labels: months,
-                datasets: [{
+            datasets: [{
                     label: 'Credits Amount',
                     data: creditsByMonth,
                     borderColor: 'rgba(59, 130, 246, 1)',
                     backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                    fill: true,
-                    tension: 0.4
-                }]
-            },
+                fill: true,
+                tension: 0.4
+            }]
+        },
             options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { callback: v => '$' + v.toLocaleString() } } } }
         });
     }
@@ -279,9 +279,9 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
         new Chart(ctx, {
             type: 'line',
-            data: {
+        data: {
                 labels: months,
-                datasets: [{
+            datasets: [{
                     label: 'Claims Submitted',
                     data: claimsByMonth,
                     borderColor: 'rgba(59, 130, 246, 1)',
