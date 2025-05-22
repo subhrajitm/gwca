@@ -40,12 +40,6 @@
                     <span>Claims</span>
                 </a>
             </li>
-            <li class="active">
-                <a href="table.html">
-                    <i class="fas fa-table"></i>
-                    <span>Claims Table</span>
-                </a>
-            </li>
         </ul>
         
         <div class="sidebar-footer">
@@ -60,9 +54,22 @@
     <!-- Main Content -->
     <main class="main-content">
         <!-- Enhanced Header -->
-        <header class="header">
-            <h1 class="page-title mb-0">Warranty Claims Table</h1>
+        <header class="header d-flex align-items-center justify-content-between gap-2">
+            <div class="breadcrumb-wrapper">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-1">
+                        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Claims Table</li>
+                    </ol>
+                </nav>
+                <h1 class="page-title mb-0">Warranty Claims Table</h1>
+            </div>
             <div class="header-actions d-flex align-items-center gap-2 ms-auto">
+                <!-- Claims Table Link -->
+                <a href="table.html" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-2">
+                    <i class="fas fa-table"></i>
+                    <span class="d-none d-md-inline">Claims Table</span>
+                </a>
                 <!-- Profile Section -->
                 <div class="dropdown">
                     <button class="d-flex align-items-center border-0 bg-transparent dropdown-toggle p-0" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
@@ -112,7 +119,10 @@
             </div>
             <div class="table-responsive">
                 <table class="table table-bordered table-hover align-middle" id="claimsTable">
-                    <thead>
+                    <thead style="
+                    z-index: 1;
+                    position: relative;
+                ">
                         <tr id="claimsTableHeader">
                             <th data-sort="Claim Number">Claim Number</th>
                             <th data-sort="Customer Name">Customer Name</th>

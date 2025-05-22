@@ -803,12 +803,6 @@
                         <span>Claims</span>
                     </a>
                 </li>
-                <li>
-                    <a href="table.html">
-                        <i class="fas fa-table"></i>
-                        <span>Claims Table</span>
-                    </a>
-                </li>
             </ul>
             
             <div class="sidebar-footer">
@@ -823,18 +817,38 @@
         <!-- Main Content -->
         <main class="main-content">
             <!-- Enhanced Header -->
-            <header class="header">
-                <button class="sidebar-toggle d-lg-none" id="sidebar-toggle">
-                    <i class="fas fa-bars"></i>
-                </button>
+            <header class="header d-flex align-items-center justify-content-between gap-2">
                 <div class="breadcrumb-wrapper">
                     <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb">
+                        <ol class="breadcrumb mb-1">
                             <li class="breadcrumb-item"><a href="index.html">Home</a></li>
                             <li class="breadcrumb-item active" aria-current="page">Claims</li>
                         </ol>
                     </nav>
-                    <h1 class="page-title">Claims</h1>
+                    <h1 class="page-title mb-0">Claims</h1>
+                </div>
+                <div class="header-actions d-flex align-items-center gap-2 ms-auto">
+                    <!-- Claims Table Link -->
+                    <a href="table.html" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-2">
+                        <i class="fas fa-table"></i>
+                        <span class="d-none d-md-inline">Claims Table</span>
+                    </a>
+                    <!-- Profile Section -->
+                    <div class="dropdown">
+                        <button class="d-flex align-items-center border-0 bg-transparent dropdown-toggle p-0" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="https://ui-avatars.com/api/?name=John+Doe&background=0066FF&color=fff" alt="User" class="rounded-circle" width="36" height="36">
+                            <div class="d-none d-md-block text-start ms-2">
+                                <div class="fw-semibold" style="font-size:1em;line-height:1.1;">John Doe</div>
+                                <div class="text-muted" style="font-size:0.85em;line-height:1;">Administrator</div>
+                            </div>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>My Profile</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Account Settings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                        </ul>
+                    </div>
                 </div>
             </header>
 
