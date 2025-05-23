@@ -170,7 +170,7 @@ document.addEventListener('DOMContentLoaded', function() {
     attachColumnsDropdownEvents();
 
     // Fetch data and initialize table and filters
-    fetch('data.json')
+    fetch('data/data.json')
         .then(response => response.json())
         .then(data => {
             claimsData = data;
@@ -178,8 +178,8 @@ document.addEventListener('DOMContentLoaded', function() {
             renderTable(filteredData);
         })
         .catch(error => {
-            document.querySelector('#claimsTable tbody').innerHTML = `<tr><td colspan="29">Failed to load data.json</td></tr>`;
-            console.error('Error loading data.json:', error);
+            document.querySelector('#claimsTable tbody').innerHTML = `<tr><td colspan="29">Failed to load data/data.json</td></tr>`;
+            console.error('Error loading data/data.json:', error);
         });
 });
 

@@ -886,7 +886,7 @@
                     </div>
                 </div>
 
-                <!-- Show all data from data.json -->
+                <!-- Show all data from data/data.json -->
                 <div class="table-container fade-in" id="all-data-container">
                     <div class="table-header">
                         <h2>All Claims Data</h2>
@@ -918,8 +918,8 @@
         let data = [], bpData = [];
         try {
             const [claimsRes, bpRes] = await Promise.all([
-                fetch('data.json'),
-                fetch('bpData.json')
+                fetch('data/data.json'),
+                fetch('data/bpData.json')
             ]);
             data = await claimsRes.json();
             bpData = await bpRes.json();

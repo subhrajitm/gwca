@@ -30,10 +30,10 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Fetch data.json
     let data = [];
     try {
-        const res = await fetch('data.json');
+        const res = await fetch('data/data.json');
         data = await res.json();
     } catch (e) {
-        console.error('Failed to load data.json', e);
+        console.error('Failed to load data/data.json', e);
         return;
     }
 
