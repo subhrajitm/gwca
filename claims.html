@@ -915,49 +915,113 @@
         const invoiceStatusCount = document.getElementById('invoiceStatusCount');
         const warrantyTableBody = document.querySelector('#warranty-claim-table tbody');
         const warrantyClaimCount = document.getElementById('warrantyClaimCount');
-        let data = [], bpData = [];
+        let data = [], bpData = [], invoiceData = [];
         try {
-            const [claimsRes, bpRes] = await Promise.all([
+            const [claimsRes, bpRes, invoiceRes] = await Promise.all([
                 fetch('data/data.json'),
-                fetch('data/bpData.json')
+                fetch('data/bpData.json'),
+                fetch('data/invoiceData.json')
             ]);
             data = await claimsRes.json();
             bpData = await bpRes.json();
+            invoiceData = await invoiceRes.json();
         } catch (e) {
+            console.error('Failed to load data:', e);
             invoiceTableBody.innerHTML = '<tr><td colspan="3" class="text-danger">Failed to load data</td></tr>';
             warrantyTableBody.innerHTML = '<tr><td colspan="4" class="text-danger">Failed to load data</td></tr>';
             return;
         }
 
-        // --- Final Invoice Status Table ---
-        function findBP(esn, part) {
-            return bpData.find(bp => {
-                return (bp['ESN'] && esn && esn.replace(/^0+/, '') === bp['ESN'].replace(/^0+/, '')) &&
-                       (bp['Part #'] && part && part === bp['Part #']);
-            });
+        // Function to check if a part matches BP criteria
+        function checkBPCriteria(invoice, bp) {
+            if (!invoice || !bp) return false;
+            
+            // Check ESN match
+            const invoiceESN = invoice.Serial_Number?.replace(/^0+/, '');
+            const bpESN = bp.ESN?.replace(/^0+/, '');
+            if (invoiceESN !== bpESN) return false;
+
+            // Check part number match
+            if (invoice.Part_Number !== bp['Part #']) return false;
+
+            // Check quantity match
+            if (invoice.Total_Quantity > bp.Qty) return false;
+
+            // Check if BP is active
+            const currentDate = new Date();
+            const bpStartDate = new Date(bp['BP Start Date']);
+            const bpEndDate = new Date(bp['BP End Date']);
+            if (currentDate < bpStartDate || currentDate > bpEndDate) return false;
+
+            return true;
         }
+
+        // Generate claim data from invoice and BP data
+        function generateClaimData(invoice, bp) {
+            return {
+                WARRANTY_CLAIM_NUM: `WC${invoice.Invoice_Number}`,
+                ENGINE_SERIAL_NUMBER: invoice.Serial_Number,
+                EVENT_DATE: invoice.Invoice_Date,
+                PRODUCT_LINE: invoice.Model?.replace('MDL', ''),
+                TIME_SINCE_NEW_TSN: invoice.Total_Hours || 0,
+                CLAIM_ITEM_NUMBER: 1,
+                WARRANTY_COST_CODE: "M",
+                WARRANTY_TYPE_CODE: "5",
+                SERV_BULLETIN_CML_NUMBER: bp['BP Name'],
+                PART_NUMBER: invoice.Part_Number,
+                PART_TIME_SINCE_NEW_PTSN: invoice.Total_Hours || 0,
+                PART_CYCLE_SINCE_NEW_PCSN: 0,
+                REQUEST_QUANTITY: invoice.Total_Quantity,
+                REQUEST_LABOR_RATE: "",
+                REQUEST_UNIT_PRICE: invoice.Total_Amount / invoice.Total_Quantity,
+                REQUEST_LIABILITY_PERCENT: parseInt(bp.Discount) || 0,
+                MATERIAL_SCRAPPED: "Y",
+                PART_SERIAL_NUM: "",
+                MODULE_SERIAL_NUM: "",
+                MODULE_REMOVAL_DATE: "",
+                MODULE_TIME_SINCE_NEW: "",
+                COMMENTS: invoice.Removal_Reason,
+                AIRCRAFT_SERIAL_NUMBER: ""
+            };
+        }
+
+        // Process invoice data with BP criteria
+        const processedClaims = [];
+        invoiceData.Summary.forEach(invoice => {
+            const matchingBP = bpData.find(bp => checkBPCriteria(invoice, bp));
+            if (matchingBP) {
+                processedClaims.push(generateClaimData(invoice, matchingBP));
+            }
+        });
+
+        // --- Final Invoice Status Table ---
         const esnMap = {};
-        data.forEach(claim => {
-            const esn = claim['ESN'];
-            if (!esn) return;
+        processedClaims.forEach(claim => {
+            const esn = claim.ENGINE_SERIAL_NUMBER;
             if (!esnMap[esn]) esnMap[esn] = [];
             esnMap[esn].push(claim);
         });
+
         let invoiceRows = [];
         Object.entries(esnMap).forEach(([esn, claims]) => {
             let potential = 0, withOpportunity = 0;
             claims.forEach(claim => {
-                const bp = findBP(esn, claim['Part Number']);
-                if (bp && claim['Claim Status'] !== 'Disallowed') {
-                    withOpportunity++;
-                } else if (bp) {
-                    potential++;
+                const matchingBP = bpData.find(bp => 
+                    bp.ESN?.replace(/^0+/, '') === esn.replace(/^0+/, '') && 
+                    bp['Part #'] === claim.PART_NUMBER
+                );
+                if (matchingBP) {
+                    if (claim.REQUEST_LIABILITY_PERCENT > 0) {
+                        withOpportunity++;
+                    } else {
+                        potential++;
+                    }
                 }
             });
-            // Show logic used for this ESN
-            const logic = `Potential: Has BP & Disallowed; With Opportunity: Has BP & Not Disallowed`;
+            const logic = `Potential: Has BP & No Discount; With Opportunity: Has BP & Has Discount`;
             invoiceRows.push({ esn, logic, potential, withOpportunity });
         });
+
         invoiceTableBody.innerHTML = invoiceRows.length ? invoiceRows.map(row =>
             `<tr><td>${row.esn}</td><td style="font-size:0.85em;color:#2563eb;background:#f1f5f9;">${row.logic}</td><td>${row.potential}</td><td>${row.withOpportunity}</td></tr>`
         ).join('') : '<tr><td colspan="4">No data available</td></tr>';
@@ -965,31 +1029,24 @@
 
         // --- Warranty Claim Status Table ---
         const shopMap = {};
-        data.forEach(claim => {
-            const shop = claim['Customer Name'] || 'Unknown';
+        processedClaims.forEach(claim => {
+            const shop = claim.COMMENTS || 'Unknown';
             if (!shopMap[shop]) shopMap[shop] = [];
             shopMap[shop].push(claim);
         });
-        function getStatusCounts(claims) {
-            let toBeAssessed = 0, noOpportunity = 0, inProgress = 0;
-            claims.forEach(claim => {
-                if (claim['Claim Status'] === 'Pending' || claim['Claim Status'] === 'Submitted') {
-                    toBeAssessed++;
-                } else if (claim['Claim Status'] === 'Disallowed') {
-                    noOpportunity++;
-                } else if (claim['Claim Status'] === 'Approved' || claim['Claim Status'] === 'In Progress') {
-                    inProgress++;
-                }
-            });
-            return { toBeAssessed, noOpportunity, inProgress };
-        }
+
         let warrantyRows = [];
         Object.entries(shopMap).forEach(([shop, claims]) => {
-            const { toBeAssessed, noOpportunity, inProgress } = getStatusCounts(claims);
-            // Show logic used for this row
-            const logic = `To be assessed: Pending/Submitted; No Opportunity: Disallowed; In Progress: Approved/In Progress`;
+            const toBeAssessed = claims.filter(c => c.REQUEST_LIABILITY_PERCENT === 0).length;
+            const noOpportunity = claims.filter(c => !bpData.find(bp => 
+                bp.ESN?.replace(/^0+/, '') === c.ENGINE_SERIAL_NUMBER.replace(/^0+/, '') && 
+                bp['Part #'] === c.PART_NUMBER
+            )).length;
+            const inProgress = claims.filter(c => c.REQUEST_LIABILITY_PERCENT > 0).length;
+            const logic = `To be assessed: No Discount; No Opportunity: No BP Match; In Progress: Has Discount`;
             warrantyRows.push({ shop, toBeAssessed, noOpportunity, inProgress, logic });
         });
+
         warrantyTableBody.innerHTML = warrantyRows.length ? warrantyRows.map(row =>
             `<tr><td>${row.shop}</td><td>${row.toBeAssessed}</td><td>${row.noOpportunity}</td><td>${row.inProgress}</td><td style="font-size:0.85em;color:#2563eb;background:#f1f5f9;">${row.logic}</td></tr>`
         ).join('') : '<tr><td colspan="5">No data available</td></tr>';
@@ -998,14 +1055,13 @@
         // --- Dashboard Stats ---
         const statsContainer = document.getElementById('dashboard-stats-container');
         if (statsContainer) {
-            // Calculate metrics
-            const totalClaims = data.length;
-            const approvedClaims = data.filter(d => d['Claim Status'] === 'Approved').length;
-            const disallowedClaims = data.filter(d => d['Claim Status'] === 'Disallowed').length;
-            const totalCredits = data.reduce((sum, d) => {
-                let val = d['Credited Amount'] || '';
-                return sum + (Number(val.replace(/[^\d.-]+/g, '')) || 0);
+            const totalClaims = processedClaims.length;
+            const approvedClaims = processedClaims.filter(c => c.REQUEST_LIABILITY_PERCENT > 0).length;
+            const disallowedClaims = processedClaims.filter(c => c.REQUEST_LIABILITY_PERCENT === 0).length;
+            const totalCredits = processedClaims.reduce((sum, c) => {
+                return sum + (c.REQUEST_UNIT_PRICE * c.REQUEST_QUANTITY * (c.REQUEST_LIABILITY_PERCENT / 100));
             }, 0);
+
             statsContainer.innerHTML = `
                 <div class="stat-card">
                     <div class="stat-icon" style="background-color: rgba(26, 58, 143, 0.08);">
@@ -1049,15 +1105,13 @@
         // --- All Data Table ---
         const allDataTable = document.getElementById('all-data-table');
         const allDataCount = document.getElementById('allDataCount');
-        if (allDataTable && data.length) {
-            // Table header
-            const columns = Object.keys(data[0]);
+        if (allDataTable && processedClaims.length) {
+            const columns = Object.keys(processedClaims[0]);
             allDataTable.querySelector('thead').innerHTML = '<tr>' + columns.map(col => `<th>${col}</th>`).join('') + '</tr>';
-            // Table body
-            allDataTable.querySelector('tbody').innerHTML = data.map(row =>
+            allDataTable.querySelector('tbody').innerHTML = processedClaims.map(row =>
                 '<tr>' + columns.map(col => `<td>${row[col]}</td>`).join('') + '</tr>'
             ).join('');
-            allDataCount.textContent = `Total Rows: ${data.length}`;
+            allDataCount.textContent = `Total Rows: ${processedClaims.length}`;
         }
     });
     </script>

@@ -109,9 +109,9 @@
                             <i class="fas fa-file-invoice"></i>
                         </div>
                         <div class="stat-content">
-                            <h3>Total Claims</h3>
-                            <p class="stat-value"></p>
-                            <p class="stat-label">Total warranty claims processed</p>
+                            <h3>Total Invoices</h3>
+                            <p class="stat-value" id="totalInvoices">0</p>
+                            <p class="stat-label">Total invoices processed</p>
                         </div>
                     </div>
                     <div class="stat-card">
@@ -119,49 +119,29 @@
                             <i class="fas fa-check-circle"></i>
                         </div>
                         <div class="stat-content">
-                            <h3>Approved Claims</h3>
-                            <p class="stat-value"></p>
-                            <p class="stat-label">Successfully processed claims</p>
+                            <h3>BP Matches</h3>
+                            <p class="stat-value" id="bpMatches">0</p>
+                            <p class="stat-label">Invoices matching BP criteria</p>
                         </div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-icon">
-                            <i class="fas fa-times-circle"></i>
+                            <i class="fas fa-percentage"></i>
                         </div>
                         <div class="stat-content">
-                            <h3>Disallowed Claims</h3>
-                            <p class="stat-value"></p>
-                            <p class="stat-label">Claims that were not approved</p>
+                            <h3>Discount Applied</h3>
+                            <p class="stat-value" id="discountApplied">0%</p>
+                            <p class="stat-label">Average discount on matched claims</p>
                         </div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-icon">
-                            <i class="fas fa-clock"></i>
+                            <i class="fas fa-engine"></i>
                         </div>
                         <div class="stat-content">
-                            <h3>Average TAT</h3>
-                            <p class="stat-value"></p>
-                            <p class="stat-label"></p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-dollar-sign"></i>
-                        </div>
-                        <div class="stat-content">
-                            <h3>Total Credits</h3>
-                            <p class="stat-value"></p>
-                            <p class="stat-label">Total amount credited to customers</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <div class="stat-content">
-                            <h3>Unique Customers</h3>
-                            <p class="stat-value"></p>
-                            <p class="stat-label"></p>
+                            <h3>Unique ESNs</h3>
+                            <p class="stat-value" id="uniqueESNs">0</p>
+                            <p class="stat-label">Unique engine serial numbers</p>
                         </div>
                     </div>
                 </div>
@@ -173,50 +153,37 @@
                         <div class="widget-header">
                             <h2>Claims Overview</h2>
                             <div class="widget-actions">
-                                <a href="metrics.html" class="btn btn-sm btn-outline-primary">View Details</a>
+                                <a href="claims.html" class="btn btn-sm btn-outline-primary">View Details</a>
                             </div>
                         </div>
                         <div class="widget-body">
-                                <div class="row g-3">
+                            <div class="row g-3">
                                 <div class="col-md-6">
                                     <div class="chart-wrapper">
-                                        <h6 class="chart-title">Claim Status Distribution</h6>
-                                        <canvas id="claimStatusChart"></canvas>
-                                    </div>
-                                            </div>
-                                <div class="col-md-6">
-                                    <div class="chart-wrapper">
-                                        <h6 class="chart-title">Claims by Product Line</h6>
-                                        <canvas id="productLineChart"></canvas>
+                                        <h6 class="chart-title">BP Match Distribution</h6>
+                                        <canvas id="bpMatchChart"></canvas>
                                     </div>
                                 </div>
-                                    <div class="col-12">
+                                <div class="col-md-6">
+                                    <div class="chart-wrapper">
+                                        <h6 class="chart-title">Discount Distribution</h6>
+                                        <canvas id="discountChart"></canvas>
+                                    </div>
+                                </div>
+                                <div class="col-12">
                                     <div class="table-responsive">
                                         <table class="table table-sm">
                                             <thead>
                                                 <tr>
-                                                    <th>Customer</th>
-                                                    <th>Total Claims</th>
-                                                    <th>Approved Claims</th>
+                                                    <th>ESN</th>
+                                                    <th>Total Invoices</th>
+                                                    <th>BP Matches</th>
                                                     <th>Total Amount</th>
-                                                    <th>Avg. TAT</th>
+                                                    <th>Avg. Discount</th>
                                                 </tr>
                                             </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>WRNTCUST908</td>
-                                                    <td>19</td>
-                                                    <td>17</td>
-                                                    <td>$22,310.00</td>
-                                                    <td>33 days</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>WRNTCUST100</td>
-                                                    <td>1</td>
-                                                    <td>1</td>
-                                                    <td>$49,191.00</td>
-                                                    <td>24 days</td>
-                                                </tr>
+                                            <tbody id="esnSummaryTable">
+                                                <!-- Populated by JS -->
                                             </tbody>
                                         </table>
                                     </div>
@@ -230,77 +197,60 @@
                         <div class="widget-header">
                             <h2>Financial Metrics</h2>
                             <div class="widget-actions">
-                                <a href="metrics.html" class="btn btn-sm btn-outline-primary">View Details</a>
+                                <a href="claims.html" class="btn btn-sm btn-outline-primary">View Details</a>
                             </div>
                         </div>
                         <div class="widget-body">
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <div class="chart-wrapper">
-                                        <h6 class="chart-title">Credits by Warranty Type</h6>
-                                        <canvas id="warrantyTypeChart"></canvas>
+                                        <h6 class="chart-title">Credits by BP Type</h6>
+                                        <canvas id="bpTypeChart"></canvas>
                                     </div>
-                                                </div>
+                                </div>
                                 <div class="col-md-6">
                                     <div class="chart-wrapper">
                                         <h6 class="chart-title">Monthly Credits Trend</h6>
                                         <canvas id="monthlyTrendChart"></canvas>
-                                                </div>
-                                            </div>
+                                    </div>
+                                </div>
                                 <div class="col-12">
                                     <div class="table-responsive">
                                         <table class="table table-sm">
                                             <thead>
                                                 <tr>
                                                     <th>Part Number</th>
-                                                    <th>Frequency</th>
+                                                    <th>BP Matches</th>
                                                     <th>Total Amount</th>
-                                                    <th>Avg. Amount</th>
+                                                    <th>Avg. Discount</th>
                                                 </tr>
                                             </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>BCD1246</td>
-                                                    <td>2</td>
-                                                    <td>$11,267.00</td>
-                                                    <td>$5,633.50</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>BCD1240</td>
-                                                    <td>1</td>
-                                                    <td>$1,628.00</td>
-                                                    <td>$1,628.00</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>BCD1241</td>
-                                                    <td>1</td>
-                                                    <td>$2,342.00</td>
-                                                    <td>$2,342.00</td>
-                                                </tr>
+                                            <tbody id="partSummaryTable">
+                                                <!-- Populated by JS -->
                                             </tbody>
                                         </table>
-                                                </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                                </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     
                     <!-- Performance Metrics Widget -->
                     <div class="dashboard-widget" style="width: 100%;">
                         <div class="widget-header">
                             <h2>Performance Metrics</h2>
                             <div class="widget-actions">
-                                <a href="metrics.html" class="btn btn-sm btn-outline-primary">View Details</a>
-                                                </div>
+                                <a href="claims.html" class="btn btn-sm btn-outline-primary">View Details</a>
+                            </div>
                         </div>
                         <div class="widget-body">
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <div class="chart-wrapper">
-                                        <h6 class="chart-title">TAT Distribution</h6>
-                                        <canvas id="tatDistributionChart"></canvas>
-                                            </div>
-                                        </div>
+                                        <h6 class="chart-title">BP Status Distribution</h6>
+                                        <canvas id="bpStatusChart"></canvas>
+                                    </div>
+                                </div>
                                 <div class="col-md-6">
                                     <div class="chart-wrapper">
                                         <h6 class="chart-title">Claims by Month</h6>
@@ -310,39 +260,19 @@
                                 <div class="col-12">
                                     <div class="table-responsive">
                                         <table class="table table-sm">
-                                        <thead>
-                                            <tr>
+                                            <thead>
+                                                <tr>
                                                     <th>Month</th>
-                                                    <th>Claims Submitted</th>
-                                                    <th>Claims Closed</th>
-                                                    <th>Avg. TAT</th>
-                                                    <th>Total Amount</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                                <tr>
-                                                    <td>January 2024</td>
-                                                    <td>1</td>
-                                                    <td>1</td>
-                                                    <td>40 days</td>
-                                                    <td>$0.00</td>
-                                            </tr>
-                                                <tr>
-                                                    <td>April 2024</td>
-                                                    <td>1</td>
-                                                    <td>1</td>
-                                                    <td>24 days</td>
-                                                    <td>$49,191.00</td>
-                                            </tr>
-                                                <tr>
-                                                    <td>September 2024</td>
-                                                    <td>18</td>
-                                                    <td>18</td>
-                                                    <td>35 days</td>
-                                                    <td>$22,310.00</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                                    <th>Total Invoices</th>
+                                                    <th>BP Matches</th>
+                                                    <th>Total Credits</th>
+                                                    <th>Match Rate</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="monthlySummaryTable">
+                                                <!-- Populated by JS -->
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
@@ -363,5 +293,167 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/script.js"></script>
     <script src="js/index.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', async function() {
+        let invoiceData = [], bpData = [];
+        try {
+            const [invoiceRes, bpRes] = await Promise.all([
+                fetch('data/invoiceData.json'),
+                fetch('data/bpData.json')
+            ]);
+            invoiceData = await invoiceRes.json();
+            bpData = await bpRes.json();
+        } catch (e) {
+            console.error('Failed to load data:', e);
+            return;
+        }
+
+        // Process data for dashboard
+        const invoices = invoiceData.Summary || [];
+        const bps = bpData || [];
+
+        // Update stats
+        document.getElementById('totalInvoices').textContent = invoices.length;
+        
+        const matchingInvoices = invoices.filter(invoice => {
+            return bps.some(bp => 
+                bp.ESN?.replace(/^0+/, '') === invoice.Serial_Number?.replace(/^0+/, '') &&
+                bp['Part #'] === invoice.Part_Number
+            );
+        });
+        
+        document.getElementById('bpMatches').textContent = matchingInvoices.length;
+        
+        const totalDiscount = matchingInvoices.reduce((sum, invoice) => {
+            const matchingBP = bps.find(bp => 
+                bp.ESN?.replace(/^0+/, '') === invoice.Serial_Number?.replace(/^0+/, '') &&
+                bp['Part #'] === invoice.Part_Number
+            );
+            return sum + (parseInt(matchingBP?.Discount) || 0);
+        }, 0);
+        
+        document.getElementById('discountApplied').textContent = 
+            matchingInvoices.length ? `${Math.round(totalDiscount / matchingInvoices.length)}%` : '0%';
+        
+        const uniqueESNs = new Set(invoices.map(i => i.Serial_Number));
+        document.getElementById('uniqueESNs').textContent = uniqueESNs.size;
+
+        // Prepare data for charts
+        const bpMatchData = {
+            labels: ['Matched', 'Not Matched'],
+            datasets: [{
+                data: [matchingInvoices.length, invoices.length - matchingInvoices.length],
+                backgroundColor: ['#28a745', '#dc3545']
+            }]
+        };
+
+        const discountData = {
+            labels: ['0%', '30%', '40%', '50%', '100%'],
+            datasets: [{
+                data: [
+                    matchingInvoices.filter(i => {
+                        const bp = bps.find(b => 
+                            b.ESN?.replace(/^0+/, '') === i.Serial_Number?.replace(/^0+/, '') &&
+                            b['Part #'] === i.Part_Number
+                        );
+                        return !bp?.Discount;
+                    }).length,
+                    matchingInvoices.filter(i => {
+                        const bp = bps.find(b => 
+                            b.ESN?.replace(/^0+/, '') === i.Serial_Number?.replace(/^0+/, '') &&
+                            b['Part #'] === i.Part_Number
+                        );
+                        return bp?.Discount === '30%';
+                    }).length,
+                    matchingInvoices.filter(i => {
+                        const bp = bps.find(b => 
+                            b.ESN?.replace(/^0+/, '') === i.Serial_Number?.replace(/^0+/, '') &&
+                            b['Part #'] === i.Part_Number
+                        );
+                        return bp?.Discount === '40%';
+                    }).length,
+                    matchingInvoices.filter(i => {
+                        const bp = bps.find(b => 
+                            b.ESN?.replace(/^0+/, '') === i.Serial_Number?.replace(/^0+/, '') &&
+                            b['Part #'] === i.Part_Number
+                        );
+                        return bp?.Discount === '50%';
+                    }).length,
+                    matchingInvoices.filter(i => {
+                        const bp = bps.find(b => 
+                            b.ESN?.replace(/^0+/, '') === i.Serial_Number?.replace(/^0+/, '') &&
+                            b['Part #'] === i.Part_Number
+                        );
+                        return bp?.Discount === '100%';
+                    }).length
+                ],
+                backgroundColor: ['#6c757d', '#ffc107', '#17a2b8', '#007bff', '#28a745']
+            }]
+        };
+
+        // Initialize charts
+        new Chart(document.getElementById('bpMatchChart'), {
+            type: 'pie',
+            data: bpMatchData,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        new Chart(document.getElementById('discountChart'), {
+            type: 'pie',
+            data: discountData,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        // Populate summary tables
+        const esnSummary = {};
+        invoices.forEach(invoice => {
+            if (!esnSummary[invoice.Serial_Number]) {
+                esnSummary[invoice.Serial_Number] = {
+                    totalInvoices: 0,
+                    bpMatches: 0,
+                    totalAmount: 0,
+                    totalDiscount: 0
+                };
+            }
+            esnSummary[invoice.Serial_Number].totalInvoices++;
+            esnSummary[invoice.Serial_Number].totalAmount += invoice.Total_Amount;
+            
+            const matchingBP = bps.find(bp => 
+                bp.ESN?.replace(/^0+/, '') === invoice.Serial_Number?.replace(/^0+/, '') &&
+                bp['Part #'] === invoice.Part_Number
+            );
+            
+            if (matchingBP) {
+                esnSummary[invoice.Serial_Number].bpMatches++;
+                esnSummary[invoice.Serial_Number].totalDiscount += parseInt(matchingBP.Discount) || 0;
+            }
+        });
+
+        document.getElementById('esnSummaryTable').innerHTML = Object.entries(esnSummary)
+            .map(([esn, data]) => `
+                <tr>
+                    <td>${esn}</td>
+                    <td>${data.totalInvoices}</td>
+                    <td>${data.bpMatches}</td>
+                    <td>$${data.totalAmount.toLocaleString()}</td>
+                    <td>${data.bpMatches ? Math.round(data.totalDiscount / data.bpMatches) : 0}%</td>
+                </tr>
+            `).join('');
+    });
+    </script>
 </body>
 </html>
