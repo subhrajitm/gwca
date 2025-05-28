@@ -388,28 +388,137 @@ function initializeCharts(claims) {
     }
 
     // Claims by Month Chart
-    const claimsByMonthCanvas = document.getElementById('claimsByMonthChart');
-    if (claimsByMonthCanvas) {
-        charts.claimsByMonth = new Chart(claimsByMonthCanvas, {
-            type: 'bar',
+    const claimsByMonthCtx = document.getElementById('claimsByMonthChart');
+    if (claimsByMonthCtx) {
+        // Prepare monthly data
+        const monthlyData = {};
+        claims.forEach(claim => {
+            const date = new Date(claim['Claim Submission Date']);
+            const monthKey = `${date.toLocaleString('default', { month: 'short' })} ${date.getFullYear()}`;
+            
+            if (!monthlyData[monthKey]) {
+                monthlyData[monthKey] = {
+                    submitted: 0,
+                    closed: 0,
+                    totalAmount: 0
+                };
+            }
+            
+            monthlyData[monthKey].submitted++;
+            if (claim['Claim Close Date'] && claim['Claim Close Date'] !== '-') {
+                monthlyData[monthKey].closed++;
+            }
+            
+            const amount = parseFloat(claim['Credited Amount'].replace(/[^0-9.-]+/g, ''));
+            monthlyData[monthKey].totalAmount += isNaN(amount) ? 0 : amount;
+        });
+
+        // Sort months chronologically
+        const sortedMonths = Object.keys(monthlyData).sort((a, b) => {
+            const [monthA, yearA] = a.split(' ');
+            const [monthB, yearB] = b.split(' ');
+            const dateA = new Date(`${monthA} 1, ${yearA}`);
+            const dateB = new Date(`${monthB} 1, ${yearB}`);
+            return dateA - dateB;
+        });
+
+        charts.claimsByMonth = new Chart(claimsByMonthCtx, {
+            type: 'line',
             data: {
                 labels: sortedMonths,
-                datasets: [{
-                    label: 'Number of Claims',
-                    data: sortedMonths.map(month => claimsByMonth[month]),
-                    backgroundColor: 'rgba(40, 167, 69, 0.8)',
-                    borderColor: 'rgba(40, 167, 69, 1)',
-                    borderWidth: 1,
-                    borderRadius: 4,
-                    barThickness: 16
-                }]
+                datasets: [
+                    {
+                        label: 'Submitted Claims',
+                        data: sortedMonths.map(month => monthlyData[month].submitted),
+                        borderColor: '#4e73df',
+                        backgroundColor: 'rgba(78, 115, 223, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        pointBackgroundColor: '#4e73df',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        order: 1
+                    },
+                    {
+                        label: 'Closed Claims',
+                        data: sortedMonths.map(month => monthlyData[month].closed),
+                        borderColor: '#1cc88a',
+                        backgroundColor: 'rgba(28, 200, 138, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        pointBackgroundColor: '#1cc88a',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        order: 2
+                    },
+                    {
+                        label: 'Total Amount ($)',
+                        data: sortedMonths.map(month => monthlyData[month].totalAmount),
+                        borderColor: '#f6c23e',
+                        backgroundColor: 'rgba(246, 194, 62, 0.1)',
+                        borderWidth: 2,
+                        fill: false,
+                        tension: 0.4,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        pointBackgroundColor: '#f6c23e',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        yAxisID: 'y1',
+                        order: 3
+                    }
+                ]
             },
             options: {
-                ...modernOptions,
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false
+                },
                 plugins: {
-                    ...modernOptions.plugins,
                     legend: {
-                        display: false
+                        position: 'top',
+                        align: 'end',
+                        labels: {
+                            usePointStyle: true,
+                            pointStyle: 'circle',
+                            padding: 20,
+                            font: {
+                                size: 11,
+                                weight: '500'
+                            }
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                        titleColor: '#2d3748',
+                        bodyColor: '#4a5568',
+                        borderColor: 'rgba(0, 0, 0, 0.1)',
+                        borderWidth: 1,
+                        padding: 12,
+                        boxPadding: 6,
+                        usePointStyle: true,
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.dataset.yAxisID === 'y1') {
+                                    label += '$' + context.parsed.y.toLocaleString();
+                                } else {
+                                    label += context.parsed.y;
+                                }
+                                return label;
+                            }
+                        }
                     }
                 },
                 scales: {
@@ -419,37 +528,43 @@ function initializeCharts(claims) {
                         },
                         ticks: {
                             font: {
-                                size: 11,
-                                family: "'Inter', sans-serif",
-                                weight: '500'
+                                size: 11
                             },
-                            color: '#6B7280',
-                            maxRotation: 0
+                            maxRotation: 45,
+                            minRotation: 45
                         }
                     },
                     y: {
                         beginAtZero: true,
+                        position: 'left',
                         grid: {
-                            color: 'rgba(0, 0, 0, 0.05)',
-                            drawBorder: false
+                            color: 'rgba(0, 0, 0, 0.05)'
                         },
                         ticks: {
                             font: {
-                                size: 11,
-                                family: "'Inter', sans-serif",
-                                weight: '500'
+                                size: 11
                             },
-                            color: '#6B7280',
-                            padding: 8,
-                            stepSize: 1
-                        },
-                        border: {
+                            callback: function(value) {
+                                return value;
+                            }
+                        }
+                    },
+                    y1: {
+                        beginAtZero: true,
+                        position: 'right',
+                        grid: {
                             display: false
+                        },
+                        ticks: {
+                            font: {
+                                size: 11
+                            },
+                            callback: function(value) {
+                                return '$' + value.toLocaleString();
+                            }
                         }
                     }
-                },
-                barPercentage: 0.8,
-                categoryPercentage: 0.8
+                }
             }
         });
     }
