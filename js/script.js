@@ -82,6 +82,8 @@ const priorityData = {
 
 // Function to transition between tables
 function transitionTables(fromTable, toTable) {
+    if (!fromTable || !toTable) return;
+    
     fromTable.classList.add('fade-out');
     setTimeout(() => {
         fromTable.style.display = 'none';
@@ -94,27 +96,34 @@ function transitionTables(fromTable, toTable) {
     }, 500);
 }
 
-// Table 1 row click event
-table1Body.querySelectorAll('tr').forEach(row => {
-    row.addEventListener('click', () => {
-        const rows = table1Body.querySelectorAll('tr');
-        rows.forEach(r => r.classList.remove('selected-row'));
-        row.classList.add('selected-row');
-        proceedBtn1.disabled = false;
-        selectedShop = row.getAttribute('data-shop');
+// Initialize table 1 if it exists
+if (table1Body) {
+    // Table 1 row click event
+    table1Body.querySelectorAll('tr').forEach(row => {
+        row.addEventListener('click', () => {
+            const rows = table1Body.querySelectorAll('tr');
+            rows.forEach(r => r.classList.remove('selected-row'));
+            row.classList.add('selected-row');
+            if (proceedBtn1) proceedBtn1.disabled = false;
+            selectedShop = row.getAttribute('data-shop');
+        });
     });
-});
+}
 
-// Proceed button 1 click event
-proceedBtn1.addEventListener('click', () => {
-    if (selectedShop) {
-        populateTable2(selectedShop);
-        transitionTables(table1Container, table2Container);
-    }
-});
+// Initialize proceed button 1 if it exists
+if (proceedBtn1) {
+    proceedBtn1.addEventListener('click', () => {
+        if (selectedShop && table1Container && table2Container) {
+            populateTable2(selectedShop);
+            transitionTables(table1Container, table2Container);
+        }
+    });
+}
 
 // Function to populate table 2
 function populateTable2(shop) {
+    if (!table2Body) return;
+    
     table2Body.innerHTML = '';
     const data = warrantyClaimData[shop];
     
@@ -131,28 +140,36 @@ function populateTable2(shop) {
         const rows = table2Body.querySelectorAll('tr');
         rows.forEach(r => r.classList.remove('selected-row'));
         row.classList.add('selected-row');
-        proceedBtn2.disabled = false;
+        if (proceedBtn2) proceedBtn2.disabled = false;
         selectedShop = shop;
     });
     
     table2Body.appendChild(row);
 }
 
-// Back button 2 click event
-backBtn2.addEventListener('click', () => {
-    transitionTables(table2Container, table1Container);
-});
+// Initialize back button 2 if it exists
+if (backBtn2) {
+    backBtn2.addEventListener('click', () => {
+        if (table2Container && table1Container) {
+            transitionTables(table2Container, table1Container);
+        }
+    });
+}
 
-// Proceed button 2 click event
-proceedBtn2.addEventListener('click', () => {
-    if (selectedShop) {
-        populateTable3(selectedShop);
-        transitionTables(table2Container, table3Container);
-    }
-});
+// Initialize proceed button 2 if it exists
+if (proceedBtn2) {
+    proceedBtn2.addEventListener('click', () => {
+        if (selectedShop && table2Container && table3Container) {
+            populateTable3(selectedShop);
+            transitionTables(table2Container, table3Container);
+        }
+    });
+}
 
 // Function to populate table 3
 function populateTable3(shop) {
+    if (!table3Body) return;
+    
     table3Body.innerHTML = '';
     const data = opportunityData[shop];
     
@@ -170,19 +187,29 @@ function populateTable3(shop) {
     });
 }
 
-// Back button 3 click event
-backBtn3.addEventListener('click', () => {
-    transitionTables(table3Container, table2Container);
-});
+// Initialize back button 3 if it exists
+if (backBtn3) {
+    backBtn3.addEventListener('click', () => {
+        if (table3Container && table2Container) {
+            transitionTables(table3Container, table2Container);
+        }
+    });
+}
 
-// Analyze button click event
-analyzeBtn.addEventListener('click', () => {
-    populateTable4(selectedShop);
-    transitionTables(table3Container, table4Container);
-});
+// Initialize analyze button if it exists
+if (analyzeBtn) {
+    analyzeBtn.addEventListener('click', () => {
+        if (table3Container && table4Container) {
+            populateTable4(selectedShop);
+            transitionTables(table3Container, table4Container);
+        }
+    });
+}
 
 // Function to populate table 4
 function populateTable4(shop) {
+    if (!table4Body) return;
+    
     table4Body.innerHTML = '';
     const data = recommendationsData[shop];
     
@@ -200,7 +227,7 @@ function populateTable4(shop) {
             const rows = table4Body.querySelectorAll('tr');
             rows.forEach(r => r.classList.remove('selected-row'));
             row.classList.add('selected-row');
-            proceedBtn4.disabled = false;
+            if (proceedBtn4) proceedBtn4.disabled = false;
             selectedBusinessPlan = item.businessPlan;
         });
         
@@ -208,21 +235,29 @@ function populateTable4(shop) {
     });
 }
 
-// Back button 4 click event
-backBtn4.addEventListener('click', () => {
-    transitionTables(table4Container, table3Container);
-});
+// Initialize back button 4 if it exists
+if (backBtn4) {
+    backBtn4.addEventListener('click', () => {
+        if (table4Container && table3Container) {
+            transitionTables(table4Container, table3Container);
+        }
+    });
+}
 
-// Proceed button 4 click event
-proceedBtn4.addEventListener('click', () => {
-    if (selectedBusinessPlan) {
-        populateTable5(selectedBusinessPlan);
-        transitionTables(table4Container, table5Container);
-    }
-});
+// Initialize proceed button 4 if it exists
+if (proceedBtn4) {
+    proceedBtn4.addEventListener('click', () => {
+        if (selectedBusinessPlan && table4Container && table5Container) {
+            populateTable5(selectedBusinessPlan);
+            transitionTables(table4Container, table5Container);
+        }
+    });
+}
 
 // Function to populate table 5
 function populateTable5(businessPlan) {
+    if (!table5Body) return;
+    
     table5Body.innerHTML = '';
     const data = priorityData[businessPlan];
     
@@ -245,23 +280,35 @@ function populateTable5(businessPlan) {
     });
 }
 
-// Back button 5 click event
-backBtn5.addEventListener('click', () => {
-    transitionTables(table5Container, table4Container);
-});
+// Initialize back button 5 if it exists
+if (backBtn5) {
+    backBtn5.addEventListener('click', () => {
+        if (table5Container && table4Container) {
+            transitionTables(table5Container, table4Container);
+        }
+    });
+}
 
 // Finish button click event
-finishBtn.addEventListener('click', () => {
-    alert('Process completed successfully!');
-    transitionTables(table5Container, table1Container);
-    // Reset selections
-    selectedShop = null;
-    selectedBusinessPlan = null;
-    proceedBtn1.disabled = true;
-    table1Body.querySelectorAll('tr').forEach(row => {
-        row.classList.remove('selected-row');
+if (finishBtn) {
+    finishBtn.addEventListener('click', () => {
+        alert('Process completed successfully!');
+        if (table5Container && table1Container) {
+            transitionTables(table5Container, table1Container);
+        }
+        // Reset selections
+        selectedShop = null;
+        selectedBusinessPlan = null;
+        if (proceedBtn1) {
+            proceedBtn1.disabled = true;
+        }
+        if (table1Body) {
+            table1Body.querySelectorAll('tr').forEach(row => {
+                row.classList.remove('selected-row');
+            });
+        }
     });
-});
+}
 
 // Enhanced sidebar functionality
 document.addEventListener('DOMContentLoaded', function() {
