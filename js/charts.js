@@ -48,20 +48,33 @@ function initializeCharts(claims) {
         .map(claim => parseInt(claim.TAT));
 
     const tatRanges = {
-        '0-10': 0,
-        '11-20': 0,
-        '21-30': 0,
-        '31-40': 0,
-        '41+': 0
+        '0-5': 0,
+        '6-10': 0,
+        '11-15': 0,
+        '16-20': 0,
+        '21-25': 0,
+        '26-30': 0,
+        '31+': 0
     };
 
     validTATs.forEach(tat => {
-        if (tat <= 10) tatRanges['0-10']++;
-        else if (tat <= 20) tatRanges['11-20']++;
-        else if (tat <= 30) tatRanges['21-30']++;
-        else if (tat <= 40) tatRanges['31-40']++;
-        else tatRanges['41+']++;
+        if (tat <= 5) tatRanges['0-5']++;
+        else if (tat <= 10) tatRanges['6-10']++;
+        else if (tat <= 15) tatRanges['11-15']++;
+        else if (tat <= 20) tatRanges['16-20']++;
+        else if (tat <= 25) tatRanges['21-25']++;
+        else if (tat <= 30) tatRanges['26-30']++;
+        else tatRanges['31+']++;
     });
+
+    // Calculate average TAT
+    const avgTAT = validTATs.length > 0 
+        ? validTATs.reduce((sum, tat) => sum + tat, 0) / validTATs.length 
+        : 0;
+
+    // Calculate percentage of claims within 30 days
+    const within30Days = validTATs.filter(tat => tat <= 30).length;
+    const within30DaysPercentage = (within30Days / validTATs.length) * 100;
 
     // Monthly Credits Trend
     const monthlyCredits = {};
@@ -259,19 +272,82 @@ function initializeCharts(claims) {
                 datasets: [{
                     label: 'Number of Claims',
                     data: Object.values(tatRanges),
-                    backgroundColor: 'rgba(0, 123, 255, 0.8)',
-                    borderColor: 'rgba(0, 123, 255, 1)',
+                    backgroundColor: function(context) {
+                        const value = context.raw;
+                        const max = Math.max(...Object.values(tatRanges));
+                        const ratio = value / max;
+                        return `rgba(78, 115, 223, ${0.3 + (ratio * 0.5)})`;
+                    },
+                    borderColor: '#4e73df',
                     borderWidth: 1,
                     borderRadius: 4,
-                    barThickness: 16
+                    barThickness: 20,
+                    maxBarThickness: 25
                 }]
             },
             options: {
-                ...modernOptions,
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false
+                },
                 plugins: {
-                    ...modernOptions.plugins,
                     legend: {
                         display: false
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                        titleColor: '#2d3748',
+                        bodyColor: '#4a5568',
+                        borderColor: 'rgba(0, 0, 0, 0.1)',
+                        borderWidth: 1,
+                        padding: 12,
+                        boxPadding: 6,
+                        callbacks: {
+                            title: function(context) {
+                                return `TAT Range: ${context[0].label} days`;
+                            },
+                            label: function(context) {
+                                const value = context.raw;
+                                const total = Object.values(tatRanges).reduce((sum, val) => sum + val, 0);
+                                const percentage = ((value / total) * 100).toFixed(1);
+                                return `${value} claims (${percentage}%)`;
+                            },
+                            afterBody: function() {
+                                return [
+                                    '',
+                                    `Average TAT: ${avgTAT.toFixed(1)} days`,
+                                    `${within30DaysPercentage.toFixed(1)}% within 30 days`
+                                ];
+                            }
+                        }
+                    },
+                    annotation: {
+                        annotations: {
+                            avgLine: {
+                                type: 'line',
+                                yMin: 0,
+                                yMax: Math.max(...Object.values(tatRanges)),
+                                xMin: '21-25',
+                                xMax: '21-25',
+                                borderColor: '#e74a3b',
+                                borderWidth: 2,
+                                borderDash: [5, 5],
+                                label: {
+                                    content: 'Avg TAT',
+                                    enabled: true,
+                                    position: 'top',
+                                    backgroundColor: '#e74a3b',
+                                    color: '#fff',
+                                    font: {
+                                        size: 11,
+                                        weight: '500'
+                                    },
+                                    padding: 4
+                                }
+                            }
+                        }
                     }
                 },
                 scales: {
@@ -282,10 +358,19 @@ function initializeCharts(claims) {
                         ticks: {
                             font: {
                                 size: 11,
-                                family: "'Inter', sans-serif",
                                 weight: '500'
                             },
                             color: '#6B7280'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Turnaround Time (Days)',
+                            font: {
+                                size: 12,
+                                weight: '500'
+                            },
+                            color: '#4B5563',
+                            padding: { top: 10 }
                         }
                     },
                     y: {
@@ -297,7 +382,6 @@ function initializeCharts(claims) {
                         ticks: {
                             font: {
                                 size: 11,
-                                family: "'Inter', sans-serif",
                                 weight: '500'
                             },
                             color: '#6B7280',
@@ -306,11 +390,23 @@ function initializeCharts(claims) {
                         },
                         border: {
                             display: false
+                        },
+                        title: {
+                            display: true,
+                            text: 'Number of Claims',
+                            font: {
+                                size: 12,
+                                weight: '500'
+                            },
+                            color: '#4B5563',
+                            padding: { bottom: 10 }
                         }
                     }
                 },
-                barPercentage: 0.8,
-                categoryPercentage: 0.8
+                animation: {
+                    duration: 800,
+                    easing: 'easeOutQuart'
+                }
             }
         });
     }
