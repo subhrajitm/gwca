@@ -7,7 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="css/styles.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
     <link href="css/index.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -41,15 +41,9 @@
             
             <ul class="sidebar-menu">
                 <li class="active">
-                    <a href="index.html">
+                    <a href="/">
                         <i class="fas fa-th-large"></i>
                         <span>Dashboard</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="claims.html">
-                        <i class="fas fa-file-invoice"></i>
-                        <span>Claims</span>
                     </a>
                 </li>
             </ul>
@@ -77,11 +71,6 @@
                 <h1 class="page-title mb-0">WCA Dashboard</h1>
             </div>
             <div class="header-actions d-flex align-items-center gap-2 ms-auto">
-                <!-- Claims Table Link -->
-                <a href="table.html" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-2">
-                    <i class="fas fa-table"></i>
-                    <span class="d-none d-md-inline">Claims Table</span>
-                </a>
                 <!-- Profile Section -->
                 <div class="dropdown">
                     <button class="d-flex align-items-center border-0 bg-transparent dropdown-toggle p-0" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
@@ -305,9 +294,6 @@
                     <div class="dashboard-widget">
                         <div class="widget-header">
                             <h2>Claims Overview</h2>
-                            <div class="widget-actions">
-                                <a href="metrics.html" class="btn btn-sm btn-outline-primary">View Details</a>
-                            </div>
                         </div>
                         <div class="widget-body">
                             <div class="row g-3">
@@ -362,9 +348,6 @@
                     <div class="dashboard-widget">
                         <div class="widget-header">
                             <h2>Financial Metrics</h2>
-                            <div class="widget-actions">
-                                <a href="metrics.html" class="btn btn-sm btn-outline-primary">View Details</a>
-                            </div>
                         </div>
                         <div class="widget-body">
                             <div class="row g-3">
@@ -425,9 +408,6 @@
                     <div class="dashboard-widget" style="width: 100%;">
                         <div class="widget-header">
                             <h2>Performance Metrics</h2>
-                            <div class="widget-actions">
-                                <a href="metrics.html" class="btn btn-sm btn-outline-primary">View Details</a>
-                            </div>
                         </div>
                         <div class="widget-body">
                             <div class="row g-3">
@@ -455,28 +435,8 @@
                                                     <th>Total Amount</th>
                                                 </tr>
                                             </thead>
-                                        <tbody>
-                                                <tr>
-                                                    <td>January 2024</td>
-                                                    <td>1</td>
-                                                    <td>1</td>
-                                                    <td>40 days</td>
-                                                    <td>$0.00</td>
-                                            </tr>
-                                                <tr>
-                                                    <td>April 2024</td>
-                                                    <td>1</td>
-                                                    <td>1</td>
-                                                    <td>24 days</td>
-                                                    <td>$49,191.00</td>
-                                            </tr>
-                                                <tr>
-                                                    <td>September 2024</td>
-                                                    <td>18</td>
-                                                    <td>18</td>
-                                                    <td>35 days</td>
-                                                    <td>$22,310.00</td>
-                                            </tr>
+                                            <tbody id="performanceMetricsTable">
+                                                <!-- Table will be populated dynamically -->
                                             </tbody>
                                         </table>
                                     </div>
@@ -498,262 +458,162 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="js/charts.js"></script>
+    <script src="{{ url_for('static', filename='js/charts.js') }}"></script>
     <script src="js/script.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Initialize dashboard
-        initializeDashboard();
-
-        // Function to initialize dashboard
-        async function initializeDashboard() {
-            try {
-                // Try multiple paths for data file
-                const paths = [
-                    './data/data.json',
-                    'data/data.json',
-                    '/data/data.json',
-                    '../data/data.json'
-                ];
-
-                let data = null;
-                for (const path of paths) {
-                    try {
-                        const response = await fetch(path);
-                        if (response.ok) {
-                            data = await response.json();
-                            console.log('Successfully loaded data from:', path);
-                            break;
-                        }
-                    } catch (error) {
-                        console.log('Failed to load data from:', path);
-                    }
-                }
-
-                if (!data) {
-                    throw new Error('Could not load data from any of the specified paths');
+        // Initialize dashboard with data passed from Flask
+        const claimsData = {{ data|tojson|safe }};
+        console.log('Received data:', claimsData); // Debug log
+        
+        if (!claimsData || claimsData.length === 0) {
+            console.error('No data received from server');
+            document.body.innerHTML = '<div style="text-align: center; padding: 20px;"><h2>No data available</h2><p>Please check the server logs for more information.</p></div>';
+            return;
         }
 
-                // Clear all tables initially
-                const tables = ['table1Body', 'table2Body', 'table3Body', 'table4Body', 'table5Body'];
-                tables.forEach(tableId => {
-                    const tableBody = document.getElementById(tableId);
-                    if (tableBody) {
-                        tableBody.innerHTML = '';
-                    }
-                });
-
+        // Function to initialize dashboard
+        function initializeDashboard(data) {
+            try {
+                console.log('Initializing dashboard with data length:', data.length);
+                
                 // Update dashboard statistics
                 updateDashboardStats(data);
 
                 // Initialize charts
                 initializeCharts(data);
 
-                // Populate tables
-                populateTable1(data);
-                populateTable2(data);
-                populateTable3(data);
-                populateTable4(data);
-                populateTable5(data);
-
             } catch (error) {
-                console.error('Error loading or processing data:', error);
-                document.getElementById('errorMessage').textContent = 
-                    'Error loading data. Please ensure data.json exists in the data directory and is properly formatted.';
+                console.error('Error processing data:', error);
+                document.body.innerHTML = '<div style="text-align: center; padding: 20px;"><h2>Error Processing Data</h2><p>' + error.message + '</p></div>';
             }
         }
 
         // Function to update dashboard statistics
         function updateDashboardStats(data) {
-            const claims = data || [];
-            
-            // Calculate basic metrics
-            const totalClaims = claims.length;
-            const approvedClaims = claims.filter(claim => claim['Claim Status'] === 'Approved').length;
-            const disallowedClaims = claims.filter(claim => claim['Claim Status'] === 'Disallowed').length;
-            
-            // Calculate credit metrics
-            const credits = claims.map(claim => {
-                const amount = parseFloat(claim['Credited Amount'].replace(/[^0-9.-]+/g, ''));
-                return isNaN(amount) ? 0 : amount;
-        });
-            const totalCredits = credits.reduce((sum, amount) => sum + amount, 0);
-            const avgCredit = credits.length > 0 ? totalCredits / credits.length : 0;
-            const maxCredit = Math.max(...credits, 0);
+            try {
+                // Calculate total claims
+                const totalClaims = data.length;
+                document.getElementById('totalClaims').textContent = totalClaims;
 
-            // Calculate requested credits metrics
-            const requestedCredits = claims.map(claim => {
-                const amount = parseFloat(claim['Requested Credits'].replace(/[^0-9.-]+/g, ''));
-                return isNaN(amount) ? 0 : amount;
-            });
-            const totalRequested = requestedCredits.reduce((sum, amount) => sum + amount, 0);
-            
-            // Calculate TAT metrics
-            const tats = claims
-                .map(claim => parseInt(claim.TAT))
-                .filter(tat => !isNaN(tat) && tat > 0);
-            const avgTAT = tats.length > 0 ? tats.reduce((sum, tat) => sum + tat, 0) / tats.length : 0;
-            const minTAT = tats.length > 0 ? Math.min(...tats) : 0;
-            const maxTAT = tats.length > 0 ? Math.max(...tats) : 0;
-            
-            // Calculate success rates
-            const successRate = totalClaims > 0 ? (approvedClaims / totalClaims) * 100 : 0;
-            const approvalRate = totalClaims > 0 ? (approvedClaims / totalClaims) * 100 : 0;
-            const rejectionRate = totalClaims > 0 ? (disallowedClaims / totalClaims) * 100 : 0;
+                // Calculate approved and disallowed claims
+                const approvedClaims = data.filter(claim => claim['Claim Status'] === 'Approved').length;
+                const disallowedClaims = data.filter(claim => claim['Claim Status'] === 'Disallowed').length;
+                document.getElementById('approvedClaims').textContent = approvedClaims;
+                document.getElementById('disallowedClaims').textContent = disallowedClaims;
 
-            // Calculate additional metrics
-            const uniqueCustomers = new Set(claims.map(claim => claim['Customer Name'])).size;
-            const uniqueParts = new Set(claims.map(claim => claim['Part Number']).filter(part => part !== '-')).size;
-            const avgRequestedAmount = totalRequested / totalClaims;
-            const creditEfficiency = totalRequested > 0 ? (totalCredits / totalRequested) * 100 : 0;
+                // Calculate total credits and averages
+                const totalCredits = data.reduce((sum, claim) => {
+                    const amount = parseFloat(claim['Credited Amount'].replace(/[^0-9.-]+/g, ''));
+                    console.log('Processing credit amount:', claim['Credited Amount'], 'Parsed:', amount); // Debug log
+                    return sum + (isNaN(amount) ? 0 : amount);
+                }, 0);
+                console.log('Total credits calculated:', totalCredits); // Debug log
+                document.getElementById('totalCredits').textContent = `$${totalCredits.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
 
-            // Update DOM elements
-            document.getElementById('totalClaims').textContent = totalClaims.toLocaleString();
-            document.getElementById('approvedClaims').textContent = approvedClaims.toLocaleString();
-            document.getElementById('disallowedClaims').textContent = disallowedClaims.toLocaleString();
-        
-            document.getElementById('totalCredits').textContent = '$' + totalCredits.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
-            document.getElementById('avgCredit').textContent = '$' + avgCredit.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
-            document.getElementById('maxCredit').textContent = '$' + maxCredit.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
-            
-            document.getElementById('avgTAT').textContent = Math.round(avgTAT) + ' days';
-            document.getElementById('minTAT').textContent = minTAT + ' days';
-            document.getElementById('maxTAT').textContent = maxTAT + ' days';
-            
-            document.getElementById('successRate').textContent = Math.round(successRate) + '%';
-            document.getElementById('approvalRate').textContent = Math.round(approvalRate) + '%';
-            document.getElementById('rejectionRate').textContent = Math.round(rejectionRate) + '%';
+                const avgCredit = totalCredits / totalClaims;
+                document.getElementById('avgCredit').textContent = `$${avgCredit.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
 
-            // Update customer summary table
-            const customerSummary = {};
-            claims.forEach(claim => {
-                const customer = claim['Customer Name'];
-                if (!customerSummary[customer]) {
-                    customerSummary[customer] = {
-                        totalClaims: 0,
-                        approvedClaims: 0,
-                        totalAmount: 0,
-                        totalTAT: 0,
-                        validTATCount: 0
-                    };
-                }
-                customerSummary[customer].totalClaims++;
-                if (claim['Claim Status'] === 'Approved') {
-                    customerSummary[customer].approvedClaims++;
-                }
-                const amount = parseFloat(claim['Credited Amount'].replace(/[^0-9.-]+/g, ''));
-                customerSummary[customer].totalAmount += isNaN(amount) ? 0 : amount;
-                if (claim.TAT && !isNaN(parseInt(claim.TAT))) {
-                    customerSummary[customer].totalTAT += parseInt(claim.TAT);
-                    customerSummary[customer].validTATCount++;
-                }
-            });
+                const maxCredit = Math.max(...data.map(claim => {
+                    const amount = parseFloat(claim['Credited Amount'].replace(/[^0-9.-]+/g, ''));
+                    console.log('Processing max credit amount:', claim['Credited Amount'], 'Parsed:', amount); // Debug log
+                    return isNaN(amount) ? 0 : amount;
+                }));
+                console.log('Max credit calculated:', maxCredit); // Debug log
+                document.getElementById('maxCredit').textContent = `$${maxCredit.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
 
-            // Update part summary table
-            const partSummary = {};
-            claims.forEach(claim => {
-                const partNumber = claim['Part Number'];
-                if (partNumber && partNumber !== '-') {
-                    if (!partSummary[partNumber]) {
-                        partSummary[partNumber] = {
-                            frequency: 0,
+                // Calculate TAT statistics
+                const tatValues = data.map(claim => parseInt(claim['TAT']) || 0);
+                const avgTAT = tatValues.reduce((a, b) => a + b, 0) / tatValues.length;
+                const minTAT = Math.min(...tatValues);
+                const maxTAT = Math.max(...tatValues);
+
+                document.getElementById('avgTAT').textContent = `${Math.round(avgTAT)} days`;
+                document.getElementById('minTAT').textContent = `${minTAT} days`;
+                document.getElementById('maxTAT').textContent = `${maxTAT} days`;
+
+                // Calculate success and approval rates
+                const successRate = (approvedClaims / totalClaims) * 100;
+                const approvalRate = (approvedClaims / totalClaims) * 100;
+                const rejectionRate = (disallowedClaims / totalClaims) * 100;
+
+                document.getElementById('successRate').textContent = `${successRate.toFixed(1)}%`;
+                document.getElementById('approvalRate').textContent = `${approvalRate.toFixed(1)}%`;
+                document.getElementById('rejectionRate').textContent = `${rejectionRate.toFixed(1)}%`;
+
+                // Update Performance Metrics Table
+                updatePerformanceMetricsTable(data);
+
+            } catch (error) {
+                console.error('Error updating dashboard stats:', error);
+                throw error;
+            }
+        }
+
+        // Function to update Performance Metrics Table
+        function updatePerformanceMetricsTable(data) {
+            try {
+                // Group data by month
+                const monthlyData = {};
+                
+                data.forEach(claim => {
+                    const submissionDate = new Date(claim['Claim Submission Date']);
+                    const monthKey = submissionDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+                    
+                    if (!monthlyData[monthKey]) {
+                        monthlyData[monthKey] = {
+                            submitted: 0,
+                            closed: 0,
+                            totalTAT: 0,
                             totalAmount: 0
                         };
                     }
-                    partSummary[partNumber].frequency++;
-                    const amount = parseFloat(claim['Credited Amount'].replace(/[^0-9.-]+/g, ''));
-                    partSummary[partNumber].totalAmount += isNaN(amount) ? 0 : amount;
-                }
-            });
-
-            // Update monthly summary table
-            const monthlySummary = {};
-            claims.forEach(claim => {
-                const date = new Date(claim['Claim Submission Date']);
-                const monthKey = `${date.toLocaleString('default', { month: 'long' })} ${date.getFullYear()}`;
+                    
+                    monthlyData[monthKey].submitted++;
+                    
+                    if (claim['Claim Close Date'] !== '-') {
+                        monthlyData[monthKey].closed++;
+                    }
+                    
+                    const tat = parseInt(claim['TAT']) || 0;
+                    monthlyData[monthKey].totalTAT += tat;
+                    
+                    const amount = parseFloat(claim['Credited Amount'].replace(/[^0-9.-]+/g, '')) || 0;
+                    monthlyData[monthKey].totalAmount += amount;
+                });
                 
-                if (!monthlySummary[monthKey]) {
-                    monthlySummary[monthKey] = {
-                        submitted: 0,
-                        closed: 0,
-                        totalTAT: 0,
-                        validTATCount: 0,
-                        totalAmount: 0
-                    };
-                }
+                // Sort months chronologically
+                const sortedMonths = Object.keys(monthlyData).sort((a, b) => {
+                    return new Date(a) - new Date(b);
+                });
                 
-                monthlySummary[monthKey].submitted++;
-                if (claim['Claim Close Date'] && claim['Claim Close Date'] !== '-') {
-                    monthlySummary[monthKey].closed++;
-                }
+                // Generate table rows
+                const tableBody = document.getElementById('performanceMetricsTable');
+                tableBody.innerHTML = '';
                 
-                if (claim.TAT && !isNaN(parseInt(claim.TAT))) {
-                    monthlySummary[monthKey].totalTAT += parseInt(claim.TAT);
-                    monthlySummary[monthKey].validTATCount++;
-                }
+                sortedMonths.forEach(month => {
+                    const monthData = monthlyData[month];
+                    const avgTAT = monthData.submitted > 0 ? Math.round(monthData.totalTAT / monthData.submitted) : 0;
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${month}</td>
+                        <td>${monthData.submitted}</td>
+                        <td>${monthData.closed}</td>
+                        <td>${avgTAT} days</td>
+                        <td>$${monthData.totalAmount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
                 
-                const amount = parseFloat(claim['Credited Amount'].replace(/[^0-9.-]+/g, ''));
-                monthlySummary[monthKey].totalAmount += isNaN(amount) ? 0 : amount;
-            });
-
-            // Update tables with processed data
-            updateCustomerTable(customerSummary);
-            updatePartTable(partSummary);
-            updateMonthlyTable(monthlySummary);
-        }
-
-        // Helper function to update customer table
-        function updateCustomerTable(customerSummary) {
-            const tbody = document.querySelector('.dashboard-widget:nth-child(1) table tbody');
-            if (tbody) {
-                tbody.innerHTML = Object.entries(customerSummary)
-                    .map(([customer, data]) => `
-                        <tr>
-                            <td>${customer}</td>
-                            <td>${data.totalClaims}</td>
-                            <td>${data.approvedClaims}</td>
-                            <td>$${data.totalAmount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                            <td>${data.validTATCount ? Math.round(data.totalTAT / data.validTATCount) : 0} days</td>
-                        </tr>
-                    `).join('');
+            } catch (error) {
+                console.error('Error updating performance metrics table:', error);
+                throw error;
             }
         }
 
-        // Helper function to update part table
-        function updatePartTable(partSummary) {
-            const tbody = document.querySelector('.dashboard-widget:nth-child(2) table tbody');
-            if (tbody) {
-                tbody.innerHTML = Object.entries(partSummary)
-                    .sort((a, b) => b[1].frequency - a[1].frequency)
-                    .slice(0, 5)
-                    .map(([part, data]) => `
-                        <tr>
-                            <td>${part}</td>
-                            <td>${data.frequency}</td>
-                            <td>$${data.totalAmount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                            <td>$${(data.totalAmount / data.frequency).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                        </tr>
-                    `).join('');
-            }
-        }
-
-        // Helper function to update monthly table
-        function updateMonthlyTable(monthlySummary) {
-            const tbody = document.querySelector('.dashboard-widget:nth-child(3) table tbody');
-            if (tbody) {
-                tbody.innerHTML = Object.entries(monthlySummary)
-                    .sort((a, b) => new Date(b[0]) - new Date(a[0]))
-                    .map(([month, data]) => `
-                <tr>
-                            <td>${month}</td>
-                            <td>${data.submitted}</td>
-                            <td>${data.closed}</td>
-                            <td>${data.validTATCount ? Math.round(data.totalTAT / data.validTATCount) : 0} days</td>
-                            <td>$${data.totalAmount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                </tr>
-            `).join('');
-            }
-        }
+        // Initialize the dashboard
+        initializeDashboard(claimsData);
     });
     </script>
 </body>
