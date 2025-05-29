@@ -8,8 +8,8 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
-    <link href="css/index.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
     <div class="dashboard">
@@ -17,23 +17,12 @@
         <aside class="sidebar">
             <div class="sidebar-header">
                 <div class="logo-container">
-                    <!-- <img src="https://www.genpact.com/design/images/logo.svg" alt="Genpact Logo" class="logo"> -->
                     <span class="logo-text">WCA</span>
                 </div>
                 <button class="sidebar-close d-md-none" id="sidebar-close">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            
-            <!-- <div class="user-profile-sidebar">
-                <div class="user-avatar">
-                    <img src="https://ui-avatars.com/api/?name=John+Doe&background=0066FF&color=fff" alt="User">
-                </div>
-                <div class="user-info">
-                    <h5>John Doe</h5>
-                    <p>Administrator</p>
-                </div>
-            </div> -->
             
             <div class="sidebar-divider">
                 <span>MAIN MENU</span>
@@ -59,36 +48,36 @@
 
         <!-- Main Content -->
         <main class="main-content">
-           <!-- Enhanced Header -->
-           <header class="header d-flex align-items-center justify-content-between gap-2">
-            <div class="breadcrumb-wrapper">
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb mb-1">
-                        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
-                    </ol>
-                </nav>
-                <h1 class="page-title mb-0">WCA Dashboard</h1>
-            </div>
-            <div class="header-actions d-flex align-items-center gap-2 ms-auto">
-                <!-- Profile Section -->
-                <div class="dropdown">
-                    <button class="d-flex align-items-center border-0 bg-transparent dropdown-toggle p-0" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="https://ui-avatars.com/api/?name=John+Doe&background=0066FF&color=fff" alt="User" class="rounded-circle" width="36" height="36">
-                        <div class="d-none d-md-block text-start ms-2">
-                            <div class="fw-semibold" style="font-size:1em;line-height:1.1;">John Doe</div>
-                            <div class="text-muted" style="font-size:0.85em;line-height:1;">Administrator</div>
-                        </div>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-                        <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>My Profile</a></li>
-                        <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Account Settings</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
-                    </ul>
+            <!-- Enhanced Header -->
+            <header class="header d-flex align-items-center justify-content-between gap-2">
+                <div class="breadcrumb-wrapper">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb mb-1">
+                            <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+                        </ol>
+                    </nav>
+                    <h1 class="page-title mb-0">WCA Dashboard</h1>
                 </div>
-            </div>
-        </header>
+                <div class="header-actions d-flex align-items-center gap-2 ms-auto">
+                    <!-- Profile Section -->
+                    <div class="dropdown">
+                        <button class="d-flex align-items-center border-0 bg-transparent dropdown-toggle p-0" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="https://ui-avatars.com/api/?name=John+Doe&background=0066FF&color=fff" alt="User" class="rounded-circle" width="36" height="36">
+                            <div class="d-none d-md-block text-start ms-2">
+                                <div class="fw-semibold" style="font-size:1em;line-height:1.1;">John Doe</div>
+                                <div class="text-muted" style="font-size:0.85em;line-height:1;">Administrator</div>
+                            </div>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>My Profile</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Account Settings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </header>
 
             <div class="content-wrapper">
                 <!-- Dashboard Stats -->
@@ -117,7 +106,7 @@
                                         <small class="text-danger fw-medium" id="disallowedClaims">0</small>
                                     </div>
                                 </div>
-                        </div>
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-3">
@@ -144,7 +133,7 @@
                                         <small class="text-success fw-medium" id="maxCredit">$0</small>
                                     </div>
                                 </div>
-                        </div>
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-3">
@@ -171,7 +160,7 @@
                                         <small class="text-info fw-medium" id="maxTAT">0 days</small>
                                     </div>
                                 </div>
-                        </div>
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-3">
@@ -182,263 +171,26 @@
                                         <div class="stats-icon bg-warning-gradient">
                                             <i class="fas fa-chart-line text-white"></i>
                                         </div>
-                        </div>
+                                    </div>
                                     <div class="flex-grow-1 ms-3">
                                         <h6 class="card-subtitle text-muted mb-1">Success Rate</h6>
                                         <h3 class="card-title mb-0 fw-bold" id="successRate">0%</h3>
-                        </div>
-                    </div>
+                                    </div>
+                                </div>
                                 <div class="stats-details">
                                     <div class="d-flex justify-content-between align-items-center">
                                         <small class="text-muted">Approval Rate</small>
                                         <small class="text-warning fw-medium" id="approvalRate">0%</small>
-                        </div>
+                                    </div>
                                     <div class="d-flex justify-content-between align-items-center mt-2">
                                         <small class="text-muted">Rejection Rate</small>
                                         <small class="text-warning fw-medium" id="rejectionRate">0%</small>
-                        </div>
-                    </div>
-                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-
-                <style>
-                .stats-card {
-                    border-radius: 0.75rem;
-                    transition: all 0.2s ease;
-                    background: #fff;
-                    border: 1px solid rgba(0,0,0,.03);
-                }
-                .stats-card:hover {
-                    transform: translateY(-2px);
-                    box-shadow: 0 0.5rem 1.5rem rgba(0,0,0,.05)!important;
-                }
-                .stats-icon {
-                    width: 36px;
-                    height: 36px;
-                    border-radius: 0.75rem;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    font-size: 1rem;
-                    box-shadow: 0 0.25rem 0.5rem rgba(0,0,0,.1);
-                }
-                .bg-primary-gradient {
-                    background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
-                }
-                .bg-success-gradient {
-                    background: linear-gradient(135deg, #1cc88a 0%, #13855c 100%);
-                }
-                .bg-info-gradient {
-                    background: linear-gradient(135deg, #36b9cc 0%, #258391 100%);
-                }
-                .bg-warning-gradient {
-                    background: linear-gradient(135deg, #f6c23e 0%, #dda20a 100%);
-                }
-                .card-title {
-                    font-size: 1.25rem;
-                    line-height: 1.2;
-                    color: #2d3748;
-                    font-weight: 600;
-                    letter-spacing: -0.02em;
-                }
-                .card-subtitle {
-                    font-size: 0.75rem;
-                    font-weight: 500;
-                    letter-spacing: 0.02em;
-                    color: #718096;
-                    text-transform: uppercase;
-                }
-                .stats-details {
-                    padding-top: 0.5rem;
-                    margin-top: 0.5rem;
-                    border-top: 1px solid rgba(0,0,0,.04);
-                }
-                .stats-details small {
-                    font-size: 0.75rem;
-                    font-weight: 500;
-                }
-                .stats-details .text-muted {
-                    color: #718096 !important;
-                }
-                .fw-medium {
-                    font-weight: 500 !important;
-                }
-                .text-success {
-                    color: #059669 !important;
-                }
-                .text-danger {
-                    color: #dc2626 !important;
-                }
-                .text-info {
-                    color: #0891b2 !important;
-                }
-                .text-warning {
-                    color: #d97706 !important;
-                }
-                .card-body {
-                    padding: 0.75rem;
-                }
-                .d-flex.justify-content-between {
-                    margin-bottom: 0.25rem;
-                }
-                .d-flex.justify-content-between:last-child {
-                    margin-bottom: 0;
-                }
-
-                /* Compact styles for dashboard widgets */
-                .dashboard-widget {
-                    margin-bottom: 1rem;
-                }
-                .widget-header {
-                    padding: 0.75rem 1rem;
-                    border-bottom: 1px solid rgba(0,0,0,.05);
-                }
-                .widget-header h2 {
-                    font-size: 1.1rem;
-                    margin: 0;
-                    font-weight: 600;
-                }
-                .widget-body {
-                    padding: 0.75rem;
-                }
-                .chart-wrapper {
-                    padding: 0.5rem;
-                    margin-bottom: 0.5rem;
-                }
-                .chart-title {
-                    font-size: 0.875rem;
-                    margin-bottom: 0.5rem;
-                    font-weight: 500;
-                }
-                .table {
-                    margin-bottom: 0;
-                }
-                .table th {
-                    font-size: 0.75rem;
-                    font-weight: 600;
-                    padding: 0.5rem;
-                    background-color: #f8fafc;
-                }
-                .table td {
-                    font-size: 0.75rem;
-                    padding: 0.5rem;
-                    vertical-align: middle;
-                }
-                .row.g-3 {
-                    --bs-gutter-y: 0.75rem;
-                }
-                .content-wrapper {
-                    padding: 1rem;
-                }
-                .header {
-                    padding: 0.75rem 1rem;
-                    margin-bottom: 1rem;
-                }
-                .page-title {
-                    font-size: 1.25rem;
-                    margin: 0;
-                }
-                .breadcrumb {
-                    margin-bottom: 0.25rem;
-                }
-                .breadcrumb-item {
-                    font-size: 0.75rem;
-                }
-
-                /* Enhanced table styles */
-                .table-container {
-                    background: #fff;
-                    border-radius: 0.5rem;
-                    box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,.075);
-                    overflow: hidden;
-                }
-                .table-header {
-                    background: #f8fafc;
-                    padding: 0.75rem 1rem;
-                    border-bottom: 1px solid rgba(0,0,0,.05);
-                }
-                .table-header h6 {
-                    margin: 0;
-                    font-size: 0.875rem;
-                    font-weight: 600;
-                    color: #2d3748;
-                }
-                .table {
-                    margin-bottom: 0;
-                }
-                .table th {
-                    font-size: 0.75rem;
-                    font-weight: 600;
-                    padding: 0.75rem;
-                    background: #f8fafc;
-                    border-bottom: 2px solid rgba(0,0,0,.05);
-                    white-space: nowrap;
-                }
-                .table td {
-                    font-size: 0.75rem;
-                    padding: 0.75rem;
-                    vertical-align: middle;
-                    border-bottom: 1px solid rgba(0,0,0,.05);
-                }
-                .table tbody tr:hover {
-                    background-color: #f8fafc;
-                }
-                .badge {
-                    font-size: 0.75rem;
-                    font-weight: 500;
-                    padding: 0.25rem 0.5rem;
-                    border-radius: 0.25rem;
-                }
-                .badge-success {
-                    background-color: #def7ec;
-                    color: #03543f;
-                }
-                .badge-warning {
-                    background-color: #fef3c7;
-                    color: #92400e;
-                }
-                .badge-danger {
-                    background-color: #fde8e8;
-                    color: #9b1c1c;
-                }
-                .progress {
-                    height: 0.5rem;
-                    border-radius: 0.25rem;
-                    background-color: #e2e8f0;
-                }
-                .progress-bar {
-                    border-radius: 0.25rem;
-                }
-                .metric-card {
-                    background: #fff;
-                    border-radius: 0.5rem;
-                    padding: 0.75rem;
-                    margin-bottom: 0.75rem;
-                    border: 1px solid rgba(0,0,0,.05);
-                }
-                .metric-title {
-                    font-size: 0.75rem;
-                    color: #64748b;
-                    margin-bottom: 0.25rem;
-                }
-                .metric-value {
-                    font-size: 1rem;
-                    font-weight: 600;
-                    color: #1e293b;
-                }
-                .metric-trend {
-                    font-size: 0.75rem;
-                    margin-top: 0.25rem;
-                }
-                .trend-up {
-                    color: #059669;
-                }
-                .trend-down {
-                    color: #dc2626;
-                }
-                </style>
 
                 <!-- Dashboard Widgets -->
                 <div class="dashboard-widgets">
@@ -547,11 +299,8 @@
                         </div>
                     </div>
                     
-                </div>    
-
-                <div class="dashboard-widgets" style="display: flex;">
                     <!-- Performance Metrics Widget -->
-                    <div class="dashboard-widget" style="width: 100%;">
+                    <div class="dashboard-widget">
                         <div class="widget-header">
                             <h2>Performance Metrics</h2>
                         </div>
@@ -603,359 +352,16 @@
                         </div>
                     </div>
                 </div>
-                
-
-                <!-- Original tables can remain below but hidden initially -->
-                <div id="table1-container" class="table-container fade-in" style="display: none;">
-                    <!-- Original table content -->
-                </div>
-                
-                <!-- Other tables remain unchanged -->
             </div>
         </main>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ url_for('static', filename='js/charts.js') }}"></script>
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Initialize dashboard with data passed from Flask
-        const claimsData = {{ data|tojson|safe }};
-        console.log('Received data:', claimsData); // Debug log
-        
-        if (!claimsData || claimsData.length === 0) {
-            console.error('No data received from server');
-            document.body.innerHTML = '<div style="text-align: center; padding: 20px;"><h2>No data available</h2><p>Please check the server logs for more information.</p></div>';
-            return;
-        }
-
-        // Function to initialize dashboard
-        function initializeDashboard(data) {
-            try {
-                console.log('Initializing dashboard with data length:', data.length);
-                
-                // Update dashboard statistics
-                updateDashboardStats(data);
-
-                // Initialize charts
-                initializeCharts(data);
-
-            } catch (error) {
-                console.error('Error processing data:', error);
-                document.body.innerHTML = '<div style="text-align: center; padding: 20px;"><h2>Error Processing Data</h2><p>' + error.message + '</p></div>';
-            }
-        }
-
-        // Function to update dashboard statistics
-        function updateDashboardStats(data) {
-            try {
-                // Calculate total claims
-                const totalClaims = data.length;
-                document.getElementById('totalClaims').textContent = totalClaims;
-
-                // Calculate approved and disallowed claims
-                const approvedClaims = data.filter(claim => claim['Claim Status'] === 'Approved').length;
-                const disallowedClaims = data.filter(claim => claim['Claim Status'] === 'Disallowed').length;
-                document.getElementById('approvedClaims').textContent = approvedClaims;
-                document.getElementById('disallowedClaims').textContent = disallowedClaims;
-
-                // Calculate total credits and averages
-                const totalCredits = data.reduce((sum, claim) => {
-                    const amount = parseFloat(claim['Credited Amount'].replace(/[^0-9.-]+/g, ''));
-                    console.log('Processing credit amount:', claim['Credited Amount'], 'Parsed:', amount); // Debug log
-                    return sum + (isNaN(amount) ? 0 : amount);
-                }, 0);
-                console.log('Total credits calculated:', totalCredits); // Debug log
-                document.getElementById('totalCredits').textContent = `$${totalCredits.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-
-                const avgCredit = totalCredits / totalClaims;
-                document.getElementById('avgCredit').textContent = `$${avgCredit.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-
-                const maxCredit = Math.max(...data.map(claim => {
-                    const amount = parseFloat(claim['Credited Amount'].replace(/[^0-9.-]+/g, ''));
-                    console.log('Processing max credit amount:', claim['Credited Amount'], 'Parsed:', amount); // Debug log
-                    return isNaN(amount) ? 0 : amount;
-                }));
-                console.log('Max credit calculated:', maxCredit); // Debug log
-                document.getElementById('maxCredit').textContent = `$${maxCredit.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-
-                // Calculate TAT statistics
-                const tatValues = data.map(claim => parseInt(claim['TAT']) || 0);
-                const avgTAT = tatValues.reduce((a, b) => a + b, 0) / tatValues.length;
-                const minTAT = Math.min(...tatValues);
-                const maxTAT = Math.max(...tatValues);
-
-                document.getElementById('avgTAT').textContent = `${Math.round(avgTAT)} days`;
-                document.getElementById('minTAT').textContent = `${minTAT} days`;
-                document.getElementById('maxTAT').textContent = `${maxTAT} days`;
-
-                // Calculate success and approval rates
-                const successRate = (approvedClaims / totalClaims) * 100;
-                const approvalRate = (approvedClaims / totalClaims) * 100;
-                const rejectionRate = (disallowedClaims / totalClaims) * 100;
-
-                document.getElementById('successRate').textContent = `${successRate.toFixed(1)}%`;
-                document.getElementById('approvalRate').textContent = `${approvalRate.toFixed(1)}%`;
-                document.getElementById('rejectionRate').textContent = `${rejectionRate.toFixed(1)}%`;
-
-                // Update Performance Metrics Table
-                updatePerformanceMetricsTable(data);
-
-                // Update Claims Overview Table
-                updateClaimsOverviewTable(data);
-
-                // Update Financial Metrics Table
-                updateFinancialMetricsTable(data);
-
-            } catch (error) {
-                console.error('Error updating dashboard stats:', error);
-                throw error;
-            }
-        }
-
-        // Function to update Claims Overview Table
-        function updateClaimsOverviewTable(data) {
-            try {
-                // Group data by customer
-                const customerData = {};
-                
-                data.forEach(claim => {
-                    const customer = claim['Customer Name'] || 'Unknown';
-                    
-                    if (!customerData[customer]) {
-                        customerData[customer] = {
-                            totalClaims: 0,
-                            approvedClaims: 0,
-                            pendingClaims: 0,
-                            disallowedClaims: 0,
-                            totalAmount: 0,
-                            totalTAT: 0
-                        };
-                    }
-                    
-                    customerData[customer].totalClaims++;
-                    
-                    switch(claim['Claim Status']) {
-                        case 'Approved':
-                            customerData[customer].approvedClaims++;
-                            break;
-                        case 'Pending':
-                            customerData[customer].pendingClaims++;
-                            break;
-                        case 'Disallowed':
-                            customerData[customer].disallowedClaims++;
-                            break;
-                    }
-                    
-                    const amount = parseFloat(claim['Credited Amount'].replace(/[^0-9.-]+/g, '')) || 0;
-                    customerData[customer].totalAmount += amount;
-                    
-                    const tat = parseInt(claim['TAT']) || 0;
-                    customerData[customer].totalTAT += tat;
-                });
-                
-                // Generate table rows
-                const tableBody = document.getElementById('claimsOverviewTable');
-                tableBody.innerHTML = '';
-                
-                Object.entries(customerData).forEach(([customer, stats]) => {
-                    const avgTAT = Math.round(stats.totalTAT / stats.totalClaims);
-                    const approvalRate = (stats.approvedClaims / stats.totalClaims) * 100;
-                    
-                    // Calculate status distribution
-                    const approvedWidth = (stats.approvedClaims / stats.totalClaims) * 100;
-                    const pendingWidth = (stats.pendingClaims / stats.totalClaims) * 100;
-                    const disallowedWidth = (stats.disallowedClaims / stats.totalClaims) * 100;
-                    
-                    // Determine performance status
-                    let performanceStatus = '';
-                    if (approvalRate >= 80) {
-                        performanceStatus = '<span class="badge badge-success">Excellent</span>';
-                    } else if (approvalRate >= 60) {
-                        performanceStatus = '<span class="badge badge-warning">Good</span>';
-                    } else {
-                        performanceStatus = '<span class="badge badge-danger">Needs Improvement</span>';
-                    }
-                    
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${customer}</td>
-                        <td>${stats.totalClaims}</td>
-                        <td>
-                            <div class="progress" style="width: 100px;">
-                                <div class="progress-bar bg-success" style="width: ${approvedWidth}%"></div>
-                                <div class="progress-bar bg-warning" style="width: ${pendingWidth}%"></div>
-                                <div class="progress-bar bg-danger" style="width: ${disallowedWidth}%"></div>
-                            </div>
-                        </td>
-                        <td>${approvalRate.toFixed(1)}%</td>
-                        <td>$${stats.totalAmount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                        <td>${avgTAT} days</td>
-                        <td>${performanceStatus}</td>
-                    `;
-                    tableBody.appendChild(row);
-                });
-                
-            } catch (error) {
-                console.error('Error updating claims overview table:', error);
-                throw error;
-            }
-        }
-
-        // Function to update Financial Metrics Table
-        function updateFinancialMetricsTable(data) {
-            try {
-                // Group data by part number
-                const partData = {};
-                
-                data.forEach(claim => {
-                    const partNumber = claim['Part Number'] || 'Unknown';
-                    
-                    if (!partData[partNumber]) {
-                        partData[partNumber] = {
-                            frequency: 0,
-                            totalAmount: 0,
-                            amounts: []
-                        };
-                    }
-                    
-                    partData[partNumber].frequency++;
-                    
-                    const amount = parseFloat(claim['Credited Amount'].replace(/[^0-9.-]+/g, '')) || 0;
-                    partData[partNumber].totalAmount += amount;
-                    partData[partNumber].amounts.push(amount);
-                });
-                
-                // Sort by total amount in descending order
-                const sortedParts = Object.entries(partData)
-                    .sort(([, a], [, b]) => b.totalAmount - a.totalAmount);
-                
-                // Generate table rows
-                const tableBody = document.getElementById('financialMetricsTable');
-                tableBody.innerHTML = '';
-                
-                sortedParts.forEach(([partNumber, stats]) => {
-                    const avgAmount = stats.totalAmount / stats.frequency;
-                    
-                    // Determine value category
-                    let valueCategory = '';
-                    if (avgAmount >= 5000) {
-                        valueCategory = '<span class="badge badge-success">High Value</span>';
-                    } else if (avgAmount >= 1000) {
-                        valueCategory = '<span class="badge badge-warning">Medium Value</span>';
-                    } else {
-                        valueCategory = '<span class="badge badge-danger">Low Value</span>';
-                    }
-                    
-                    // Calculate trend
-                    const amounts = stats.amounts;
-                    const trend = amounts.length > 1 ? 
-                        ((amounts[amounts.length - 1] - amounts[0]) / amounts[0] * 100).toFixed(1) : 0;
-                    
-                    const trendClass = trend > 0 ? 'trend-up' : 'trend-down';
-                    const trendIcon = trend > 0 ? '↑' : '↓';
-                    
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${partNumber}</td>
-                        <td>${stats.frequency}</td>
-                        <td>$${stats.totalAmount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                        <td>$${avgAmount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                        <td>${valueCategory}</td>
-                        <td class="${trendClass}">${trendIcon} ${Math.abs(trend)}%</td>
-                    `;
-                    tableBody.appendChild(row);
-                });
-                
-            } catch (error) {
-                console.error('Error updating financial metrics table:', error);
-                throw error;
-            }
-        }
-
-        // Function to update Performance Metrics Table
-        function updatePerformanceMetricsTable(data) {
-            try {
-                // Group data by month
-                const monthlyData = {};
-                
-                data.forEach(claim => {
-                    const submissionDate = new Date(claim['Claim Submission Date']);
-                    const monthKey = submissionDate.toLocaleString('default', { month: 'long', year: 'numeric' });
-                    
-                    if (!monthlyData[monthKey]) {
-                        monthlyData[monthKey] = {
-                            submitted: 0,
-                            closed: 0,
-                            totalTAT: 0,
-                            totalAmount: 0
-                        };
-                    }
-                    
-                    monthlyData[monthKey].submitted++;
-                    
-                    if (claim['Claim Close Date'] !== '-') {
-                        monthlyData[monthKey].closed++;
-                    }
-                    
-                    const tat = parseInt(claim['TAT']) || 0;
-                    monthlyData[monthKey].totalTAT += tat;
-                    
-                    const amount = parseFloat(claim['Credited Amount'].replace(/[^0-9.-]+/g, '')) || 0;
-                    monthlyData[monthKey].totalAmount += amount;
-                });
-                
-                // Sort months chronologically
-                const sortedMonths = Object.keys(monthlyData).sort((a, b) => {
-                    return new Date(a) - new Date(b);
-                });
-                
-                // Generate table rows
-                const tableBody = document.getElementById('performanceMetricsTable');
-                tableBody.innerHTML = '';
-                
-                sortedMonths.forEach(month => {
-                    const monthData = monthlyData[month];
-                    const avgTAT = Math.round(monthData.totalTAT / monthData.submitted);
-                    const completionRate = (monthData.closed / monthData.submitted) * 100;
-                    
-                    // Determine status
-                    let status = '';
-                    if (completionRate >= 90 && avgTAT <= 30) {
-                        status = '<span class="badge badge-success">On Track</span>';
-                    } else if (completionRate >= 70 && avgTAT <= 45) {
-                        status = '<span class="badge badge-warning">At Risk</span>';
-                    } else {
-                        status = '<span class="badge badge-danger">Delayed</span>';
-                    }
-                    
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${month}</td>
-                        <td>${monthData.submitted}</td>
-                        <td>${monthData.closed}</td>
-                        <td>
-                            <div class="progress" style="width: 100px;">
-                                <div class="progress-bar bg-success" style="width: ${completionRate}%"></div>
-                            </div>
-                            <small class="text-muted">${completionRate.toFixed(1)}%</small>
-                        </td>
-                        <td>${avgTAT} days</td>
-                        <td>$${monthData.totalAmount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                        <td>${status}</td>
-                    `;
-                    tableBody.appendChild(row);
-                });
-                
-            } catch (error) {
-                console.error('Error updating performance metrics table:', error);
-                throw error;
-            }
-        }
-
-        // Initialize the dashboard
-        initializeDashboard(claimsData);
-    });
+    <!-- Hidden data element with proper JSON formatting -->
+    <script type="application/json" id="claimsData">
+        {{ data | safe }}
     </script>
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 </body>
 </html>
