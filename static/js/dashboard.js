@@ -1,3 +1,11 @@
+// Global variables for data management
+let allData = [];
+let currentPage = 1;
+let totalPages = 1;
+const perPage = 1000;
+let isLoading = false;
+let hasMoreData = true;
+
 // Initialize dashboard with data passed from Flask
 function initializeDashboard(claimsData) {
     try {
@@ -558,50 +566,122 @@ function initializeCharts(data) {
     }
 }
 
-// Initialize dashboard when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
+// Function to load data asynchronously
+async function loadData(page = 1) {
+    if (isLoading || !hasMoreData) return;
+    
     try {
-        // Get the data from the hidden element
-        const claimsDataElement = document.getElementById('claimsData');
-        if (!claimsDataElement) {
-            throw new Error('Claims data element not found');
-        }
-
-        // Parse the JSON data
-        let claimsData;
-        try {
-            // Get the text content and parse it as JSON
-            const jsonText = claimsDataElement.textContent.trim();
-            console.log('Raw JSON data:', jsonText); // Debug log
-            claimsData = JSON.parse(jsonText);
-        } catch (parseError) {
-            console.error('Error parsing claims data:', parseError);
-            throw new Error('Invalid JSON data received from server');
-        }
-
-        // Validate the data
-        if (!Array.isArray(claimsData)) {
-            console.error('Data is not an array:', claimsData);
-            throw new Error('Claims data is not an array');
-        }
-
-        console.log('Parsed data:', claimsData); // Debug log
-        console.log('Data length:', claimsData.length); // Debug log
+        isLoading = true;
+        showLoadingIndicator();
         
-        if (claimsData.length === 0) {
-            console.warn('No data received from server');
-            document.body.innerHTML = '<div style="text-align: center; padding: 20px;"><h2>No data available</h2><p>Please check the server logs for more information.</p></div>';
-            return;
+        const response = await fetch(`/api/data?page=${page}&per_page=${perPage}`);
+        const result = await response.json();
+        
+        if (result.error) {
+            throw new Error(result.error);
         }
+        
+        if (page === 1) {
+            allData = result.data;
+        } else {
+            allData = [...allData, ...result.data];
+        }
+        
+        currentPage = result.page;
+        totalPages = result.total_pages;
+        hasMoreData = currentPage < totalPages;
+        
+        // Update dashboard with current data
+        updateDashboardStats(allData);
+        
+        // Initialize charts with current data
+        initializeCharts(allData);
+        
+        // Update tables with current data
+        updateClaimsOverviewTable(allData);
+        updateFinancialMetricsTable(allData);
+        updatePerformanceMetricsTable(allData);
+        
+        // If there's more data and we're not at the end, load the next page
+        if (hasMoreData) {
+            setTimeout(() => loadData(currentPage + 1), 100);
+        } else {
+            // Hide loading indicator only when all data is loaded
+            hideLoadingIndicator();
+        }
+        
+    } catch (error) {
+        console.error('Error loading data:', error);
+        hideLoadingIndicator();
+        showError('Error loading data: ' + error.message);
+    } finally {
+        isLoading = false;
+    }
+}
 
-        // Initialize the dashboard
-        initializeDashboard(claimsData);
+// Function to show loading indicator
+function showLoadingIndicator() {
+    let loadingDiv = document.getElementById('loading-spinner');
+    if (!loadingDiv) {
+        loadingDiv = document.createElement('div');
+        loadingDiv.id = 'loading-spinner';
+        loadingDiv.className = 'loading-spinner';
+        document.body.appendChild(loadingDiv);
+    }
+    loadingDiv.innerHTML = `
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p>Loading data... ${Math.round((currentPage / totalPages) * 100)}%</p>
+    `;
+    loadingDiv.style.display = 'block';
+}
+
+// Function to hide loading indicator
+function hideLoadingIndicator() {
+    const loadingDiv = document.getElementById('loading-spinner');
+    if (loadingDiv) {
+        loadingDiv.style.display = 'none';
+    }
+}
+
+// Function to show error message
+function showError(message) {
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'alert alert-danger';
+    errorDiv.style.position = 'fixed';
+    errorDiv.style.top = '20px';
+    errorDiv.style.right = '20px';
+    errorDiv.style.zIndex = '9999';
+    errorDiv.textContent = message;
+    document.body.appendChild(errorDiv);
+    setTimeout(() => errorDiv.remove(), 5000);
+}
+
+// Initialize dashboard when DOM is loaded
+document.addEventListener('DOMContentLoaded', async function() {
+    try {
+        // Get initial summary data
+        const summaryResponse = await fetch('/api/summary');
+        const summary = await summaryResponse.json();
+        
+        if (summary.error) {
+            throw new Error(summary.error);
+        }
+        
+        // Update summary statistics
+        document.getElementById('totalClaims').textContent = summary.total_claims;
+        document.getElementById('approvedClaims').textContent = summary.approved_claims;
+        document.getElementById('disallowedClaims').textContent = summary.disallowed_claims;
+        document.getElementById('totalCredits').textContent = `$${summary.total_credits.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        document.getElementById('avgTAT').textContent = `${Math.round(summary.avg_tat)} days`;
+        
+        // Start loading data
+        await loadData(1);
+        
     } catch (error) {
         console.error('Error initializing dashboard:', error);
-        document.body.innerHTML = `<div style="text-align: center; padding: 20px;">
-            <h2>Error Loading Dashboard</h2>
-            <p>${error.message}</p>
-            <p>Please check the console for more details.</p>
-        </div>`;
+        hideLoadingIndicator();
+        showError('Error initializing dashboard: ' + error.message);
     }
 }); 
