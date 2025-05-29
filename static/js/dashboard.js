@@ -6,6 +6,34 @@ const perPage = 1000;
 let isLoading = false;
 let hasMoreData = true;
 
+// Store chart instances
+let charts = {
+    claimStatus: null,
+    productLine: null,
+    warrantyType: null,
+    monthlyTrend: null,
+    tatDistribution: null,
+    claimsByMonth: null
+};
+
+// Function to destroy all charts
+function destroyCharts() {
+    Object.values(charts).forEach(chart => {
+        if (chart) {
+            chart.destroy();
+        }
+    });
+    // Reset chart instances
+    charts = {
+        claimStatus: null,
+        productLine: null,
+        warrantyType: null,
+        monthlyTrend: null,
+        tatDistribution: null,
+        claimsByMonth: null
+    };
+}
+
 // Initialize dashboard with data passed from Flask
 function initializeDashboard(claimsData) {
     try {
@@ -350,7 +378,10 @@ function initializeCharts(data) {
             pending: data.filter(claim => claim['Claim Status'] === 'Pending').length,
             disallowed: data.filter(claim => claim['Claim Status'] === 'Disallowed').length
         };
-        new Chart(claimStatusCtx, {
+        if (charts.claimStatus) {
+            charts.claimStatus.destroy();
+        }
+        charts.claimStatus = new Chart(claimStatusCtx, {
             type: 'doughnut',
             data: {
                 labels: ['Approved', 'Pending', 'Disallowed'],
@@ -377,7 +408,10 @@ function initializeCharts(data) {
             const productLine = claim['Product Line'] || 'Unknown';
             productLineData[productLine] = (productLineData[productLine] || 0) + 1;
         });
-        new Chart(productLineCtx, {
+        if (charts.productLine) {
+            charts.productLine.destroy();
+        }
+        charts.productLine = new Chart(productLineCtx, {
             type: 'bar',
             data: {
                 labels: Object.keys(productLineData),
@@ -416,7 +450,10 @@ function initializeCharts(data) {
                 : parseFloat(claim['Credited Amount']);
             warrantyTypeData[warrantyType] = (warrantyTypeData[warrantyType] || 0) + (isNaN(amount) ? 0 : amount);
         });
-        new Chart(warrantyTypeCtx, {
+        if (charts.warrantyType) {
+            charts.warrantyType.destroy();
+        }
+        charts.warrantyType = new Chart(warrantyTypeCtx, {
             type: 'pie',
             data: {
                 labels: Object.keys(warrantyTypeData),
@@ -447,7 +484,10 @@ function initializeCharts(data) {
                 : parseFloat(claim['Credited Amount']);
             monthlyData[monthKey] = (monthlyData[monthKey] || 0) + (isNaN(amount) ? 0 : amount);
         });
-        new Chart(monthlyTrendCtx, {
+        if (charts.monthlyTrend) {
+            charts.monthlyTrend.destroy();
+        }
+        charts.monthlyTrend = new Chart(monthlyTrendCtx, {
             type: 'line',
             data: {
                 labels: Object.keys(monthlyData),
@@ -494,7 +534,10 @@ function initializeCharts(data) {
             else if (tat <= 30) tatRanges['22-30 days']++;
             else tatRanges['>30 days']++;
         });
-        new Chart(tatDistributionCtx, {
+        if (charts.tatDistribution) {
+            charts.tatDistribution.destroy();
+        }
+        charts.tatDistribution = new Chart(tatDistributionCtx, {
             type: 'bar',
             data: {
                 labels: Object.keys(tatRanges),
@@ -531,7 +574,10 @@ function initializeCharts(data) {
             const monthKey = date.toLocaleString('default', { month: 'short', year: 'numeric' });
             claimsByMonth[monthKey] = (claimsByMonth[monthKey] || 0) + 1;
         });
-        new Chart(claimsByMonthCtx, {
+        if (charts.claimsByMonth) {
+            charts.claimsByMonth.destroy();
+        }
+        charts.claimsByMonth = new Chart(claimsByMonthCtx, {
             type: 'bar',
             data: {
                 labels: Object.keys(claimsByMonth),
@@ -583,6 +629,8 @@ async function loadData(page = 1) {
         
         if (page === 1) {
             allData = result.data;
+            // Destroy existing charts when starting fresh
+            destroyCharts();
         } else {
             allData = [...allData, ...result.data];
         }
