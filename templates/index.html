@@ -77,36 +77,36 @@
 
         <!-- Main Content -->
         <main class="main-content">
-            <!-- Enhanced Header -->
-            <header class="header d-flex align-items-center justify-content-between gap-2">
-                <div class="breadcrumb-wrapper">
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb mb-1">
-                            <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
-                        </ol>
-                    </nav>
-                    <h1 class="page-title mb-0">WCA Dashboard</h1>
+           <!-- Enhanced Header -->
+           <header class="header d-flex align-items-center justify-content-between gap-2">
+            <div class="breadcrumb-wrapper">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-1">
+                        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+                    </ol>
+                </nav>
+                <h1 class="page-title mb-0">WCA Dashboard</h1>
+            </div>
+            <div class="header-actions d-flex align-items-center gap-2 ms-auto">
+                <!-- Profile Section -->
+                <div class="dropdown">
+                    <button class="d-flex align-items-center border-0 bg-transparent dropdown-toggle p-0" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="https://ui-avatars.com/api/?name=John+Doe&background=0066FF&color=fff" alt="User" class="rounded-circle" width="36" height="36">
+                        <div class="d-none d-md-block text-start ms-2">
+                            <div class="fw-semibold" style="font-size:1em;line-height:1.1;">John Doe</div>
+                            <div class="text-muted" style="font-size:0.85em;line-height:1;">Administrator</div>
+                        </div>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>My Profile</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Account Settings</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                    </ul>
                 </div>
-                <div class="header-actions d-flex align-items-center gap-2 ms-auto">
-                    <!-- Profile Section -->
-                    <div class="dropdown">
-                        <button class="d-flex align-items-center border-0 bg-transparent dropdown-toggle p-0" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                            <img src="https://ui-avatars.com/api/?name=John+Doe&background=0066FF&color=fff" alt="User" class="rounded-circle" width="36" height="36">
-                            <div class="d-none d-md-block text-start ms-2">
-                                <div class="fw-semibold" style="font-size:1em;line-height:1.1;">John Doe</div>
-                                <div class="text-muted" style="font-size:0.85em;line-height:1;">Administrator</div>
-                            </div>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-                            <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>My Profile</a></li>
-                            <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Account Settings</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </header>
+            </div>
+        </header>
 
             <div class="content-wrapper">
                 <!-- Dashboard Stats -->
@@ -135,7 +135,7 @@
                                         <small class="text-danger fw-medium" id="disallowedClaims">0</small>
                                     </div>
                                 </div>
-                            </div>
+                        </div>
                         </div>
                     </div>
                     <div class="col-md-3">
@@ -162,7 +162,7 @@
                                         <small class="text-success fw-medium" id="maxCredit">$0</small>
                                     </div>
                                 </div>
-                            </div>
+                        </div>
                         </div>
                     </div>
                     <div class="col-md-3">
@@ -189,7 +189,7 @@
                                         <small class="text-info fw-medium" id="maxTAT">0 days</small>
                                     </div>
                                 </div>
-                            </div>
+                        </div>
                         </div>
                     </div>
                     <div class="col-md-3">
@@ -200,182 +200,98 @@
                                         <div class="stats-icon bg-warning-gradient">
                                             <i class="fas fa-chart-line text-white"></i>
                                         </div>
-                                    </div>
+                        </div>
                                     <div class="flex-grow-1 ms-3">
                                         <h6 class="card-subtitle text-muted mb-1">Success Rate</h6>
                                         <h3 class="card-title mb-0 fw-bold" id="successRate">0%</h3>
-                                    </div>
-                                </div>
+                        </div>
+                    </div>
                                 <div class="stats-details">
                                     <div class="d-flex justify-content-between align-items-center">
                                         <small class="text-muted">Approval Rate</small>
                                         <small class="text-warning fw-medium" id="approvalRate">0%</small>
-                                    </div>
+                        </div>
                                     <div class="d-flex justify-content-between align-items-center mt-2">
                                         <small class="text-muted">Rejection Rate</small>
                                         <small class="text-warning fw-medium" id="rejectionRate">0%</small>
-                                    </div>
-                                </div>
-                            </div>
+                        </div>
+                    </div>
+                        </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Dashboard Widgets -->
-                <div class="dashboard-widgets">
-                    <!-- Claims Overview Widget -->
-                    <div class="dashboard-widget">
-                        <div class="widget-header">
-                            <h2>Claims Overview</h2>
-                        </div>
-                        <div class="widget-body">
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <div class="chart-wrapper">
-                                        <h6 class="chart-title">Claim Status Distribution</h6>
-                                        <canvas id="claimStatusChart"></canvas>
-                                    </div>
+                <!-- Charts Grid -->
+                <div class="charts-grid">
+                    <div class="row g-3">
+                        <!-- First Row: Status and Product Distribution -->
+                        <div class="col-md-6">
+                            <div class="chart-card h-100">
+                                <div class="chart-header d-flex justify-content-between align-items-center">
+                                    <h3 class="mb-0">Claim Status</h3>
+                                    <button class="btn btn-sm btn-outline-secondary">Export</button>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="chart-wrapper">
-                                        <h6 class="chart-title">Claims by Product Line</h6>
-                                        <canvas id="productLineChart"></canvas>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="table-container">
-                                        <div class="table-header d-flex justify-content-between align-items-center">
-                                            <h6>Customer Claims Summary</h6>
-                                            <div class="d-flex gap-2">
-                                                <span class="badge badge-success">Approved</span>
-                                                <span class="badge badge-warning">Pending</span>
-                                                <span class="badge badge-danger">Disallowed</span>
-                                            </div>
-                                        </div>
-                                        <div class="table-responsive">
-                                            <table class="table table-sm">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Customer</th>
-                                                        <th>Total Claims</th>
-                                                        <th>Status Distribution</th>
-                                                        <th>Approval Rate</th>
-                                                        <th>Total Amount</th>
-                                                        <th>Avg. TAT</th>
-                                                        <th>Performance</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="claimsOverviewTable">
-                                                    <!-- Table will be populated dynamically -->
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
+                                <div class="chart-body">
+                                    <canvas id="claimStatusChart"></canvas>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    
-                    <!-- Financial Metrics Widget -->
-                    <div class="dashboard-widget">
-                        <div class="widget-header">
-                            <h2>Financial Metrics</h2>
-                        </div>
-                        <div class="widget-body">
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <div class="chart-wrapper">
-                                        <h6 class="chart-title">Credits by Warranty Type</h6>
-                                        <canvas id="warrantyTypeChart"></canvas>
-                                    </div>
+                        <div class="col-md-6">
+                            <div class="chart-card h-100">
+                                <div class="chart-header d-flex justify-content-between align-items-center">
+                                    <h3 class="mb-0">Product Line</h3>
+                                    <button class="btn btn-sm btn-outline-secondary">Export</button>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="chart-wrapper">
-                                        <h6 class="chart-title">Monthly Credits Trend</h6>
-                                        <canvas id="monthlyTrendChart"></canvas>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="table-container">
-                                        <div class="table-header d-flex justify-content-between align-items-center">
-                                            <h6>Part Analysis</h6>
-                                            <div class="d-flex gap-2">
-                                                <span class="badge badge-success">High Value</span>
-                                                <span class="badge badge-warning">Medium Value</span>
-                                                <span class="badge badge-danger">Low Value</span>
-                                            </div>
-                                        </div>
-                                        <div class="table-responsive">
-                                            <table class="table table-sm">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Part Number</th>
-                                                        <th>Frequency</th>
-                                                        <th>Total Amount</th>
-                                                        <th>Avg. Amount</th>
-                                                        <th>Value Category</th>
-                                                        <th>Trend</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="financialMetricsTable">
-                                                    <!-- Table will be populated dynamically -->
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
+                                <div class="chart-body">
+                                    <canvas id="productLineChart"></canvas>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    
-                    <!-- Performance Metrics Widget -->
-                    <div class="dashboard-widget">
-                        <div class="widget-header">
-                            <h2>Performance Metrics</h2>
+
+                        <!-- Second Row: Warranty and Monthly Trend -->
+                        <div class="col-md-6">
+                            <div class="chart-card h-100">
+                                <div class="chart-header d-flex justify-content-between align-items-center">
+                                    <h3 class="mb-0">Warranty Type</h3>
+                                    <button class="btn btn-sm btn-outline-secondary">Export</button>
+                                </div>
+                                <div class="chart-body">
+                                    <canvas id="warrantyTypeChart"></canvas>
+                                </div>
+                            </div>
                         </div>
-                        <div class="widget-body">
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <div class="chart-wrapper">
-                                        <h6 class="chart-title">TAT Distribution</h6>
-                                        <canvas id="tatDistributionChart"></canvas>
-                                    </div>
+                        <div class="col-md-6">
+                            <div class="chart-card h-100">
+                                <div class="chart-header d-flex justify-content-between align-items-center">
+                                    <h3 class="mb-0">Monthly Trend</h3>
+                                    <button class="btn btn-sm btn-outline-secondary">Export</button>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="chart-wrapper">
-                                        <h6 class="chart-title">Claims by Month</h6>
-                                        <canvas id="claimsByMonthChart"></canvas>
-                                    </div>
+                                <div class="chart-body">
+                                    <canvas id="monthlyTrendChart"></canvas>
                                 </div>
-                                <div class="col-12">
-                                    <div class="table-container">
-                                        <div class="table-header d-flex justify-content-between align-items-center">
-                                            <h6>Monthly Performance Analysis</h6>
-                                            <div class="d-flex gap-2">
-                                                <span class="badge badge-success">On Track</span>
-                                                <span class="badge badge-warning">At Risk</span>
-                                                <span class="badge badge-danger">Delayed</span>
-                                            </div>
-                                        </div>
-                                        <div class="table-responsive">
-                                            <table class="table table-sm">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Month</th>
-                                                        <th>Claims Submitted</th>
-                                                        <th>Claims Closed</th>
-                                                        <th>Completion Rate</th>
-                                                        <th>Avg. TAT</th>
-                                                        <th>Total Amount</th>
-                                                        <th>Status</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="performanceMetricsTable">
-                                                    <!-- Table will be populated dynamically -->
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
+                            </div>
+                        </div>
+
+                        <!-- Third Row: TAT and Claims by Month -->
+                        <div class="col-md-6">
+                            <div class="chart-card h-100">
+                                <div class="chart-header d-flex justify-content-between align-items-center">
+                                    <h3 class="mb-0">TAT Distribution</h3>
+                                    <button class="btn btn-sm btn-outline-secondary">Export</button>
+                                </div>
+                                <div class="chart-body">
+                                    <canvas id="tatDistributionChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="chart-card h-100">
+                                <div class="chart-header d-flex justify-content-between align-items-center">
+                                    <h3 class="mb-0">Claims by Month</h3>
+                                    <button class="btn btn-sm btn-outline-secondary">Export</button>
+                                </div>
+                                <div class="chart-body">
+                                    <canvas id="claimsByMonthChart"></canvas>
                                 </div>
                             </div>
                         </div>
@@ -386,8 +302,14 @@
     </div>
 
     <!-- Loading spinner -->
-    <div id="loading-spinner" class="loading-spinner">
-        <p>Loading...</p>
+    <div id="loading-spinner" class="loading-spinner" style="display: none;">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p>Loading data...</p>
     </div>
+
+    <!-- Hidden data element -->
+    <div id="claims-data" style="display: none;">{{ claims_data|tojson }}</div>
 </body>
 </html>

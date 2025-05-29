@@ -157,7 +157,16 @@ def index():
     # Load initial data for summary statistics
     data = load_data()
     if data.empty:
-        return render_template('index.html', data=json.dumps([]))
+        return render_template('index.html', 
+                             claims_data=json.dumps([]),
+                             summary=json.dumps({
+                                 'total_records': 0,
+                                 'total_claims': 0,
+                                 'approved_claims': 0,
+                                 'disallowed_claims': 0,
+                                 'total_credits': 0,
+                                 'avg_tat': 0
+                             }))
     
     try:
         # Get summary statistics
@@ -177,13 +186,16 @@ def index():
             'avg_tat': float(tat_values.mean())
         }
         
+        # Process the data for initial load
+        processed_data = process_data(data)
+        
         return render_template('index.html', 
-                             data=json.dumps([]),  # Empty initial data
+                             claims_data=json.dumps(processed_data),  # Pass processed data
                              summary=json.dumps(summary))
     except Exception as e:
         logger.error(f"Error in index route: {str(e)}", exc_info=True)
         return render_template('index.html', 
-                             data=json.dumps([]),
+                             claims_data=json.dumps([]),
                              summary=json.dumps({
                                  'total_records': 0,
                                  'total_claims': 0,

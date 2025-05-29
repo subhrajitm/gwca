@@ -58,312 +58,26 @@ function updateDashboardStats(data) {
         const totalClaims = data.length;
         document.getElementById('totalClaims').textContent = totalClaims;
 
-        // Calculate approved and disallowed claims
+        // Calculate approved claims
         const approvedClaims = data.filter(claim => claim['Claim Status'] === 'Approved').length;
-        const disallowedClaims = data.filter(claim => claim['Claim Status'] === 'Disallowed').length;
         document.getElementById('approvedClaims').textContent = approvedClaims;
-        document.getElementById('disallowedClaims').textContent = disallowedClaims;
 
-        // Calculate total credits and averages
+        // Calculate total credits
         const totalCredits = data.reduce((sum, claim) => {
-            const amount = typeof claim['Credited Amount'] === 'string' 
-                ? parseFloat(claim['Credited Amount'].replace(/[^0-9.-]+/g, '')) 
-                : parseFloat(claim['Credited Amount']);
-            console.log('Processing credit amount:', claim['Credited Amount'], 'Parsed:', amount); // Debug log
-            return sum + (isNaN(amount) ? 0 : amount);
-        }, 0);
-        console.log('Total credits calculated:', totalCredits); // Debug log
-        document.getElementById('totalCredits').textContent = `$${totalCredits.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-
-        const avgCredit = totalCredits / totalClaims;
-        document.getElementById('avgCredit').textContent = `$${avgCredit.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-
-        const maxCredit = Math.max(...data.map(claim => {
             const amount = typeof claim['Credited Amount'] === 'string'
                 ? parseFloat(claim['Credited Amount'].replace(/[^0-9.-]+/g, ''))
                 : parseFloat(claim['Credited Amount']);
-            console.log('Processing max credit amount:', claim['Credited Amount'], 'Parsed:', amount); // Debug log
-            return isNaN(amount) ? 0 : amount;
-        }));
-        console.log('Max credit calculated:', maxCredit); // Debug log
-        document.getElementById('maxCredit').textContent = `$${maxCredit.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            return sum + (isNaN(amount) ? 0 : amount);
+        }, 0);
+        document.getElementById('totalCredits').textContent = `$${totalCredits.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
 
-        // Calculate TAT statistics
+        // Calculate average TAT
         const tatValues = data.map(claim => parseInt(claim['TAT']) || 0);
         const avgTAT = tatValues.reduce((a, b) => a + b, 0) / tatValues.length;
-        const minTAT = Math.min(...tatValues);
-        const maxTAT = Math.max(...tatValues);
-
         document.getElementById('avgTAT').textContent = `${Math.round(avgTAT)} days`;
-        document.getElementById('minTAT').textContent = `${minTAT} days`;
-        document.getElementById('maxTAT').textContent = `${maxTAT} days`;
-
-        // Calculate success and approval rates
-        const successRate = (approvedClaims / totalClaims) * 100;
-        const approvalRate = (approvedClaims / totalClaims) * 100;
-        const rejectionRate = (disallowedClaims / totalClaims) * 100;
-
-        document.getElementById('successRate').textContent = `${successRate.toFixed(1)}%`;
-        document.getElementById('approvalRate').textContent = `${approvalRate.toFixed(1)}%`;
-        document.getElementById('rejectionRate').textContent = `${rejectionRate.toFixed(1)}%`;
-
-        // Update Performance Metrics Table
-        updatePerformanceMetricsTable(data);
-
-        // Update Claims Overview Table
-        updateClaimsOverviewTable(data);
-
-        // Update Financial Metrics Table
-        updateFinancialMetricsTable(data);
 
     } catch (error) {
         console.error('Error updating dashboard stats:', error);
-        throw error;
-    }
-}
-
-// Function to update Claims Overview Table
-function updateClaimsOverviewTable(data) {
-    try {
-        // Group data by customer
-        const customerData = {};
-        
-        data.forEach(claim => {
-            const customer = claim['Customer Name'] || 'Unknown';
-            
-            if (!customerData[customer]) {
-                customerData[customer] = {
-                    totalClaims: 0,
-                    approvedClaims: 0,
-                    pendingClaims: 0,
-                    disallowedClaims: 0,
-                    totalAmount: 0,
-                    totalTAT: 0
-                };
-            }
-            
-            customerData[customer].totalClaims++;
-            
-            switch(claim['Claim Status']) {
-                case 'Approved':
-                    customerData[customer].approvedClaims++;
-                    break;
-                case 'Pending':
-                    customerData[customer].pendingClaims++;
-                    break;
-                case 'Disallowed':
-                    customerData[customer].disallowedClaims++;
-                    break;
-            }
-            
-            const amount = typeof claim['Credited Amount'] === 'string'
-                ? parseFloat(claim['Credited Amount'].replace(/[^0-9.-]+/g, ''))
-                : parseFloat(claim['Credited Amount']);
-            customerData[customer].totalAmount += isNaN(amount) ? 0 : amount;
-            
-            const tat = parseInt(claim['TAT']) || 0;
-            customerData[customer].totalTAT += tat;
-        });
-        
-        // Generate table rows
-        const tableBody = document.getElementById('claimsOverviewTable');
-        tableBody.innerHTML = '';
-        
-        Object.entries(customerData).forEach(([customer, stats]) => {
-            const avgTAT = Math.round(stats.totalTAT / stats.totalClaims);
-            const approvalRate = (stats.approvedClaims / stats.totalClaims) * 100;
-            
-            // Calculate status distribution
-            const approvedWidth = (stats.approvedClaims / stats.totalClaims) * 100;
-            const pendingWidth = (stats.pendingClaims / stats.totalClaims) * 100;
-            const disallowedWidth = (stats.disallowedClaims / stats.totalClaims) * 100;
-            
-            // Determine performance status
-            let performanceStatus = '';
-            if (approvalRate >= 80) {
-                performanceStatus = '<span class="badge badge-success">Excellent</span>';
-            } else if (approvalRate >= 60) {
-                performanceStatus = '<span class="badge badge-warning">Good</span>';
-            } else {
-                performanceStatus = '<span class="badge badge-danger">Needs Improvement</span>';
-            }
-            
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${customer}</td>
-                <td>${stats.totalClaims}</td>
-                <td>
-                    <div class="progress" style="width: 100px;">
-                        <div class="progress-bar bg-success" style="width: ${approvedWidth}%"></div>
-                        <div class="progress-bar bg-warning" style="width: ${pendingWidth}%"></div>
-                        <div class="progress-bar bg-danger" style="width: ${disallowedWidth}%"></div>
-                    </div>
-                </td>
-                <td>${approvalRate.toFixed(1)}%</td>
-                <td>$${stats.totalAmount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                <td>${avgTAT} days</td>
-                <td>${performanceStatus}</td>
-            `;
-            tableBody.appendChild(row);
-        });
-        
-    } catch (error) {
-        console.error('Error updating claims overview table:', error);
-        throw error;
-    }
-}
-
-// Function to update Financial Metrics Table
-function updateFinancialMetricsTable(data) {
-    try {
-        // Group data by part number
-        const partData = {};
-        
-        data.forEach(claim => {
-            const partNumber = claim['Part Number'] || 'Unknown';
-            
-            if (!partData[partNumber]) {
-                partData[partNumber] = {
-                    frequency: 0,
-                    totalAmount: 0,
-                    amounts: []
-                };
-            }
-            
-            partData[partNumber].frequency++;
-            
-            const amount = typeof claim['Credited Amount'] === 'string'
-                ? parseFloat(claim['Credited Amount'].replace(/[^0-9.-]+/g, ''))
-                : parseFloat(claim['Credited Amount']);
-            partData[partNumber].totalAmount += isNaN(amount) ? 0 : amount;
-            partData[partNumber].amounts.push(amount);
-        });
-        
-        // Sort by total amount in descending order
-        const sortedParts = Object.entries(partData)
-            .sort(([, a], [, b]) => b.totalAmount - a.totalAmount);
-        
-        // Generate table rows
-        const tableBody = document.getElementById('financialMetricsTable');
-        tableBody.innerHTML = '';
-        
-        sortedParts.forEach(([partNumber, stats]) => {
-            const avgAmount = stats.totalAmount / stats.frequency;
-            
-            // Determine value category
-            let valueCategory = '';
-            if (avgAmount >= 5000) {
-                valueCategory = '<span class="badge badge-success">High Value</span>';
-            } else if (avgAmount >= 1000) {
-                valueCategory = '<span class="badge badge-warning">Medium Value</span>';
-            } else {
-                valueCategory = '<span class="badge badge-danger">Low Value</span>';
-            }
-            
-            // Calculate trend
-            const amounts = stats.amounts;
-            const trend = amounts.length > 1 ? 
-                ((amounts[amounts.length - 1] - amounts[0]) / amounts[0] * 100).toFixed(1) : 0;
-            
-            const trendClass = trend > 0 ? 'trend-up' : 'trend-down';
-            const trendIcon = trend > 0 ? '↑' : '↓';
-            
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${partNumber}</td>
-                <td>${stats.frequency}</td>
-                <td>$${stats.totalAmount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                <td>$${avgAmount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                <td>${valueCategory}</td>
-                <td class="${trendClass}">${trendIcon} ${Math.abs(trend)}%</td>
-            `;
-            tableBody.appendChild(row);
-        });
-        
-    } catch (error) {
-        console.error('Error updating financial metrics table:', error);
-        throw error;
-    }
-}
-
-// Function to update Performance Metrics Table
-function updatePerformanceMetricsTable(data) {
-    try {
-        // Group data by month
-        const monthlyData = {};
-        
-        data.forEach(claim => {
-            const submissionDate = new Date(claim['Claim Submission Date']);
-            const monthKey = submissionDate.toLocaleString('default', { month: 'long', year: 'numeric' });
-            
-            if (!monthlyData[monthKey]) {
-                monthlyData[monthKey] = {
-                    submitted: 0,
-                    closed: 0,
-                    totalTAT: 0,
-                    totalAmount: 0
-                };
-            }
-            
-            monthlyData[monthKey].submitted++;
-            
-            if (claim['Claim Close Date'] !== '-') {
-                monthlyData[monthKey].closed++;
-            }
-            
-            const tat = parseInt(claim['TAT']) || 0;
-            monthlyData[monthKey].totalTAT += tat;
-            
-            const amount = typeof claim['Credited Amount'] === 'string'
-                ? parseFloat(claim['Credited Amount'].replace(/[^0-9.-]+/g, ''))
-                : parseFloat(claim['Credited Amount']);
-            monthlyData[monthKey].totalAmount += isNaN(amount) ? 0 : amount;
-        });
-        
-        // Sort months chronologically
-        const sortedMonths = Object.keys(monthlyData).sort((a, b) => {
-            return new Date(a) - new Date(b);
-        });
-        
-        // Generate table rows
-        const tableBody = document.getElementById('performanceMetricsTable');
-        tableBody.innerHTML = '';
-        
-        sortedMonths.forEach(month => {
-            const monthData = monthlyData[month];
-            const avgTAT = Math.round(monthData.totalTAT / monthData.submitted);
-            const completionRate = (monthData.closed / monthData.submitted) * 100;
-            
-            // Determine status
-            let status = '';
-            if (completionRate >= 90 && avgTAT <= 30) {
-                status = '<span class="badge badge-success">On Track</span>';
-            } else if (completionRate >= 70 && avgTAT <= 45) {
-                status = '<span class="badge badge-warning">At Risk</span>';
-            } else {
-                status = '<span class="badge badge-danger">Delayed</span>';
-            }
-            
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${month}</td>
-                <td>${monthData.submitted}</td>
-                <td>${monthData.closed}</td>
-                <td>
-                    <div class="progress" style="width: 100px;">
-                        <div class="progress-bar bg-success" style="width: ${completionRate}%"></div>
-                    </div>
-                    <small class="text-muted">${completionRate.toFixed(1)}%</small>
-                </td>
-                <td>${avgTAT} days</td>
-                <td>$${monthData.totalAmount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                <td>${status}</td>
-            `;
-            tableBody.appendChild(row);
-        });
-        
-    } catch (error) {
-        console.error('Error updating performance metrics table:', error);
         throw error;
     }
 }
@@ -644,11 +358,6 @@ async function loadData(page = 1) {
         
         // Initialize charts with current data
         initializeCharts(allData);
-        
-        // Update tables with current data
-        updateClaimsOverviewTable(allData);
-        updateFinancialMetricsTable(allData);
-        updatePerformanceMetricsTable(allData);
         
         // If there's more data and we're not at the end, load the next page
         if (hasMoreData) {
