@@ -346,6 +346,98 @@
                 .breadcrumb-item {
                     font-size: 0.75rem;
                 }
+
+                /* Enhanced table styles */
+                .table-container {
+                    background: #fff;
+                    border-radius: 0.5rem;
+                    box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,.075);
+                    overflow: hidden;
+                }
+                .table-header {
+                    background: #f8fafc;
+                    padding: 0.75rem 1rem;
+                    border-bottom: 1px solid rgba(0,0,0,.05);
+                }
+                .table-header h6 {
+                    margin: 0;
+                    font-size: 0.875rem;
+                    font-weight: 600;
+                    color: #2d3748;
+                }
+                .table {
+                    margin-bottom: 0;
+                }
+                .table th {
+                    font-size: 0.75rem;
+                    font-weight: 600;
+                    padding: 0.75rem;
+                    background: #f8fafc;
+                    border-bottom: 2px solid rgba(0,0,0,.05);
+                    white-space: nowrap;
+                }
+                .table td {
+                    font-size: 0.75rem;
+                    padding: 0.75rem;
+                    vertical-align: middle;
+                    border-bottom: 1px solid rgba(0,0,0,.05);
+                }
+                .table tbody tr:hover {
+                    background-color: #f8fafc;
+                }
+                .badge {
+                    font-size: 0.75rem;
+                    font-weight: 500;
+                    padding: 0.25rem 0.5rem;
+                    border-radius: 0.25rem;
+                }
+                .badge-success {
+                    background-color: #def7ec;
+                    color: #03543f;
+                }
+                .badge-warning {
+                    background-color: #fef3c7;
+                    color: #92400e;
+                }
+                .badge-danger {
+                    background-color: #fde8e8;
+                    color: #9b1c1c;
+                }
+                .progress {
+                    height: 0.5rem;
+                    border-radius: 0.25rem;
+                    background-color: #e2e8f0;
+                }
+                .progress-bar {
+                    border-radius: 0.25rem;
+                }
+                .metric-card {
+                    background: #fff;
+                    border-radius: 0.5rem;
+                    padding: 0.75rem;
+                    margin-bottom: 0.75rem;
+                    border: 1px solid rgba(0,0,0,.05);
+                }
+                .metric-title {
+                    font-size: 0.75rem;
+                    color: #64748b;
+                    margin-bottom: 0.25rem;
+                }
+                .metric-value {
+                    font-size: 1rem;
+                    font-weight: 600;
+                    color: #1e293b;
+                }
+                .metric-trend {
+                    font-size: 0.75rem;
+                    margin-top: 0.25rem;
+                }
+                .trend-up {
+                    color: #059669;
+                }
+                .trend-down {
+                    color: #dc2626;
+                }
                 </style>
 
                 <!-- Dashboard Widgets -->
@@ -370,34 +462,33 @@
                                     </div>
                                 </div>
                                 <div class="col-12">
-                                    <div class="table-responsive">
-                                        <table class="table table-sm">
-                                            <thead>
-                                                <tr>
-                                                    <th>Customer</th>
-                                                    <th>Total Claims</th>
-                                                    <th>Approved Claims</th>
-                                                    <th>Total Amount</th>
-                                                    <th>Avg. TAT</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>WRNTCUST908</td>
-                                                    <td>19</td>
-                                                    <td>17</td>
-                                                    <td>$22,310.00</td>
-                                                    <td>33 days</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>WRNTCUST100</td>
-                                                    <td>1</td>
-                                                    <td>1</td>
-                                                    <td>$49,191.00</td>
-                                                    <td>24 days</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                    <div class="table-container">
+                                        <div class="table-header d-flex justify-content-between align-items-center">
+                                            <h6>Customer Claims Summary</h6>
+                                            <div class="d-flex gap-2">
+                                                <span class="badge badge-success">Approved</span>
+                                                <span class="badge badge-warning">Pending</span>
+                                                <span class="badge badge-danger">Disallowed</span>
+                                            </div>
+                                        </div>
+                                        <div class="table-responsive">
+                                            <table class="table table-sm">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Customer</th>
+                                                        <th>Total Claims</th>
+                                                        <th>Status Distribution</th>
+                                                        <th>Approval Rate</th>
+                                                        <th>Total Amount</th>
+                                                        <th>Avg. TAT</th>
+                                                        <th>Performance</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="claimsOverviewTable">
+                                                    <!-- Table will be populated dynamically -->
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -424,37 +515,32 @@
                                     </div>
                                 </div>
                                 <div class="col-12">
-                                    <div class="table-responsive">
-                                        <table class="table table-sm">
-                                            <thead>
-                                                <tr>
-                                                    <th>Part Number</th>
-                                                    <th>Frequency</th>
-                                                    <th>Total Amount</th>
-                                                    <th>Avg. Amount</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>BCD1246</td>
-                                                    <td>2</td>
-                                                    <td>$11,267.00</td>
-                                                    <td>$5,633.50</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>BCD1240</td>
-                                                    <td>1</td>
-                                                    <td>$1,628.00</td>
-                                                    <td>$1,628.00</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>BCD1241</td>
-                                                    <td>1</td>
-                                                    <td>$2,342.00</td>
-                                                    <td>$2,342.00</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                    <div class="table-container">
+                                        <div class="table-header d-flex justify-content-between align-items-center">
+                                            <h6>Part Analysis</h6>
+                                            <div class="d-flex gap-2">
+                                                <span class="badge badge-success">High Value</span>
+                                                <span class="badge badge-warning">Medium Value</span>
+                                                <span class="badge badge-danger">Low Value</span>
+                                            </div>
+                                        </div>
+                                        <div class="table-responsive">
+                                            <table class="table table-sm">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Part Number</th>
+                                                        <th>Frequency</th>
+                                                        <th>Total Amount</th>
+                                                        <th>Avg. Amount</th>
+                                                        <th>Value Category</th>
+                                                        <th>Trend</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="financialMetricsTable">
+                                                    <!-- Table will be populated dynamically -->
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -484,21 +570,33 @@
                                     </div>
                                 </div>
                                 <div class="col-12">
-                                    <div class="table-responsive">
-                                        <table class="table table-sm">
-                                            <thead>
-                                                <tr>
-                                                    <th>Month</th>
-                                                    <th>Claims Submitted</th>
-                                                    <th>Claims Closed</th>
-                                                    <th>Avg. TAT</th>
-                                                    <th>Total Amount</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="performanceMetricsTable">
-                                                <!-- Table will be populated dynamically -->
-                                            </tbody>
-                                        </table>
+                                    <div class="table-container">
+                                        <div class="table-header d-flex justify-content-between align-items-center">
+                                            <h6>Monthly Performance Analysis</h6>
+                                            <div class="d-flex gap-2">
+                                                <span class="badge badge-success">On Track</span>
+                                                <span class="badge badge-warning">At Risk</span>
+                                                <span class="badge badge-danger">Delayed</span>
+                                            </div>
+                                        </div>
+                                        <div class="table-responsive">
+                                            <table class="table table-sm">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Month</th>
+                                                        <th>Claims Submitted</th>
+                                                        <th>Claims Closed</th>
+                                                        <th>Completion Rate</th>
+                                                        <th>Avg. TAT</th>
+                                                        <th>Total Amount</th>
+                                                        <th>Status</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="performanceMetricsTable">
+                                                    <!-- Table will be populated dynamically -->
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -603,8 +701,174 @@
                 // Update Performance Metrics Table
                 updatePerformanceMetricsTable(data);
 
+                // Update Claims Overview Table
+                updateClaimsOverviewTable(data);
+
+                // Update Financial Metrics Table
+                updateFinancialMetricsTable(data);
+
             } catch (error) {
                 console.error('Error updating dashboard stats:', error);
+                throw error;
+            }
+        }
+
+        // Function to update Claims Overview Table
+        function updateClaimsOverviewTable(data) {
+            try {
+                // Group data by customer
+                const customerData = {};
+                
+                data.forEach(claim => {
+                    const customer = claim['Customer Name'] || 'Unknown';
+                    
+                    if (!customerData[customer]) {
+                        customerData[customer] = {
+                            totalClaims: 0,
+                            approvedClaims: 0,
+                            pendingClaims: 0,
+                            disallowedClaims: 0,
+                            totalAmount: 0,
+                            totalTAT: 0
+                        };
+                    }
+                    
+                    customerData[customer].totalClaims++;
+                    
+                    switch(claim['Claim Status']) {
+                        case 'Approved':
+                            customerData[customer].approvedClaims++;
+                            break;
+                        case 'Pending':
+                            customerData[customer].pendingClaims++;
+                            break;
+                        case 'Disallowed':
+                            customerData[customer].disallowedClaims++;
+                            break;
+                    }
+                    
+                    const amount = parseFloat(claim['Credited Amount'].replace(/[^0-9.-]+/g, '')) || 0;
+                    customerData[customer].totalAmount += amount;
+                    
+                    const tat = parseInt(claim['TAT']) || 0;
+                    customerData[customer].totalTAT += tat;
+                });
+                
+                // Generate table rows
+                const tableBody = document.getElementById('claimsOverviewTable');
+                tableBody.innerHTML = '';
+                
+                Object.entries(customerData).forEach(([customer, stats]) => {
+                    const avgTAT = Math.round(stats.totalTAT / stats.totalClaims);
+                    const approvalRate = (stats.approvedClaims / stats.totalClaims) * 100;
+                    
+                    // Calculate status distribution
+                    const approvedWidth = (stats.approvedClaims / stats.totalClaims) * 100;
+                    const pendingWidth = (stats.pendingClaims / stats.totalClaims) * 100;
+                    const disallowedWidth = (stats.disallowedClaims / stats.totalClaims) * 100;
+                    
+                    // Determine performance status
+                    let performanceStatus = '';
+                    if (approvalRate >= 80) {
+                        performanceStatus = '<span class="badge badge-success">Excellent</span>';
+                    } else if (approvalRate >= 60) {
+                        performanceStatus = '<span class="badge badge-warning">Good</span>';
+                    } else {
+                        performanceStatus = '<span class="badge badge-danger">Needs Improvement</span>';
+                    }
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${customer}</td>
+                        <td>${stats.totalClaims}</td>
+                        <td>
+                            <div class="progress" style="width: 100px;">
+                                <div class="progress-bar bg-success" style="width: ${approvedWidth}%"></div>
+                                <div class="progress-bar bg-warning" style="width: ${pendingWidth}%"></div>
+                                <div class="progress-bar bg-danger" style="width: ${disallowedWidth}%"></div>
+                            </div>
+                        </td>
+                        <td>${approvalRate.toFixed(1)}%</td>
+                        <td>$${stats.totalAmount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                        <td>${avgTAT} days</td>
+                        <td>${performanceStatus}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+                
+            } catch (error) {
+                console.error('Error updating claims overview table:', error);
+                throw error;
+            }
+        }
+
+        // Function to update Financial Metrics Table
+        function updateFinancialMetricsTable(data) {
+            try {
+                // Group data by part number
+                const partData = {};
+                
+                data.forEach(claim => {
+                    const partNumber = claim['Part Number'] || 'Unknown';
+                    
+                    if (!partData[partNumber]) {
+                        partData[partNumber] = {
+                            frequency: 0,
+                            totalAmount: 0,
+                            amounts: []
+                        };
+                    }
+                    
+                    partData[partNumber].frequency++;
+                    
+                    const amount = parseFloat(claim['Credited Amount'].replace(/[^0-9.-]+/g, '')) || 0;
+                    partData[partNumber].totalAmount += amount;
+                    partData[partNumber].amounts.push(amount);
+                });
+                
+                // Sort by total amount in descending order
+                const sortedParts = Object.entries(partData)
+                    .sort(([, a], [, b]) => b.totalAmount - a.totalAmount);
+                
+                // Generate table rows
+                const tableBody = document.getElementById('financialMetricsTable');
+                tableBody.innerHTML = '';
+                
+                sortedParts.forEach(([partNumber, stats]) => {
+                    const avgAmount = stats.totalAmount / stats.frequency;
+                    
+                    // Determine value category
+                    let valueCategory = '';
+                    if (avgAmount >= 5000) {
+                        valueCategory = '<span class="badge badge-success">High Value</span>';
+                    } else if (avgAmount >= 1000) {
+                        valueCategory = '<span class="badge badge-warning">Medium Value</span>';
+                    } else {
+                        valueCategory = '<span class="badge badge-danger">Low Value</span>';
+                    }
+                    
+                    // Calculate trend
+                    const amounts = stats.amounts;
+                    const trend = amounts.length > 1 ? 
+                        ((amounts[amounts.length - 1] - amounts[0]) / amounts[0] * 100).toFixed(1) : 0;
+                    
+                    const trendClass = trend > 0 ? 'trend-up' : 'trend-down';
+                    const trendIcon = trend > 0 ? '↑' : '↓';
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${partNumber}</td>
+                        <td>${stats.frequency}</td>
+                        <td>$${stats.totalAmount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                        <td>$${avgAmount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                        <td>${valueCategory}</td>
+                        <td class="${trendClass}">${trendIcon} ${Math.abs(trend)}%</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+                
+            } catch (error) {
+                console.error('Error updating financial metrics table:', error);
                 throw error;
             }
         }
@@ -652,15 +916,33 @@
                 
                 sortedMonths.forEach(month => {
                     const monthData = monthlyData[month];
-                    const avgTAT = monthData.submitted > 0 ? Math.round(monthData.totalTAT / monthData.submitted) : 0;
+                    const avgTAT = Math.round(monthData.totalTAT / monthData.submitted);
+                    const completionRate = (monthData.closed / monthData.submitted) * 100;
+                    
+                    // Determine status
+                    let status = '';
+                    if (completionRate >= 90 && avgTAT <= 30) {
+                        status = '<span class="badge badge-success">On Track</span>';
+                    } else if (completionRate >= 70 && avgTAT <= 45) {
+                        status = '<span class="badge badge-warning">At Risk</span>';
+                    } else {
+                        status = '<span class="badge badge-danger">Delayed</span>';
+                    }
                     
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td>${month}</td>
                         <td>${monthData.submitted}</td>
                         <td>${monthData.closed}</td>
+                        <td>
+                            <div class="progress" style="width: 100px;">
+                                <div class="progress-bar bg-success" style="width: ${completionRate}%"></div>
+                            </div>
+                            <small class="text-muted">${completionRate.toFixed(1)}%</small>
+                        </td>
                         <td>${avgTAT} days</td>
                         <td>$${monthData.totalAmount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                        <td>${status}</td>
                     `;
                     tableBody.appendChild(row);
                 });

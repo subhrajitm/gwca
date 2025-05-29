@@ -14,7 +14,7 @@ def load_data():
     try:
         # Get the absolute path to the Excel file
         current_dir = os.path.dirname(os.path.abspath(__file__))
-        excel_path = os.path.join(current_dir, 'data', 'claims_data.xlsx')
+        excel_path = os.path.join(current_dir, 'data', 'cdata.xlsx')
         
         logger.debug(f"Attempting to read Excel file from: {excel_path}")
         
