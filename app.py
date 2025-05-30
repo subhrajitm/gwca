@@ -7,12 +7,31 @@ from datetime import datetime
 from json import JSONEncoder
 from functools import lru_cache
 import numpy as np
+from concurrent.futures import ThreadPoolExecutor
+import time
+from typing import Dict, List, Any, Optional
+import threading
 
 # Configure logging
-logging.basicConfig(level=logging.INFO)  # Changed to INFO to reduce logging overhead
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
 logger = logging.getLogger(__name__)
 
-# Custom JSON encoder to handle pandas Timestamp objects
+# Global variables
+df = None
+CHUNK_SIZE = 1000
+CACHE_SIZE = 128
+MAX_WORKERS = 4
+loading_status = {
+    'is_loading': False,
+    'progress': 0,
+    'status': '',
+    'error': None
+}
+loading_lock = threading.Lock()
+
 class CustomJSONEncoder(JSONEncoder):
     def default(self, obj):
         if isinstance(obj, (pd.Timestamp, datetime)):
@@ -28,153 +47,313 @@ class CustomJSONEncoder(JSONEncoder):
 app = Flask(__name__)
 app.json_encoder = CustomJSONEncoder
 
-# Global variables
-df = None
-CHUNK_SIZE = 1000  # Number of records to process at once
-CACHE_SIZE = 128   # Number of cached results
+def update_loading_status(progress: float, status: str, error: Optional[str] = None):
+    """Update the loading status with thread safety"""
+    with loading_lock:
+        loading_status['progress'] = progress
+        loading_status['status'] = status
+        loading_status['error'] = error
 
-def load_data():
-    """Load data from Excel file with optimized memory usage"""
+def load_data_in_background():
+    """Load data in background thread with progress tracking"""
     global df
     try:
-        if df is None:
-            current_dir = os.path.dirname(os.path.abspath(__file__))
-            excel_path = os.path.join(current_dir, 'data', 'claims_data.xlsx')
-            
-            if not os.path.exists(excel_path):
-                logger.error(f"Excel file not found at: {excel_path}")
-                return pd.DataFrame()
-            
-            # First read without any parsing to get the actual column names
-            df = pd.read_excel(excel_path)
-            logger.info(f"Original columns: {df.columns.tolist()}")
-            
-            # Map the actual column names to our expected names
-            column_mapping = {
-                'Credit to Customer': 'Credited Amount',
-                'Claim Status': 'Claim Status',
-                'Product Line': 'Product Line',
-                'Warranty Type-Final': 'Warranty Type',
-                'Claim Submitted Date': 'Claim Submission Date',
-                'Claim Close Date': 'Claim Close Date',
-                'TAT': 'TAT',
-                'Requested Credits': 'Requested Credits'
-            }
-            
-            # Rename columns that exist in the mapping
-            for old_col, new_col in column_mapping.items():
-                if old_col in df.columns:
-                    df = df.rename(columns={old_col: new_col})
-            
-            # Now read the file again with proper parsing
-            df = pd.read_excel(
-                excel_path,
-                dtype={
-                    'Claim Status': 'category',
-                    'Product Line': 'category',
-                    'Warranty Type-Final': 'category',
-                    'TAT': 'float32',
-                    'Credit to Customer': 'float32',
-                    'Requested Credits': 'float32'
-                },
-                parse_dates=['Claim Submitted Date', 'Claim Close Date']
-            )
-            
-            # Rename columns after reading
-            for old_col, new_col in column_mapping.items():
-                if old_col in df.columns:
-                    df = df.rename(columns={old_col: new_col})
-            
-            # Optimize memory usage
-            for col in df.select_dtypes(include=['object']).columns:
-                df[col] = df[col].astype('category')
-            
-            logger.info(f"Loaded data shape: {df.shape}")
-            logger.info(f"Final columns: {df.columns.tolist()}")
+        update_loading_status(0, "Starting data load...")
         
-        return df
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        excel_path = os.path.join(current_dir, 'data', 'claims_data.xlsx')
+        
+        if not os.path.exists(excel_path):
+            update_loading_status(0, "Error", f"Excel file not found at: {excel_path}")
+            return
+        
+        update_loading_status(10, "Reading Excel file...")
+        
+        # First read without any parsing to get column names
+        temp_df = pd.read_excel(excel_path)
+        logger.info(f"Original columns: {temp_df.columns.tolist()}")
+        logger.info(f"Sample data from first read:\n{temp_df.head()}")
+        
+        update_loading_status(30, "Processing column mappings...")
+        
+        # Column mapping
+        column_mapping = {
+            'Credit to Customer': 'Credited Amount',
+            'Claim Status': 'Claim Status',
+            'Product Line': 'Product Line',
+            'Warranty Type-Final': 'Warranty Type',
+            'Claim Submitted Date': 'Claim Submitted Date',  # Keep original column name
+            'Claim Close Date': 'Claim Close Date',
+            'TAT': 'TAT',
+            'Requested Credits': 'Requested Credits'
+        }
+        
+        update_loading_status(40, "Reading data with optimizations...")
+        
+        # Read with optimizations and handle non-numeric values
+        df = pd.read_excel(
+            excel_path,
+            dtype={
+                'Claim Status': 'category',
+                'Product Line': 'category',
+                'Warranty Type-Final': 'category',
+                'Requested Credits': 'float32'
+            }
+        )
+        
+        update_loading_status(60, "Optimizing memory usage...")
+        
+        # Log available columns before renaming
+        logger.info(f"Available columns before renaming: {df.columns.tolist()}")
+        
+        # Rename columns
+        for old_col, new_col in column_mapping.items():
+            if old_col in df.columns:
+                df = df.rename(columns={old_col: new_col})
+                logger.info(f"Renamed column {old_col} to {new_col}")
+            else:
+                logger.warning(f"Column {old_col} not found in DataFrame")
+        
+        # Log available columns after renaming
+        logger.info(f"Available columns after renaming: {df.columns.tolist()}")
+        
+        # Clean and convert Credit to Customer column
+        if 'Credit to Customer' in df.columns:
+            df['Credit to Customer'] = df['Credit to Customer'].apply(
+                lambda x: float(str(x).replace('$', '').replace(',', '')) 
+                if pd.notna(x) and str(x).replace('$', '').replace(',', '').replace('.', '').isdigit() 
+                else 0.0
+            )
+            df = df.rename(columns={'Credit to Customer': 'Credited Amount'})
+        
+        # Process date columns
+        date_columns = {
+            'Claim Submitted Date': 'Claim Submitted Date',  # Keep original column name
+            'Claim Close Date': 'Claim Close Date'
+        }
+        
+        for old_col, new_col in date_columns.items():
+            if old_col in df.columns:
+                logger.info(f"Processing date column {old_col}")
+                logger.info(f"Sample dates before processing: {df[old_col].head().tolist()}")
+                logger.info(f"Date column type before processing: {df[old_col].dtype}")
+                
+                # Convert to datetime
+                df[old_col] = pd.to_datetime(df[old_col], errors='coerce')
+                
+                logger.info(f"Sample dates after processing: {df[old_col].head().tolist()}")
+                logger.info(f"Date column type after processing: {df[old_col].dtype}")
+                logger.info(f"Null dates in {old_col}: {df[old_col].isna().sum()}")
+                
+                # Format dates as strings in YYYY-MM-DD format
+                df[old_col] = df[old_col].dt.strftime('%Y-%m-%d')
+                logger.info(f"Sample dates after formatting: {df[old_col].head().tolist()}")
+                
+                # Rename the column after processing
+                df = df.rename(columns={old_col: new_col})
+                logger.info(f"Renamed date column {old_col} to {new_col}")
+            else:
+                logger.warning(f"Date column {old_col} not found in DataFrame")
+        
+        # Log available columns after date processing
+        logger.info(f"Available columns after date processing: {df.columns.tolist()}")
+        
+        # Convert TAT to float
+        if 'TAT' in df.columns:
+            df['TAT'] = df['TAT'].apply(
+                lambda x: float(x) if pd.notna(x) and not isinstance(x, (pd.Timestamp, datetime)) else 0.0
+            )
+        
+        # Optimize memory usage
+        for col in df.select_dtypes(include=['object']).columns:
+            if col not in date_columns.values():  # Don't convert date columns to category
+                df[col] = df[col].astype('category')
+        
+        update_loading_status(80, "Finalizing data processing...")
+        
+        # Additional optimizations
+        df = df.replace([np.inf, -np.inf], np.nan)
+        df = df.fillna({
+            'Credited Amount': 0,
+            'Requested Credits': 0,
+            'TAT': 0
+        })
+        
+        # Ensure all required columns exist
+        required_columns = [
+            'Credited Amount', 'Claim Status', 'Product Line', 
+            'Warranty Type', 'Claim Submitted Date', 'Claim Close Date', 
+            'TAT', 'Requested Credits'
+        ]
+        
+        for col in required_columns:
+            if col not in df.columns:
+                if col in ['Credited Amount', 'Requested Credits', 'TAT']:
+                    df[col] = 0
+                elif col in date_columns.values():
+                    df[col] = pd.NaT
+                else:
+                    df[col] = None
+        
+        logger.info(f"Loaded data shape: {df.shape}")
+        logger.info(f"Final columns: {df.columns.tolist()}")
+        logger.info(f"Sample data:\n{df.head()}")
+        
+        update_loading_status(100, "Data loading complete!")
+        
     except Exception as e:
-        logger.error(f"Error loading data: {str(e)}", exc_info=True)
-        return pd.DataFrame()
+        error_msg = f"Error loading data: {str(e)}"
+        logger.error(error_msg, exc_info=True)
+        update_loading_status(0, "Error", error_msg)
+
+def load_data():
+    """Load data with background processing"""
+    global df, loading_status
+    
+    if df is not None:
+        return df
+    
+    with loading_lock:
+        if loading_status['is_loading']:
+            return None
+        
+        loading_status['is_loading'] = True
+        loading_status['progress'] = 0
+        loading_status['status'] = "Starting data load..."
+        loading_status['error'] = None
+    
+    # Start background loading
+    with ThreadPoolExecutor(max_workers=1) as executor:
+        executor.submit(load_data_in_background)
+    
+    return None
 
 @lru_cache(maxsize=CACHE_SIZE)
 def get_summary_stats():
-    """Get cached summary statistics"""
-    data = load_data()
-    if data.empty:
+    """Get cached summary statistics with error handling"""
+    try:
+        data = load_data()
+        if data is None or data.empty:
+            return {
+                'total_records': 0,
+                'total_claims': 0,
+                'approved_claims': 0,
+                'disallowed_claims': 0,
+                'total_credits': 0,
+                'avg_tat': 0,
+                'success_rate': 0,
+                'approval_rate': 0,
+                'rejection_rate': 0
+            }
+        
+        # Use vectorized operations for better performance
+        approved_mask = data['Claim Status'] == 'Approved'
+        disallowed_mask = data['Claim Status'] == 'Disallowed'
+        
+        total_claims = len(data)
+        approved_claims = int(approved_mask.sum())
+        disallowed_claims = int(disallowed_mask.sum())
+        
+        # Calculate rates
+        success_rate = (approved_claims / total_claims * 100) if total_claims > 0 else 0
+        approval_rate = (approved_claims / total_claims * 100) if total_claims > 0 else 0
+        rejection_rate = (disallowed_claims / total_claims * 100) if total_claims > 0 else 0
+        
+        return {
+            'total_records': total_claims,
+            'total_claims': total_claims,
+            'approved_claims': approved_claims,
+            'disallowed_claims': disallowed_claims,
+            'total_credits': float(data['Credited Amount'].sum()),
+            'avg_tat': float(data['TAT'].mean()),
+            'success_rate': round(success_rate, 2),
+            'approval_rate': round(approval_rate, 2),
+            'rejection_rate': round(rejection_rate, 2)
+        }
+    except Exception as e:
+        logger.error(f"Error calculating summary stats: {str(e)}", exc_info=True)
         return {
             'total_records': 0,
             'total_claims': 0,
             'approved_claims': 0,
             'disallowed_claims': 0,
             'total_credits': 0,
-            'avg_tat': 0
+            'avg_tat': 0,
+            'success_rate': 0,
+            'approval_rate': 0,
+            'rejection_rate': 0
         }
-    
-    # Use vectorized operations for better performance
-    approved_mask = data['Claim Status'] == 'Approved'
-    disallowed_mask = data['Claim Status'] == 'Disallowed'
-    
-    return {
-        'total_records': len(data),
-        'total_claims': len(data),
-        'approved_claims': int(approved_mask.sum()),
-        'disallowed_claims': int(disallowed_mask.sum()),
-        'total_credits': float(data['Credited Amount'].sum()),
-        'avg_tat': float(data['TAT'].mean())
-    }
 
-def process_data_chunk(data_chunk):
-    """Process a chunk of data efficiently"""
+def process_data_chunk(data_chunk: pd.DataFrame) -> List[Dict[str, Any]]:
+    """Process a chunk of data efficiently with error handling"""
     try:
-        # Convert to records and process
         records = data_chunk.to_dict(orient='records')
         processed_records = []
         
-        for record in records:
-            processed_record = {}
-            
-            # Process numeric fields
-            for key in ['Credited Amount', 'Requested Credits', 'TAT']:
-                if key in record:
-                    value = record[key]
-                    if pd.isna(value):
-                        processed_record[key] = 0
-                    elif isinstance(value, (int, float)):
-                        processed_record[key] = float(value)
-                    else:
-                        try:
-                            processed_record[key] = float(str(value).replace('$', '').replace(',', ''))
-                        except (ValueError, TypeError):
-                            processed_record[key] = 0
-                else:
-                    processed_record[key] = 0
-            
-            # Process date fields
-            date_columns = {
-                'Claim Submitted Date': 'Claim Submission Date',
-                'Claim Close Date': 'Claim Close Date'
-            }
-            
-            for old_key, new_key in date_columns.items():
-                if old_key in record and pd.notna(record[old_key]):
-                    if isinstance(record[old_key], (pd.Timestamp, datetime)):
-                        processed_record[new_key] = record[old_key].strftime('%Y-%m-%d')
-                    else:
-                        try:
-                            processed_record[new_key] = pd.to_datetime(record[old_key]).strftime('%Y-%m-%d')
-                        except:
-                            processed_record[new_key] = '-'
-                else:
-                    processed_record[new_key] = '-'
-            
-            # Copy other fields
-            for key, value in record.items():
-                if key not in processed_record:
-                    processed_record[key] = None if pd.isna(value) else value
-            
-            processed_records.append(processed_record)
+        logger.info(f"Processing {len(records)} records")
+        logger.info(f"Available columns: {data_chunk.columns.tolist()}")
+        logger.info(f"Sample data before processing:\n{data_chunk.head()}")
         
+        for record in records:
+            try:
+                processed_record = {}
+                
+                # Process numeric fields
+                for key in ['Credited Amount', 'Requested Credits', 'TAT']:
+                    if key in record:
+                        value = record[key]
+                        if pd.isna(value):
+                            processed_record[key] = 0
+                        elif isinstance(value, (int, float)):
+                            processed_record[key] = float(value)
+                        else:
+                            try:
+                                processed_record[key] = float(str(value).replace('$', '').replace(',', ''))
+                            except (ValueError, TypeError):
+                                processed_record[key] = 0
+                    else:
+                        processed_record[key] = 0
+                
+                # Process date fields
+                date_columns = {
+                    'Claim Submitted Date': 'Claim Submitted Date',
+                    'Claim Close Date': 'Claim Close Date'
+                }
+                
+                for old_key, new_key in date_columns.items():
+                    if old_key in record:
+                        logger.info(f"Found date field {old_key}: {record[old_key]}, type: {type(record[old_key])}")
+                        if pd.notna(record[old_key]):
+                            try:
+                                if isinstance(record[old_key], (pd.Timestamp, datetime)):
+                                    date_obj = record[old_key]
+                                else:
+                                    date_obj = pd.to_datetime(record[old_key])
+                                
+                                processed_record[new_key] = date_obj.strftime('%Y-%m-%d')
+                                logger.info(f"Processed date {new_key}: {processed_record[new_key]}")
+                            except Exception as e:
+                                logger.error(f"Error processing date {old_key}: {str(e)}")
+                                processed_record[new_key] = None
+                        else:
+                            logger.warning(f"Null date value for {old_key}")
+                            processed_record[new_key] = None
+                    else:
+                        logger.warning(f"Missing date column {old_key}")
+                        processed_record[new_key] = None
+                
+                # Copy other fields
+                for key, value in record.items():
+                    if key not in processed_record:
+                        processed_record[key] = None if pd.isna(value) else value
+                
+                processed_records.append(processed_record)
+            except Exception as e:
+                logger.error(f"Error processing record: {str(e)}")
+                continue
+        
+        logger.info(f"Successfully processed {len(processed_records)} records")
+        logger.info(f"Sample processed record: {processed_records[0] if processed_records else 'No records'}")
         return processed_records
     except Exception as e:
         logger.error(f"Error processing data chunk: {str(e)}", exc_info=True)
@@ -187,8 +366,14 @@ def index():
         # Get cached summary statistics
         summary = get_summary_stats()
         
-        # Load only first chunk of data for initial render
+        # Load data if not already loaded
         data = load_data()
+        if data is None:
+            return render_template('index.html', 
+                                 claims_data=json.dumps([]),
+                                 summary=json.dumps(summary),
+                                 loading_status=json.dumps(loading_status))
+        
         if data.empty:
             return render_template('index.html', 
                                  claims_data=json.dumps([]),
@@ -200,12 +385,14 @@ def index():
         
         return render_template('index.html', 
                              claims_data=json.dumps(processed_data),
-                             summary=json.dumps(summary))
+                             summary=json.dumps(summary),
+                             loading_status=json.dumps(loading_status))
     except Exception as e:
         logger.error(f"Error in index route: {str(e)}", exc_info=True)
         return render_template('index.html', 
                              claims_data=json.dumps([]),
-                             summary=json.dumps(get_summary_stats()))
+                             summary=json.dumps(get_summary_stats()),
+                             loading_status=json.dumps(loading_status))
 
 @app.route('/api/data')
 def get_data():
@@ -215,7 +402,19 @@ def get_data():
         per_page = int(request.args.get('per_page', CHUNK_SIZE))
         
         data = load_data()
+        if data is None:
+            logger.warning("No data available from load_data()")
+            return jsonify({
+                'data': [],
+                'total': 0,
+                'page': page,
+                'per_page': per_page,
+                'total_pages': 0,
+                'loading_status': loading_status
+            })
+        
         if data.empty:
+            logger.warning("DataFrame is empty")
             return jsonify({
                 'data': [],
                 'total': 0,
@@ -233,9 +432,13 @@ def get_data():
         end_idx = min(start_idx + per_page, total_records)
         page_data = data.iloc[start_idx:end_idx]
         
+        logger.info(f"Processing page {page} with {len(page_data)} records")
+        logger.info(f"Sample data from page:\n{page_data.head()}")
+        
         # Process the data chunk
         processed_data = process_data_chunk(page_data)
         
+        logger.info(f"Returning {len(processed_data)} processed records")
         return jsonify({
             'data': processed_data,
             'total': total_records,
@@ -270,6 +473,11 @@ def get_summary():
             'total_credits': 0,
             'avg_tat': 0
         })
+
+@app.route('/api/loading-status')
+def get_loading_status():
+    """API endpoint to get current loading status"""
+    return jsonify(loading_status)
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000) 

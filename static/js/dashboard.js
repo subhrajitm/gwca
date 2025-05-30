@@ -62,6 +62,20 @@ function updateDashboardStats(data) {
         const approvedClaims = data.filter(claim => claim['Claim Status'] === 'Approved').length;
         document.getElementById('approvedClaims').textContent = approvedClaims;
 
+        // Calculate disallowed claims
+        const disallowedClaims = data.filter(claim => claim['Claim Status'] === 'Disallowed').length;
+        document.getElementById('disallowedClaims').textContent = disallowedClaims;
+
+        // Calculate rates
+        const successRate = totalClaims > 0 ? (approvedClaims / totalClaims * 100) : 0;
+        const approvalRate = totalClaims > 0 ? (approvedClaims / totalClaims * 100) : 0;
+        const rejectionRate = totalClaims > 0 ? (disallowedClaims / totalClaims * 100) : 0;
+
+        // Update rate displays
+        document.getElementById('successRate').textContent = `${successRate.toFixed(2)}%`;
+        document.getElementById('approvalRate').textContent = `${approvalRate.toFixed(2)}%`;
+        document.getElementById('rejectionRate').textContent = `${rejectionRate.toFixed(2)}%`;
+
         // Calculate total credits
         const totalCredits = data.reduce((sum, claim) => {
             const amount = typeof claim['Credited Amount'] === 'string'
@@ -190,46 +204,106 @@ function initializeCharts(data) {
         // Initialize Monthly Trend Chart
         const monthlyTrendCtx = document.getElementById('monthlyTrendChart').getContext('2d');
         const monthlyData = {};
-        data.forEach(claim => {
-            const date = new Date(claim['Claim Submission Date']);
-            const monthKey = date.toLocaleString('default', { month: 'short', year: 'numeric' });
-            const amount = typeof claim['Credited Amount'] === 'string'
-                ? parseFloat(claim['Credited Amount'].replace(/[^0-9.-]+/g, ''))
-                : parseFloat(claim['Credited Amount']);
-            monthlyData[monthKey] = (monthlyData[monthKey] || 0) + (isNaN(amount) ? 0 : amount);
+        
+        console.log('Initializing Monthly Trend Chart with data length:', data.length);
+        
+        // Process data for monthly trend
+        data.forEach((claim, index) => {
+            if (!claim['Claim Submitted Date']) {
+                console.log(`Skipping claim ${index} - No submission date`);
+                return;
+            }
+            
+            try {
+                console.log(`Processing claim ${index} - Date: ${claim['Claim Submitted Date']}`);
+                const date = new Date(claim['Claim Submitted Date']);
+                
+                if (isNaN(date.getTime())) {
+                    console.log(`Skipping claim ${index} - Invalid date: ${claim['Claim Submitted Date']}`);
+                    return;
+                }
+                
+                const monthKey = date.toLocaleString('default', { month: 'short', year: 'numeric' });
+                console.log(`Claim ${index} - Month key: ${monthKey}`);
+                
+                const amount = typeof claim['Credited Amount'] === 'string'
+                    ? parseFloat(claim['Credited Amount'].replace(/[^0-9.-]+/g, ''))
+                    : parseFloat(claim['Credited Amount']);
+                
+                console.log(`Claim ${index} - Amount: ${amount}`);
+                
+                if (!isNaN(amount)) {
+                    monthlyData[monthKey] = (monthlyData[monthKey] || 0) + amount;
+                    console.log(`Updated monthly data for ${monthKey}: ${monthlyData[monthKey]}`);
+                } else {
+                    console.log(`Skipping claim ${index} - Invalid amount: ${claim['Credited Amount']}`);
+                }
+            } catch (error) {
+                console.error(`Error processing claim ${index}:`, error);
+            }
         });
+        
+        console.log('Final monthly data:', monthlyData);
+        
+        // Sort months chronologically
+        const sortedMonths = Object.keys(monthlyData).sort((a, b) => {
+            const dateA = new Date(a);
+            const dateB = new Date(b);
+            return dateA - dateB;
+        });
+        
+        console.log('Sorted months:', sortedMonths);
+        
         if (charts.monthlyTrend) {
             charts.monthlyTrend.destroy();
         }
-        charts.monthlyTrend = new Chart(monthlyTrendCtx, {
-            type: 'line',
-            data: {
-                labels: Object.keys(monthlyData),
-                datasets: [{
-                    label: 'Total Credits',
-                    data: Object.values(monthlyData),
-                    borderColor: '#0d6efd',
-                    tension: 0.1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
-                    }
+        
+        // Only create chart if we have data
+        if (Object.keys(monthlyData).length > 0) {
+            console.log('Creating monthly trend chart with data');
+            charts.monthlyTrend = new Chart(monthlyTrendCtx, {
+                type: 'line',
+                data: {
+                    labels: sortedMonths,
+                    datasets: [{
+                        label: 'Total Credits',
+                        data: sortedMonths.map(month => monthlyData[month]),
+                        borderColor: '#0d6efd',
+                        tension: 0.1,
+                        fill: false
+                    }]
                 },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: value => '$' + value.toLocaleString()
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `$${context.raw.toLocaleString('en-US', {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2
+                                    })}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: value => '$' + value.toLocaleString()
+                            }
                         }
                     }
                 }
-            }
-        });
+            });
+        } else {
+            console.warn('No valid data for monthly trend chart');
+        }
 
         // Initialize TAT Distribution Chart
         const tatDistributionCtx = document.getElementById('tatDistributionChart').getContext('2d');
@@ -283,42 +357,130 @@ function initializeCharts(data) {
         // Initialize Claims by Month Chart
         const claimsByMonthCtx = document.getElementById('claimsByMonthChart').getContext('2d');
         const claimsByMonth = {};
-        data.forEach(claim => {
-            const date = new Date(claim['Claim Submission Date']);
-            const monthKey = date.toLocaleString('default', { month: 'short', year: 'numeric' });
-            claimsByMonth[monthKey] = (claimsByMonth[monthKey] || 0) + 1;
+        
+        console.log('Initializing Claims by Month Chart with data length:', data.length);
+        if (data.length > 0) {
+            console.log('First record:', data[0]);
+            console.log('Available fields:', Object.keys(data[0]));
+            console.log('Sample submission date:', data[0]['Claim Submitted Date']);
+        }
+        
+        // Process data for claims by month
+        let validDates = 0;
+        let invalidDates = 0;
+        
+        data.forEach((claim, index) => {
+            // Get the submission date
+            const submissionDate = claim['Claim Submitted Date'];
+            
+            if (!submissionDate) {
+                console.log(`Skipping claim ${index} - No submission date found. Available fields:`, Object.keys(claim));
+                invalidDates++;
+                return;
+            }
+            
+            try {
+                console.log(`Processing claim ${index} - Date: ${submissionDate}, type: ${typeof submissionDate}`);
+                
+                // Parse the date string (format: YYYY-MM-DD)
+                const [year, month, day] = submissionDate.split('-').map(Number);
+                if (!year || !month || !day) {
+                    console.log(`Skipping claim ${index} - Invalid date format: ${submissionDate}`);
+                    invalidDates++;
+                    return;
+                }
+                
+                const date = new Date(year, month - 1, day);
+                
+                if (isNaN(date.getTime())) {
+                    console.log(`Skipping claim ${index} - Invalid date: ${submissionDate}`);
+                    invalidDates++;
+                    return;
+                }
+                
+                const monthKey = date.toLocaleString('default', { month: 'short', year: 'numeric' });
+                console.log(`Claim ${index} - Month key: ${monthKey}`);
+                
+                claimsByMonth[monthKey] = (claimsByMonth[monthKey] || 0) + 1;
+                validDates++;
+                console.log(`Updated claims count for ${monthKey}: ${claimsByMonth[monthKey]}`);
+            } catch (error) {
+                console.error(`Error processing claim ${index}:`, error);
+                invalidDates++;
+            }
         });
+        
+        console.log(`Date processing summary: ${validDates} valid dates, ${invalidDates} invalid dates`);
+        console.log('Final claims by month data:', claimsByMonth);
+        
+        // Sort months chronologically
+        const sortedClaimMonths = Object.keys(claimsByMonth).sort((a, b) => {
+            const dateA = new Date(a);
+            const dateB = new Date(b);
+            return dateA - dateB;
+        });
+        
+        console.log('Sorted months:', sortedClaimMonths);
+        
         if (charts.claimsByMonth) {
             charts.claimsByMonth.destroy();
         }
-        charts.claimsByMonth = new Chart(claimsByMonthCtx, {
-            type: 'bar',
-            data: {
-                labels: Object.keys(claimsByMonth),
-                datasets: [{
-                    label: 'Number of Claims',
-                    data: Object.values(claimsByMonth),
-                    backgroundColor: '#0d6efd'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
-                    }
+        
+        // Only create chart if we have data
+        if (Object.keys(claimsByMonth).length > 0) {
+            console.log('Creating claims by month chart with data');
+            charts.claimsByMonth = new Chart(claimsByMonthCtx, {
+                type: 'bar',
+                data: {
+                    labels: sortedClaimMonths,
+                    datasets: [{
+                        label: 'Number of Claims',
+                        data: sortedClaimMonths.map(month => claimsByMonth[month]),
+                        backgroundColor: '#0d6efd'
+                    }]
                 },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            stepSize: 1
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.raw} claims`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
                         }
                     }
                 }
-            }
-        });
+            });
+        } else {
+            console.warn('No valid data for claims by month chart');
+            // Add a message to the chart area
+            const chartContainer = document.getElementById('claimsByMonthChart').parentElement;
+            chartContainer.innerHTML = `
+                <div class="text-center p-3">
+                    <p>No data available for Claims by Month</p>
+                    <small class="text-muted">
+                        Valid dates: ${validDates}<br>
+                        Invalid dates: ${invalidDates}<br>
+                        Total records: ${data.length}<br>
+                        Sample date: ${data.length > 0 ? data[0]['Claim Submitted Date'] : 'No data'}<br>
+                        Available fields: ${data.length > 0 ? Object.keys(data[0]).join(', ') : 'No data'}
+                    </small>
+                </div>
+            `;
+        }
 
     } catch (error) {
         console.error('Error initializing charts:', error);
@@ -432,6 +594,11 @@ document.addEventListener('DOMContentLoaded', async function() {
         document.getElementById('disallowedClaims').textContent = summary.disallowed_claims;
         document.getElementById('totalCredits').textContent = `$${summary.total_credits.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
         document.getElementById('avgTAT').textContent = `${Math.round(summary.avg_tat)} days`;
+        
+        // Update success rate statistics
+        document.getElementById('successRate').textContent = `${summary.success_rate}%`;
+        document.getElementById('approvalRate').textContent = `${summary.approval_rate}%`;
+        document.getElementById('rejectionRate').textContent = `${summary.rejection_rate}%`;
         
         // Start loading data
         await loadData(1);

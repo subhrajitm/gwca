@@ -224,7 +224,7 @@ function processWarrantyTypeData(data) {
 function processMonthlyTrendData(data) {
     const monthlyCredits = {};
     data.forEach(claim => {
-        const date = new Date(claim['Claim Submission Date']);
+        const date = new Date(claim['Claim Submitted Date']);
         const monthKey = `${date.getMonth() + 1}/${date.getFullYear()}`;
         const amount = parseFloat(claim['Credited Amount'].replace(/[^0-9.-]+/g, ''));
         monthlyCredits[monthKey] = (monthlyCredits[monthKey] || 0) + (isNaN(amount) ? 0 : amount);
@@ -264,7 +264,7 @@ function processTATDistributionData(data) {
 function processClaimsByMonthData(data) {
     const monthlyClaims = {};
     data.forEach(claim => {
-        const date = new Date(claim['Claim Submission Date']);
+        const date = new Date(claim['Claim Submitted Date']);
         const monthKey = `${date.getMonth() + 1}/${date.getFullYear()}`;
         monthlyClaims[monthKey] = (monthlyClaims[monthKey] || 0) + 1;
     });
