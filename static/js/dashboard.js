@@ -78,17 +78,28 @@ function updateDashboardStats(data) {
 
         // Calculate total credits
         const totalCredits = data.reduce((sum, claim) => {
-            const amount = typeof claim['Credited Amount'] === 'string'
-                ? parseFloat(claim['Credited Amount'].replace(/[^0-9.-]+/g, ''))
-                : parseFloat(claim['Credited Amount']);
-            return sum + (isNaN(amount) ? 0 : amount);
+            const amount = parseFloat(claim['Credited Amount']) || 0;
+            return sum + amount;
         }, 0);
         document.getElementById('totalCredits').textContent = `$${totalCredits.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
 
-        // Calculate average TAT
-        const tatValues = data.map(claim => parseInt(claim['TAT']) || 0);
-        const avgTAT = tatValues.reduce((a, b) => a + b, 0) / tatValues.length;
+        // Calculate average credit
+        const avgCredit = totalClaims > 0 ? totalCredits / totalClaims : 0;
+        document.getElementById('avgCredit').textContent = `$${avgCredit.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+
+        // Calculate max credit
+        const maxCredit = Math.max(...data.map(claim => parseFloat(claim['Credited Amount']) || 0));
+        document.getElementById('maxCredit').textContent = `$${maxCredit.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+
+        // Calculate TAT statistics
+        const tatValues = data.map(claim => parseFloat(claim['TAT']) || 0).filter(tat => !isNaN(tat));
+        const avgTAT = tatValues.length > 0 ? tatValues.reduce((a, b) => a + b, 0) / tatValues.length : 0;
+        const minTAT = tatValues.length > 0 ? Math.min(...tatValues) : 0;
+        const maxTAT = tatValues.length > 0 ? Math.max(...tatValues) : 0;
+
         document.getElementById('avgTAT').textContent = `${Math.round(avgTAT)} days`;
+        document.getElementById('minTAT').textContent = `${Math.round(minTAT)} days`;
+        document.getElementById('maxTAT').textContent = `${Math.round(maxTAT)} days`;
 
     } catch (error) {
         console.error('Error updating dashboard stats:', error);
@@ -200,10 +211,8 @@ function initializeCharts(data) {
         const warrantyTypeData = {};
         data.forEach(claim => {
             const warrantyType = claim['Warranty Type'] || 'Unknown';
-            const amount = typeof claim['Credited Amount'] === 'string'
-                ? parseFloat(claim['Credited Amount'].replace(/[^0-9.-]+/g, ''))
-                : parseFloat(claim['Credited Amount']);
-            warrantyTypeData[warrantyType] = (warrantyTypeData[warrantyType] || 0) + (isNaN(amount) ? 0 : amount);
+            const amount = parseFloat(claim['Credited Amount']) || 0;
+            warrantyTypeData[warrantyType] = (warrantyTypeData[warrantyType] || 0) + amount;
         });
         if (charts.warrantyType) {
             charts.warrantyType.destroy();
@@ -397,9 +406,7 @@ function initializeCharts(data) {
         let invalidDates = 0;
         
         data.forEach((claim, index) => {
-            // Get the submission date
             const submissionDate = claim['Claim Submitted Date'];
-            
             if (!submissionDate) {
                 console.log(`Skipping claim ${index} - No submission date found. Available fields:`, Object.keys(claim));
                 invalidDates++;
@@ -410,15 +417,7 @@ function initializeCharts(data) {
                 console.log(`Processing claim ${index} - Date: ${submissionDate}, type: ${typeof submissionDate}`);
                 
                 // Parse the date string (format: YYYY-MM-DD)
-                const [year, month, day] = submissionDate.split('-').map(Number);
-                if (!year || !month || !day) {
-                    console.log(`Skipping claim ${index} - Invalid date format: ${submissionDate}`);
-                    invalidDates++;
-                    return;
-                }
-                
-                const date = new Date(year, month - 1, day);
-                
+                const date = new Date(submissionDate);
                 if (isNaN(date.getTime())) {
                     console.log(`Skipping claim ${index} - Invalid date: ${submissionDate}`);
                     invalidDates++;
