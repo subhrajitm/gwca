@@ -87,10 +87,12 @@ def load_data_in_background():
             dtype={
                 'Claim Status': 'category',
                 'Product Line': 'category',
-                'Warranty Type_Final': 'category',
-                'Requested Credits': 'float32'
+                'Warranty Type_Final': 'category'
             }
         )
+
+        if 'Requested Credits' in df.columns:
+            df['Requested Credits'] = pd.to_numeric(df['Requested Credits'], errors='coerce').astype('float32')
         
         update_loading_status(60, "Processing data...")
         
