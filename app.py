@@ -1,23 +1,14 @@
 from flask import Flask, render_template, jsonify, request
 import pandas as pd
 import os
-import logging
 import json
 from datetime import datetime
 from json import JSONEncoder
 from functools import lru_cache
 import numpy as np
 from concurrent.futures import ThreadPoolExecutor
-import time
-from typing import Dict, List, Any, Optional
 import threading
-
-# Configure logging
-logging.basicConfig(
-    level=logging.WARNING,  # Changed from INFO to WARNING to reduce log output
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
+from typing import Dict, List, Any
 
 # Global variables
 df = None
@@ -47,7 +38,7 @@ class CustomJSONEncoder(JSONEncoder):
 app = Flask(__name__)
 app.json_encoder = CustomJSONEncoder
 
-def update_loading_status(progress: float, status: str, error: Optional[str] = None):
+def update_loading_status(progress: float, status: str, error: str = None):
     """Update the loading status with thread safety"""
     with loading_lock:
         loading_status['progress'] = progress
@@ -88,11 +79,10 @@ def load_data_in_background():
                 'Claim Status': 'category',
                 'Product Line': 'category',
                 'Warranty Type_Final': 'category'
-            }
+            },
+            engine='openpyxl',
+            na_filter=False
         )
-
-        if 'Requested Credits' in df.columns:
-            df['Requested Credits'] = pd.to_numeric(df['Requested Credits'], errors='coerce').astype('float32')
         
         update_loading_status(60, "Processing data...")
         
@@ -101,12 +91,11 @@ def load_data_in_background():
         
         # Clean and convert Credit to Customer column
         if 'Credit to Customer' in df.columns:
-            df['Credit to Customer'] = df['Credit to Customer'].apply(
-                lambda x: float(str(x).replace('$', '').replace(',', '')) 
-                if pd.notna(x) and str(x).replace('$', '').replace(',', '').replace('.', '').isdigit() 
-                else 0.0
-            )
-            df = df.rename(columns={'Credit to Customer': 'Credited Amount'})
+            df['Credited Amount'] = pd.to_numeric(
+                df['Credit to Customer'].str.replace('$', '').str.replace(',', ''),
+                errors='coerce'
+            ).fillna(0).astype('float32')
+            df = df.drop('Credit to Customer', axis=1)
         
         # Process date columns
         date_columns = ['Claim Submitted Date', 'Claim Close Date']
@@ -114,11 +103,11 @@ def load_data_in_background():
             if col in df.columns:
                 df[col] = pd.to_datetime(df[col], errors='coerce').dt.strftime('%Y-%m-%d')
         
-        # Convert TAT to float
-        if 'TAT' in df.columns:
-            df['TAT'] = df['TAT'].apply(
-                lambda x: float(x) if pd.notna(x) and not isinstance(x, (pd.Timestamp, datetime)) else 0.0
-            )
+        # Convert numeric columns
+        numeric_columns = ['TAT', 'Requested Credits']
+        for col in numeric_columns:
+            if col in df.columns:
+                df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0).astype('float32')
         
         # Optimize memory usage
         for col in df.select_dtypes(include=['object']).columns:
@@ -155,9 +144,7 @@ def load_data_in_background():
         update_loading_status(100, "Data loading complete!")
         
     except Exception as e:
-        error_msg = f"Error loading data: {str(e)}"
-        logger.error(error_msg, exc_info=True)
-        update_loading_status(0, "Error", error_msg)
+        update_loading_status(0, "Error", str(e))
 
 def load_data():
     """Load data with background processing"""
@@ -183,7 +170,7 @@ def load_data():
 
 @lru_cache(maxsize=CACHE_SIZE)
 def get_summary_stats():
-    """Get cached summary statistics with error handling"""
+    """Get cached summary statistics"""
     try:
         data = load_data()
         if data is None or data.empty:
@@ -193,19 +180,33 @@ def get_summary_stats():
                 'approved_claims': 0,
                 'disallowed_claims': 0,
                 'total_credits': 0,
+                'avg_credit': 0,
+                'max_credit': 0,
+                'min_tat': 0,
+                'max_tat': 0,
                 'avg_tat': 0,
                 'success_rate': 0,
                 'approval_rate': 0,
                 'rejection_rate': 0
             }
         
-        # Use vectorized operations for better performance
         approved_mask = data['Claim Status'] == 'Approved'
         disallowed_mask = data['Claim Status'] == 'Disallowed'
         
         total_claims = len(data)
         approved_claims = int(approved_mask.sum())
         disallowed_claims = int(disallowed_mask.sum())
+        
+        # Calculate credit statistics
+        total_credits = float(data['Credited Amount'].sum())
+        avg_credit = float(data['Credited Amount'].mean())
+        max_credit = float(data['Credited Amount'].max())
+        
+        # Calculate TAT statistics
+        tat_values = data['TAT'].replace([np.inf, -np.inf], np.nan).dropna()
+        min_tat = float(tat_values.min()) if not tat_values.empty else 0
+        max_tat = float(tat_values.max()) if not tat_values.empty else 0
+        avg_tat = float(tat_values.mean()) if not tat_values.empty else 0
         
         # Calculate rates
         success_rate = (approved_claims / total_claims * 100) if total_claims > 0 else 0
@@ -217,20 +218,27 @@ def get_summary_stats():
             'total_claims': total_claims,
             'approved_claims': approved_claims,
             'disallowed_claims': disallowed_claims,
-            'total_credits': float(data['Credited Amount'].sum()),
-            'avg_tat': float(data['TAT'].mean()),
+            'total_credits': total_credits,
+            'avg_credit': round(avg_credit, 2),
+            'max_credit': round(max_credit, 2),
+            'min_tat': round(min_tat, 2),
+            'max_tat': round(max_tat, 2),
+            'avg_tat': round(avg_tat, 2),
             'success_rate': round(success_rate, 2),
             'approval_rate': round(approval_rate, 2),
             'rejection_rate': round(rejection_rate, 2)
         }
-    except Exception as e:
-        logger.error(f"Error calculating summary stats: {str(e)}", exc_info=True)
+    except Exception:
         return {
             'total_records': 0,
             'total_claims': 0,
             'approved_claims': 0,
             'disallowed_claims': 0,
             'total_credits': 0,
+            'avg_credit': 0,
+            'max_credit': 0,
+            'min_tat': 0,
+            'max_tat': 0,
             'avg_tat': 0,
             'success_rate': 0,
             'approval_rate': 0,
@@ -243,34 +251,24 @@ def process_data_chunk(data_chunk: pd.DataFrame) -> List[Dict[str, Any]]:
         records = data_chunk.to_dict(orient='records')
         processed_records = []
         
+        numeric_columns = ['Credited Amount', 'Requested Credits', 'TAT']
+        date_columns = ['Claim Submitted Date', 'Claim Close Date']
+        
         for record in records:
             try:
                 processed_record = {}
                 
                 # Process numeric fields
-                numeric_columns = ['Credited Amount', 'Requested Credits', 'TAT']
                 for key in numeric_columns:
                     if key in record:
                         value = record[key]
-                        if pd.isna(value):
-                            processed_record[key] = 0
-                        elif isinstance(value, (int, float)):
-                            processed_record[key] = float(value)
-                        else:
-                            try:
-                                processed_record[key] = float(str(value).replace('$', '').replace(',', ''))
-                            except (ValueError, TypeError):
-                                processed_record[key] = 0
+                        processed_record[key] = float(value) if pd.notna(value) else 0
                     else:
                         processed_record[key] = 0
                 
                 # Process date fields
-                date_columns = ['Claim Submitted Date', 'Claim Close Date']
                 for key in date_columns:
-                    if key in record:
-                        processed_record[key] = record[key] if pd.notna(record[key]) else None
-                    else:
-                        processed_record[key] = None
+                    processed_record[key] = record[key] if key in record and pd.notna(record[key]) else None
                 
                 # Copy other fields
                 for key, value in record.items():
@@ -278,24 +276,20 @@ def process_data_chunk(data_chunk: pd.DataFrame) -> List[Dict[str, Any]]:
                         processed_record[key] = None if pd.isna(value) else value
                 
                 processed_records.append(processed_record)
-            except Exception as e:
-                logger.error(f"Error processing record: {str(e)}")
+            except Exception:
                 continue
         
         return processed_records
-    except Exception as e:
-        logger.error(f"Error processing data chunk: {str(e)}", exc_info=True)
+    except Exception:
         return []
 
 @app.route('/')
 def index():
-    """Render the main dashboard with optimized initial data loading"""
+    """Render the main dashboard"""
     try:
-        # Get cached summary statistics
         summary = get_summary_stats()
-        
-        # Load data if not already loaded
         data = load_data()
+        
         if data is None:
             return render_template('index.html', 
                                  claims_data=json.dumps([]),
@@ -307,7 +301,6 @@ def index():
                                  claims_data=json.dumps([]),
                                  summary=json.dumps(summary))
         
-        # Process only the first chunk
         initial_data = data.iloc[:CHUNK_SIZE]
         processed_data = process_data_chunk(initial_data)
         
@@ -315,8 +308,7 @@ def index():
                              claims_data=json.dumps(processed_data),
                              summary=json.dumps(summary),
                              loading_status=json.dumps(loading_status))
-    except Exception as e:
-        logger.error(f"Error in index route: {str(e)}", exc_info=True)
+    except Exception:
         return render_template('index.html', 
                              claims_data=json.dumps([]),
                              summary=json.dumps(get_summary_stats()),
@@ -349,16 +341,13 @@ def get_data():
                 'total_pages': 0
             })
         
-        # Calculate pagination
         total_records = len(data)
         total_pages = (total_records + per_page - 1) // per_page
         
-        # Get the slice of data for the current page
         start_idx = (page - 1) * per_page
         end_idx = min(start_idx + per_page, total_records)
         page_data = data.iloc[start_idx:end_idx]
         
-        # Process the data chunk
         processed_data = process_data_chunk(page_data)
         
         return jsonify({
@@ -368,10 +357,9 @@ def get_data():
             'per_page': per_page,
             'total_pages': total_pages
         })
-    except Exception as e:
-        logger.error(f"Error in get_data: {str(e)}", exc_info=True)
+    except Exception:
         return jsonify({
-            'error': str(e),
+            'error': 'Internal server error',
             'data': [],
             'total': 0,
             'page': 1,
@@ -384,10 +372,9 @@ def get_summary():
     """API endpoint to get cached summary statistics"""
     try:
         return jsonify(get_summary_stats())
-    except Exception as e:
-        logger.error(f"Error in get_summary: {str(e)}", exc_info=True)
+    except Exception:
         return jsonify({
-            'error': str(e),
+            'error': 'Internal server error',
             'total_records': 0,
             'total_claims': 0,
             'approved_claims': 0,
@@ -402,4 +389,4 @@ def get_loading_status():
     return jsonify(loading_status)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000) 
+    app.run(debug=True, port=5000, host='0.0.0.0') 
