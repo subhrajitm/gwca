@@ -67,14 +67,7 @@ def load_data_in_background():
             update_loading_status(0, "Error", f"Excel file not found at: {excel_path}")
             return
         
-        update_loading_status(10, "Reading Excel file...")
-        
-        # First read without any parsing to get column names
-        temp_df = pd.read_excel(excel_path)
-        logger.info(f"Original columns: {temp_df.columns.tolist()}")
-        logger.info(f"Sample data from first read:\n{temp_df.head()}")
-        
-        update_loading_status(30, "Processing column mappings...")
+        update_loading_status(30, "Reading Excel file...")
         
         # Column mapping
         column_mapping = {
@@ -82,15 +75,13 @@ def load_data_in_background():
             'Claim Status': 'Claim Status',
             'Product Line': 'Product Line',
             'Warranty Type-Final': 'Warranty Type',
-            'Claim Submitted Date': 'Claim Submitted Date',  # Keep original column name
+            'Claim Submitted Date': 'Claim Submitted Date',
             'Claim Close Date': 'Claim Close Date',
             'TAT': 'TAT',
             'Requested Credits': 'Requested Credits'
         }
         
-        update_loading_status(40, "Reading data with optimizations...")
-        
-        # Read with optimizations and handle non-numeric values
+        # Read with optimizations
         df = pd.read_excel(
             excel_path,
             dtype={
@@ -101,21 +92,10 @@ def load_data_in_background():
             }
         )
         
-        update_loading_status(60, "Optimizing memory usage...")
-        
-        # Log available columns before renaming
-        logger.info(f"Available columns before renaming: {df.columns.tolist()}")
+        update_loading_status(60, "Processing data...")
         
         # Rename columns
-        for old_col, new_col in column_mapping.items():
-            if old_col in df.columns:
-                df = df.rename(columns={old_col: new_col})
-                logger.info(f"Renamed column {old_col} to {new_col}")
-            else:
-                logger.warning(f"Column {old_col} not found in DataFrame")
-        
-        # Log available columns after renaming
-        logger.info(f"Available columns after renaming: {df.columns.tolist()}")
+        df = df.rename(columns=column_mapping)
         
         # Clean and convert Credit to Customer column
         if 'Credit to Customer' in df.columns:
@@ -127,36 +107,10 @@ def load_data_in_background():
             df = df.rename(columns={'Credit to Customer': 'Credited Amount'})
         
         # Process date columns
-        date_columns = {
-            'Claim Submitted Date': 'Claim Submitted Date',  # Keep original column name
-            'Claim Close Date': 'Claim Close Date'
-        }
-        
-        for old_col, new_col in date_columns.items():
-            if old_col in df.columns:
-                logger.info(f"Processing date column {old_col}")
-                logger.info(f"Sample dates before processing: {df[old_col].head().tolist()}")
-                logger.info(f"Date column type before processing: {df[old_col].dtype}")
-                
-                # Convert to datetime
-                df[old_col] = pd.to_datetime(df[old_col], errors='coerce')
-                
-                logger.info(f"Sample dates after processing: {df[old_col].head().tolist()}")
-                logger.info(f"Date column type after processing: {df[old_col].dtype}")
-                logger.info(f"Null dates in {old_col}: {df[old_col].isna().sum()}")
-                
-                # Format dates as strings in YYYY-MM-DD format
-                df[old_col] = df[old_col].dt.strftime('%Y-%m-%d')
-                logger.info(f"Sample dates after formatting: {df[old_col].head().tolist()}")
-                
-                # Rename the column after processing
-                df = df.rename(columns={old_col: new_col})
-                logger.info(f"Renamed date column {old_col} to {new_col}")
-            else:
-                logger.warning(f"Date column {old_col} not found in DataFrame")
-        
-        # Log available columns after date processing
-        logger.info(f"Available columns after date processing: {df.columns.tolist()}")
+        date_columns = ['Claim Submitted Date', 'Claim Close Date']
+        for col in date_columns:
+            if col in df.columns:
+                df[col] = pd.to_datetime(df[col], errors='coerce').dt.strftime('%Y-%m-%d')
         
         # Convert TAT to float
         if 'TAT' in df.columns:
@@ -166,10 +120,10 @@ def load_data_in_background():
         
         # Optimize memory usage
         for col in df.select_dtypes(include=['object']).columns:
-            if col not in date_columns.values():  # Don't convert date columns to category
+            if col not in date_columns:
                 df[col] = df[col].astype('category')
         
-        update_loading_status(80, "Finalizing data processing...")
+        update_loading_status(80, "Finalizing...")
         
         # Additional optimizations
         df = df.replace([np.inf, -np.inf], np.nan)
@@ -190,14 +144,10 @@ def load_data_in_background():
             if col not in df.columns:
                 if col in ['Credited Amount', 'Requested Credits', 'TAT']:
                     df[col] = 0
-                elif col in date_columns.values():
+                elif col in date_columns:
                     df[col] = pd.NaT
                 else:
                     df[col] = None
-        
-        logger.info(f"Loaded data shape: {df.shape}")
-        logger.info(f"Final columns: {df.columns.tolist()}")
-        logger.info(f"Sample data:\n{df.head()}")
         
         update_loading_status(100, "Data loading complete!")
         
@@ -285,14 +235,10 @@ def get_summary_stats():
         }
 
 def process_data_chunk(data_chunk: pd.DataFrame) -> List[Dict[str, Any]]:
-    """Process a chunk of data efficiently with error handling"""
+    """Process a chunk of data efficiently"""
     try:
         records = data_chunk.to_dict(orient='records')
         processed_records = []
-        
-        logger.info(f"Processing {len(records)} records")
-        logger.info(f"Available columns: {data_chunk.columns.tolist()}")
-        logger.info(f"Sample data before processing:\n{data_chunk.head()}")
         
         for record in records:
             try:
@@ -315,32 +261,12 @@ def process_data_chunk(data_chunk: pd.DataFrame) -> List[Dict[str, Any]]:
                         processed_record[key] = 0
                 
                 # Process date fields
-                date_columns = {
-                    'Claim Submitted Date': 'Claim Submitted Date',
-                    'Claim Close Date': 'Claim Close Date'
-                }
-                
-                for old_key, new_key in date_columns.items():
-                    if old_key in record:
-                        logger.info(f"Found date field {old_key}: {record[old_key]}, type: {type(record[old_key])}")
-                        if pd.notna(record[old_key]):
-                            try:
-                                if isinstance(record[old_key], (pd.Timestamp, datetime)):
-                                    date_obj = record[old_key]
-                                else:
-                                    date_obj = pd.to_datetime(record[old_key])
-                                
-                                processed_record[new_key] = date_obj.strftime('%Y-%m-%d')
-                                logger.info(f"Processed date {new_key}: {processed_record[new_key]}")
-                            except Exception as e:
-                                logger.error(f"Error processing date {old_key}: {str(e)}")
-                                processed_record[new_key] = None
-                        else:
-                            logger.warning(f"Null date value for {old_key}")
-                            processed_record[new_key] = None
+                date_columns = ['Claim Submitted Date', 'Claim Close Date']
+                for key in date_columns:
+                    if key in record:
+                        processed_record[key] = record[key] if pd.notna(record[key]) else None
                     else:
-                        logger.warning(f"Missing date column {old_key}")
-                        processed_record[new_key] = None
+                        processed_record[key] = None
                 
                 # Copy other fields
                 for key, value in record.items():
@@ -352,8 +278,6 @@ def process_data_chunk(data_chunk: pd.DataFrame) -> List[Dict[str, Any]]:
                 logger.error(f"Error processing record: {str(e)}")
                 continue
         
-        logger.info(f"Successfully processed {len(processed_records)} records")
-        logger.info(f"Sample processed record: {processed_records[0] if processed_records else 'No records'}")
         return processed_records
     except Exception as e:
         logger.error(f"Error processing data chunk: {str(e)}", exc_info=True)
