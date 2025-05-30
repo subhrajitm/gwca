@@ -101,21 +101,34 @@ function initializeCharts(data) {
     try {
         // Initialize Claim Status Distribution Chart
         const claimStatusCtx = document.getElementById('claimStatusChart').getContext('2d');
-        const claimStatusData = {
-            approved: data.filter(claim => claim['Claim Status'] === 'Approved').length,
-            pending: data.filter(claim => claim['Claim Status'] === 'Pending').length,
-            disallowed: data.filter(claim => claim['Claim Status'] === 'Disallowed').length
+        
+        // Process claim status data
+        const statusCount = {};
+        data.forEach(claim => {
+            const status = claim['Claim Status'] || 'Unknown';
+            statusCount[status] = (statusCount[status] || 0) + 1;
+        });
+        
+        // Sort statuses for consistent display
+        const sortedStatuses = Object.keys(statusCount).sort();
+        const statusColors = {
+            'Approved': '#28a745',
+            'Pending': '#ffc107',
+            'Disallowed': '#dc3545',
+            'Unknown': '#6c757d'
         };
+        
         if (charts.claimStatus) {
             charts.claimStatus.destroy();
         }
+        
         charts.claimStatus = new Chart(claimStatusCtx, {
             type: 'doughnut',
             data: {
-                labels: ['Approved', 'Pending', 'Disallowed'],
+                labels: sortedStatuses,
                 datasets: [{
-                    data: [claimStatusData.approved, claimStatusData.pending, claimStatusData.disallowed],
-                    backgroundColor: ['#28a745', '#ffc107', '#dc3545']
+                    data: sortedStatuses.map(status => statusCount[status]),
+                    backgroundColor: sortedStatuses.map(status => statusColors[status] || '#6c757d')
                 }]
             },
             options: {
@@ -123,7 +136,21 @@ function initializeCharts(data) {
                 maintainAspectRatio: false,
                 plugins: {
                     legend: {
-                        position: 'bottom'
+                        position: 'bottom',
+                        labels: {
+                            boxWidth: 12,
+                            padding: 15
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const value = context.raw;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = ((value / total) * 100).toFixed(1);
+                                return `${context.label}: ${value} (${percentage}%)`;
+                            }
+                        }
                     }
                 }
             }
