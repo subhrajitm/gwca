@@ -14,7 +14,7 @@ import threading
 
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.WARNING,  # Changed from INFO to WARNING to reduce log output
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
@@ -74,7 +74,7 @@ def load_data_in_background():
             'Credit to Customer': 'Credited Amount',
             'Claim Status': 'Claim Status',
             'Product Line': 'Product Line',
-            'Warranty Type-Final': 'Warranty Type',
+            'Warranty Type_Final': 'Warranty Type',
             'Claim Submitted Date': 'Claim Submitted Date',
             'Claim Close Date': 'Claim Close Date',
             'TAT': 'TAT',
@@ -87,7 +87,7 @@ def load_data_in_background():
             dtype={
                 'Claim Status': 'category',
                 'Product Line': 'category',
-                'Warranty Type-Final': 'category',
+                'Warranty Type_Final': 'category',
                 'Requested Credits': 'float32'
             }
         )
@@ -127,11 +127,12 @@ def load_data_in_background():
         
         # Additional optimizations
         df = df.replace([np.inf, -np.inf], np.nan)
-        df = df.fillna({
-            'Credited Amount': 0,
-            'Requested Credits': 0,
-            'TAT': 0
-        })
+        
+        # Fill NA values separately for numeric and categorical columns
+        numeric_columns = ['Credited Amount', 'Requested Credits', 'TAT']
+        for col in numeric_columns:
+            if col in df.columns:
+                df[col] = df[col].fillna(0)
         
         # Ensure all required columns exist
         required_columns = [
@@ -142,12 +143,12 @@ def load_data_in_background():
         
         for col in required_columns:
             if col not in df.columns:
-                if col in ['Credited Amount', 'Requested Credits', 'TAT']:
+                if col in numeric_columns:
                     df[col] = 0
                 elif col in date_columns:
                     df[col] = pd.NaT
                 else:
-                    df[col] = None
+                    df[col] = df[col].cat.add_categories(['Unknown']).fillna('Unknown')
         
         update_loading_status(100, "Data loading complete!")
         
@@ -245,7 +246,8 @@ def process_data_chunk(data_chunk: pd.DataFrame) -> List[Dict[str, Any]]:
                 processed_record = {}
                 
                 # Process numeric fields
-                for key in ['Credited Amount', 'Requested Credits', 'TAT']:
+                numeric_columns = ['Credited Amount', 'Requested Credits', 'TAT']
+                for key in numeric_columns:
                     if key in record:
                         value = record[key]
                         if pd.isna(value):
@@ -327,7 +329,6 @@ def get_data():
         
         data = load_data()
         if data is None:
-            logger.warning("No data available from load_data()")
             return jsonify({
                 'data': [],
                 'total': 0,
@@ -338,7 +339,6 @@ def get_data():
             })
         
         if data.empty:
-            logger.warning("DataFrame is empty")
             return jsonify({
                 'data': [],
                 'total': 0,
@@ -356,13 +356,9 @@ def get_data():
         end_idx = min(start_idx + per_page, total_records)
         page_data = data.iloc[start_idx:end_idx]
         
-        logger.info(f"Processing page {page} with {len(page_data)} records")
-        logger.info(f"Sample data from page:\n{page_data.head()}")
-        
         # Process the data chunk
         processed_data = process_data_chunk(page_data)
         
-        logger.info(f"Returning {len(processed_data)} processed records")
         return jsonify({
             'data': processed_data,
             'total': total_records,
