@@ -5,49 +5,51 @@ import logging
 import json
 from datetime import datetime
 from json import JSONEncoder
+from functools import lru_cache
+import numpy as np
 
 # Configure logging
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)  # Changed to INFO to reduce logging overhead
 logger = logging.getLogger(__name__)
 
 # Custom JSON encoder to handle pandas Timestamp objects
 class CustomJSONEncoder(JSONEncoder):
     def default(self, obj):
-        if isinstance(obj, pd.Timestamp):
-            return obj.strftime('%Y-%m-%d')
-        if isinstance(obj, datetime):
+        if isinstance(obj, (pd.Timestamp, datetime)):
             return obj.strftime('%Y-%m-%d')
         if pd.isna(obj):
             return None
+        if isinstance(obj, np.integer):
+            return int(obj)
+        if isinstance(obj, np.floating):
+            return float(obj)
         return super().default(obj)
 
 app = Flask(__name__)
 app.json_encoder = CustomJSONEncoder
 
-# Global variable to store the DataFrame
+# Global variables
 df = None
+CHUNK_SIZE = 1000  # Number of records to process at once
+CACHE_SIZE = 128   # Number of cached results
 
 def load_data():
-    """Load data from Excel file"""
+    """Load data from Excel file with optimized memory usage"""
     global df
     try:
         if df is None:
-            # Get the absolute path to the Excel file
             current_dir = os.path.dirname(os.path.abspath(__file__))
-            excel_path = os.path.join(current_dir, 'data', 'cdata.xlsx')
+            excel_path = os.path.join(current_dir, 'data', 'claims_data.xlsx')
             
-            logger.debug(f"Attempting to read Excel file from: {excel_path}")
-            
-            # Check if file exists
             if not os.path.exists(excel_path):
                 logger.error(f"Excel file not found at: {excel_path}")
-                return []
-                
-            # Read the Excel file
-            df = pd.read_excel(excel_path)
-            logger.debug(f"Successfully read Excel file. Shape: {df.shape}")
+                return pd.DataFrame()
             
-            # Rename columns to match expected format
+            # First read without any parsing to get the actual column names
+            df = pd.read_excel(excel_path)
+            logger.info(f"Original columns: {df.columns.tolist()}")
+            
+            # Map the actual column names to our expected names
             column_mapping = {
                 'Credit to Customer': 'Credited Amount',
                 'Claim Status': 'Claim Status',
@@ -63,49 +65,108 @@ def load_data():
             for old_col, new_col in column_mapping.items():
                 if old_col in df.columns:
                     df = df.rename(columns={old_col: new_col})
+            
+            # Now read the file again with proper parsing
+            df = pd.read_excel(
+                excel_path,
+                dtype={
+                    'Claim Status': 'category',
+                    'Product Line': 'category',
+                    'Warranty Type-Final': 'category',
+                    'TAT': 'float32',
+                    'Credit to Customer': 'float32',
+                    'Requested Credits': 'float32'
+                },
+                parse_dates=['Claim Submitted Date', 'Claim Close Date']
+            )
+            
+            # Rename columns after reading
+            for old_col, new_col in column_mapping.items():
+                if old_col in df.columns:
+                    df = df.rename(columns={old_col: new_col})
+            
+            # Optimize memory usage
+            for col in df.select_dtypes(include=['object']).columns:
+                df[col] = df[col].astype('category')
+            
+            logger.info(f"Loaded data shape: {df.shape}")
+            logger.info(f"Final columns: {df.columns.tolist()}")
         
         return df
     except Exception as e:
         logger.error(f"Error loading data: {str(e)}", exc_info=True)
         return pd.DataFrame()
 
-def process_data(data):
-    """Process DataFrame records into formatted dictionaries"""
+@lru_cache(maxsize=CACHE_SIZE)
+def get_summary_stats():
+    """Get cached summary statistics"""
+    data = load_data()
+    if data.empty:
+        return {
+            'total_records': 0,
+            'total_claims': 0,
+            'approved_claims': 0,
+            'disallowed_claims': 0,
+            'total_credits': 0,
+            'avg_tat': 0
+        }
+    
+    # Use vectorized operations for better performance
+    approved_mask = data['Claim Status'] == 'Approved'
+    disallowed_mask = data['Claim Status'] == 'Disallowed'
+    
+    return {
+        'total_records': len(data),
+        'total_claims': len(data),
+        'approved_claims': int(approved_mask.sum()),
+        'disallowed_claims': int(disallowed_mask.sum()),
+        'total_credits': float(data['Credited Amount'].sum()),
+        'avg_tat': float(data['TAT'].mean())
+    }
+
+def process_data_chunk(data_chunk):
+    """Process a chunk of data efficiently"""
     try:
-        # Convert DataFrame to list of dictionaries
-        records = data.to_dict(orient='records')
+        # Convert to records and process
+        records = data_chunk.to_dict(orient='records')
         processed_records = []
         
         for record in records:
             processed_record = {}
             
-            # Format numeric columns
+            # Process numeric fields
             for key in ['Credited Amount', 'Requested Credits', 'TAT']:
                 if key in record:
-                    if pd.isna(record[key]):
+                    value = record[key]
+                    if pd.isna(value):
                         processed_record[key] = 0
-                    elif isinstance(record[key], (int, float)):
-                        processed_record[key] = float(record[key])
+                    elif isinstance(value, (int, float)):
+                        processed_record[key] = float(value)
                     else:
                         try:
-                            processed_record[key] = float(str(record[key]).replace('$', '').replace(',', ''))
+                            processed_record[key] = float(str(value).replace('$', '').replace(',', ''))
                         except (ValueError, TypeError):
                             processed_record[key] = 0
                 else:
                     processed_record[key] = 0
             
-            # Format date columns
-            for key in ['Claim Submission Date', 'Claim Close Date', 'Incident Date']:
-                if key in record and pd.notna(record[key]):
-                    if isinstance(record[key], (pd.Timestamp, datetime)):
-                        processed_record[key] = record[key].strftime('%Y-%m-%d')
+            # Process date fields
+            date_columns = {
+                'Claim Submitted Date': 'Claim Submission Date',
+                'Claim Close Date': 'Claim Close Date'
+            }
+            
+            for old_key, new_key in date_columns.items():
+                if old_key in record and pd.notna(record[old_key]):
+                    if isinstance(record[old_key], (pd.Timestamp, datetime)):
+                        processed_record[new_key] = record[old_key].strftime('%Y-%m-%d')
                     else:
                         try:
-                            processed_record[key] = pd.to_datetime(record[key]).strftime('%Y-%m-%d')
+                            processed_record[new_key] = pd.to_datetime(record[old_key]).strftime('%Y-%m-%d')
                         except:
-                            processed_record[key] = '-'
+                            processed_record[new_key] = '-'
                 else:
-                    processed_record[key] = '-'
+                    processed_record[new_key] = '-'
             
             # Copy other fields
             for key, value in record.items():
@@ -116,101 +177,42 @@ def process_data(data):
         
         return processed_records
     except Exception as e:
-        logger.error(f"Error processing data: {str(e)}", exc_info=True)
+        logger.error(f"Error processing data chunk: {str(e)}", exc_info=True)
         return []
-
-def clean_numeric_value(value):
-    """Clean and convert a value to float, handling various formats"""
-    try:
-        if isinstance(value, pd.Series):
-            # If it's a Series, get the first value
-            value = value.iloc[0] if not value.empty else None
-            
-        if pd.isna(value) or value is None:
-            return 0.0
-            
-        if isinstance(value, (int, float)):
-            return float(value)
-            
-        # Remove currency symbols, commas, and other non-numeric characters
-        cleaned = str(value).replace('$', '').replace(',', '').strip()
-        # Try to convert to float
-        return float(cleaned) if cleaned else 0.0
-    except (ValueError, TypeError, IndexError):
-        return 0.0
-
-def process_numeric_column(series):
-    """Process a pandas Series column to clean numeric values"""
-    try:
-        # Convert to string first to handle any type
-        str_series = series.astype(str)
-        # Remove currency symbols and commas
-        cleaned = str_series.str.replace('$', '').str.replace(',', '')
-        # Convert to float, replacing any errors with 0
-        return pd.to_numeric(cleaned, errors='coerce').fillna(0)
-    except Exception:
-        return pd.Series([0.0] * len(series))
 
 @app.route('/')
 def index():
-    """Render the main dashboard"""
-    # Load initial data for summary statistics
-    data = load_data()
-    if data.empty:
-        return render_template('index.html', 
-                             claims_data=json.dumps([]),
-                             summary=json.dumps({
-                                 'total_records': 0,
-                                 'total_claims': 0,
-                                 'approved_claims': 0,
-                                 'disallowed_claims': 0,
-                                 'total_credits': 0,
-                                 'avg_tat': 0
-                             }))
-    
+    """Render the main dashboard with optimized initial data loading"""
     try:
-        # Get summary statistics
-        approved_mask = data['Claim Status'] == 'Approved'
-        disallowed_mask = data['Claim Status'] == 'Disallowed'
+        # Get cached summary statistics
+        summary = get_summary_stats()
         
-        # Clean and convert numeric columns
-        credited_amounts = process_numeric_column(data['Credited Amount'])
-        tat_values = process_numeric_column(data['TAT'])
+        # Load only first chunk of data for initial render
+        data = load_data()
+        if data.empty:
+            return render_template('index.html', 
+                                 claims_data=json.dumps([]),
+                                 summary=json.dumps(summary))
         
-        summary = {
-            'total_records': int(len(data)),
-            'total_claims': int(len(data)),
-            'approved_claims': int(approved_mask.sum()),
-            'disallowed_claims': int(disallowed_mask.sum()),
-            'total_credits': float(credited_amounts.sum()),
-            'avg_tat': float(tat_values.mean())
-        }
-        
-        # Process the data for initial load
-        processed_data = process_data(data)
+        # Process only the first chunk
+        initial_data = data.iloc[:CHUNK_SIZE]
+        processed_data = process_data_chunk(initial_data)
         
         return render_template('index.html', 
-                             claims_data=json.dumps(processed_data),  # Pass processed data
+                             claims_data=json.dumps(processed_data),
                              summary=json.dumps(summary))
     except Exception as e:
         logger.error(f"Error in index route: {str(e)}", exc_info=True)
         return render_template('index.html', 
                              claims_data=json.dumps([]),
-                             summary=json.dumps({
-                                 'total_records': 0,
-                                 'total_claims': 0,
-                                 'approved_claims': 0,
-                                 'disallowed_claims': 0,
-                                 'total_credits': 0,
-                                 'avg_tat': 0
-                             }))
+                             summary=json.dumps(get_summary_stats()))
 
 @app.route('/api/data')
 def get_data():
     """API endpoint to get paginated claim data"""
     try:
         page = int(request.args.get('page', 1))
-        per_page = int(request.args.get('per_page', 1000))
+        per_page = int(request.args.get('per_page', CHUNK_SIZE))
         
         data = load_data()
         if data.empty:
@@ -231,8 +233,8 @@ def get_data():
         end_idx = min(start_idx + per_page, total_records)
         page_data = data.iloc[start_idx:end_idx]
         
-        # Process the data
-        processed_data = process_data(page_data)
+        # Process the data chunk
+        processed_data = process_data_chunk(page_data)
         
         return jsonify({
             'data': processed_data,
@@ -248,42 +250,15 @@ def get_data():
             'data': [],
             'total': 0,
             'page': 1,
-            'per_page': 1000,
+            'per_page': CHUNK_SIZE,
             'total_pages': 0
         })
 
 @app.route('/api/summary')
 def get_summary():
-    """API endpoint to get summary statistics"""
+    """API endpoint to get cached summary statistics"""
     try:
-        data = load_data()
-        if data.empty:
-            return jsonify({
-                'total_records': 0,
-                'total_claims': 0,
-                'approved_claims': 0,
-                'disallowed_claims': 0,
-                'total_credits': 0,
-                'avg_tat': 0
-            })
-        
-        approved_mask = data['Claim Status'] == 'Approved'
-        disallowed_mask = data['Claim Status'] == 'Disallowed'
-        
-        # Clean and convert numeric columns
-        credited_amounts = process_numeric_column(data['Credited Amount'])
-        tat_values = process_numeric_column(data['TAT'])
-        
-        summary = {
-            'total_records': int(len(data)),
-            'total_claims': int(len(data)),
-            'approved_claims': int(approved_mask.sum()),
-            'disallowed_claims': int(disallowed_mask.sum()),
-            'total_credits': float(credited_amounts.sum()),
-            'avg_tat': float(tat_values.mean())
-        }
-        
-        return jsonify(summary)
+        return jsonify(get_summary_stats())
     except Exception as e:
         logger.error(f"Error in get_summary: {str(e)}", exc_info=True)
         return jsonify({
