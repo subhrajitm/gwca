@@ -9,7 +9,6 @@ let hasMoreData = true;
 // Store chart instances
 let charts = {
     claimStatus: null,
-    productLine: null,
     warrantyType: null,
     monthlyTrend: null,
     tatDistribution: null,
@@ -26,12 +25,112 @@ function destroyCharts() {
     // Reset chart instances
     charts = {
         claimStatus: null,
-        productLine: null,
         warrantyType: null,
         monthlyTrend: null,
         tatDistribution: null,
         claimsByMonth: null
     };
+}
+
+// Function to process text for word cloud
+function processTextForWordCloud(text) {
+    if (!text) return '';
+    // Convert to lowercase and remove special characters
+    return text.toLowerCase()
+        .replace(/[^\w\s]/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+}
+
+// Function to generate word cloud
+function generateWordCloud(data) {
+    // Get all disallowed item comments
+    const comments = data
+        .filter(claim => claim['Claim Status'] === 'Disallowed' && claim['Disallowed Item Comment'])
+        .map(claim => processTextForWordCloud(claim['Disallowed Item Comment']))
+        .join(' ');
+
+    // Split into words and count frequencies
+    const words = comments.split(/\s+/);
+    const wordCounts = {};
+    words.forEach(word => {
+        if (word.length > 2) { // Only include words longer than 2 characters
+            wordCounts[word] = (wordCounts[word] || 0) + 1;
+        }
+    });
+
+    // Convert to array of objects for d3-cloud
+    const wordData = Object.entries(wordCounts)
+        .map(([text, size]) => ({ text, size }))
+        .sort((a, b) => b.size - a.size)
+        .slice(0, 100); // Limit to top 100 words
+
+    // Clear previous word cloud
+    const container = d3.select("#wordCloudChart");
+    container.selectAll("*").remove();
+
+    // Get container dimensions
+    const containerWidth = container.node().getBoundingClientRect().width;
+    const containerHeight = container.node().getBoundingClientRect().height;
+
+    // Set up the word cloud layout
+    const layout = d3.layout.cloud()
+        .size([containerWidth, containerHeight])
+        .words(wordData)
+        .padding(5)
+        .rotate(() => ~~(Math.random() * 2) * 90)
+        .font("Inter")
+        .fontSize(d => Math.sqrt(d.size) * 5)
+        .on("end", draw);
+
+    layout.start();
+
+    function draw(words) {
+        const svg = container
+            .append("svg")
+            .attr("width", containerWidth)
+            .attr("height", containerHeight);
+
+        const g = svg.append("g")
+            .attr("transform", `translate(${containerWidth / 2},${containerHeight / 2})`);
+
+        const text = g.selectAll("text")
+            .data(words)
+            .enter()
+            .append("text")
+            .style("font-size", d => `${d.size}px`)
+            .style("font-family", "Inter")
+            .style("fill", () => d3.schemeCategory10[~~(Math.random() * 10)])
+            .attr("text-anchor", "middle")
+            .attr("transform", d => `translate(${d.x},${d.y}) rotate(${d.rotate})`)
+            .text(d => d.text)
+            .on("mouseover", function() {
+                d3.select(this)
+                    .transition()
+                    .duration(200)
+                    .style("opacity", 0.8)
+                    .style("transform", "scale(1.1)");
+            })
+            .on("mouseout", function() {
+                d3.select(this)
+                    .transition()
+                    .duration(200)
+                    .style("opacity", 1)
+                    .style("transform", "scale(1)");
+            });
+    }
+
+    // Add resize handler
+    const resizeObserver = new ResizeObserver(entries => {
+        for (let entry of entries) {
+            const newWidth = entry.contentRect.width;
+            if (newWidth !== containerWidth) {
+                generateWordCloud(data); // Regenerate on resize
+            }
+        }
+    });
+
+    resizeObserver.observe(container.node());
 }
 
 // Initialize dashboard with data passed from Flask
@@ -167,44 +266,8 @@ function initializeCharts(data) {
             }
         });
 
-        // Initialize Product Line Chart
-        const productLineCtx = document.getElementById('productLineChart').getContext('2d');
-        const productLineData = {};
-        data.forEach(claim => {
-            const productLine = claim['Product Line'] || 'Unknown';
-            productLineData[productLine] = (productLineData[productLine] || 0) + 1;
-        });
-        if (charts.productLine) {
-            charts.productLine.destroy();
-        }
-        charts.productLine = new Chart(productLineCtx, {
-            type: 'bar',
-            data: {
-                labels: Object.keys(productLineData),
-                datasets: [{
-                    label: 'Number of Claims',
-                    data: Object.values(productLineData),
-                    backgroundColor: '#0d6efd'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            stepSize: 1
-                        }
-                    }
-                }
-            }
-        });
+        // Generate word cloud for disallowed item comments
+        generateWordCloud(data);
 
         // Initialize Warranty Type Chart
         const warrantyTypeCtx = document.getElementById('warrantyTypeChart').getContext('2d');
