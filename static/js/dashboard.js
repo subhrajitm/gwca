@@ -265,9 +265,9 @@ function updateDashboardStats(claims) {
     const maxTAT = tatValues.length > 0 ? Math.max(...tatValues) : 0;
 
     // Update TAT statistics
-    document.getElementById('avgTAT').textContent = `${avgTAT.toFixed(1)} days`;
-    document.getElementById('minTAT').textContent = `${minTAT.toFixed(1)} days`;
-    document.getElementById('maxTAT').textContent = `${maxTAT.toFixed(1)} days`;
+    document.getElementById('avgTAT').textContent = `${Math.round(avgTAT)} days`;
+    document.getElementById('minTAT').textContent = `${Math.round(minTAT)} days`;
+    document.getElementById('maxTAT').textContent = `${Math.round(maxTAT)} days`;
 }
 
 // Function to initialize all charts
@@ -672,7 +672,7 @@ function initializeCharts(data) {
                                     const month = context.label;
                                     
                                     if (label === 'Average TAT') {
-                                        return `${label}: ${value.toFixed(1)} days`;
+                                        return `${label}: ${Math.round(value)} days`;
                                     }
                                     
                                     // For bar charts, show percentage
@@ -761,7 +761,7 @@ function initializeCharts(data) {
                             },
                             ticks: {
                                 callback: function(value) {
-                                    return value.toFixed(1) + ' days';
+                                    return Math.round(value) + ' days';
                                 },
                                 font: {
                                     family: "'Inter', sans-serif",
