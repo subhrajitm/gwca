@@ -8,7 +8,6 @@ let hasMoreData = true;
 
 // Store chart instances
 let charts = {
-    claimStatus: null,
     warrantyType: null,
     monthlyTrend: null,
     tatDistribution: null,
@@ -24,7 +23,6 @@ function destroyCharts() {
     });
     // Reset chart instances
     charts = {
-        claimStatus: null,
         warrantyType: null,
         monthlyTrend: null,
         tatDistribution: null,
@@ -403,121 +401,87 @@ function initializeDashboard(claimsData) {
 }
 
 // Function to update dashboard statistics
-function updateDashboardStats(data) {
-    try {
-        // Calculate total claims
-        const totalClaims = data.length;
-        document.getElementById('totalClaims').textContent = totalClaims;
+function updateDashboardStats(claims) {
+    // Update total claims
+    const totalClaims = claims.length;
+    document.getElementById('totalClaims').textContent = totalClaims.toLocaleString();
 
-        // Calculate approved claims
-        const approvedClaims = data.filter(claim => claim['Claim Status'] === 'Approved').length;
-        document.getElementById('approvedClaims').textContent = approvedClaims;
+    // Calculate approved and disallowed claims
+    const approvedClaims = claims.filter(claim => claim['Claim Status'] === 'Approved').length;
+    const disallowedClaims = claims.filter(claim => claim['Claim Status'] === 'Disallowed').length;
+    
+    // Calculate percentages for claims
+    const approvedClaimsPercentage = totalClaims > 0 ? (approvedClaims / totalClaims * 100) : 0;
+    const disallowedClaimsPercentage = totalClaims > 0 ? (disallowedClaims / totalClaims * 100) : 0;
+    
+    // Update approved and disallowed claims with percentages
+    document.getElementById('approvedClaims').textContent = `${approvedClaims.toLocaleString()} (${approvedClaimsPercentage.toFixed(1)}%)`;
+    document.getElementById('disallowedClaims').textContent = `${disallowedClaims.toLocaleString()} (${disallowedClaimsPercentage.toFixed(1)}%)`;
 
-        // Calculate disallowed claims
-        const disallowedClaims = data.filter(claim => claim['Claim Status'] === 'Disallowed').length;
-        document.getElementById('disallowedClaims').textContent = disallowedClaims;
+    // Calculate rates
+    const approvalRate = totalClaims > 0 ? (approvedClaims / totalClaims * 100) : 0;
+    const rejectionRate = totalClaims > 0 ? (disallowedClaims / totalClaims * 100) : 0;
+    const successRate = totalClaims > 0 ? (approvedClaims / totalClaims * 100) : 0;
 
-        // Calculate rates
-        const successRate = totalClaims > 0 ? (approvedClaims / totalClaims * 100) : 0;
-        const approvalRate = totalClaims > 0 ? (approvedClaims / totalClaims * 100) : 0;
-        const rejectionRate = totalClaims > 0 ? (disallowedClaims / totalClaims * 100) : 0;
+    // Update rates
+    document.getElementById('successRate').textContent = `${successRate.toFixed(1)}%`;
+    document.getElementById('approvalRate').textContent = `${approvalRate.toFixed(1)}%`;
+    document.getElementById('rejectionRate').textContent = `${rejectionRate.toFixed(1)}%`;
 
-        // Update rate displays
-        document.getElementById('successRate').textContent = `${successRate.toFixed(2)}%`;
-        document.getElementById('approvalRate').textContent = `${approvalRate.toFixed(2)}%`;
-        document.getElementById('rejectionRate').textContent = `${rejectionRate.toFixed(2)}%`;
+    // Calculate total credits (using Credited Amount for approved and Requested Credits for disallowed)
+    const totalCredits = claims.reduce((sum, claim) => {
+        let amount = 0;
+        if (claim['Claim Status'] === 'Approved') {
+            amount = parseFloat(claim['Credited Amount']) || 0;
+        } else if (claim['Claim Status'] === 'Disallowed') {
+            amount = parseFloat(claim['Requested Credits']) || 0;
+        }
+        return sum + amount;
+    }, 0);
+    document.getElementById('totalCredits').textContent = `$${totalCredits.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
 
-        // Calculate total credits
-        const totalCredits = data.reduce((sum, claim) => {
+    // Calculate approved credits (using Credited Amount)
+    const approvedCredits = claims
+        .filter(claim => claim['Claim Status'] === 'Approved')
+        .reduce((sum, claim) => {
             const amount = parseFloat(claim['Credited Amount']) || 0;
             return sum + amount;
         }, 0);
-        document.getElementById('totalCredits').textContent = `$${totalCredits.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
 
-        // Calculate average credit
-        const avgCredit = totalClaims > 0 ? totalCredits / totalClaims : 0;
-        document.getElementById('avgCredit').textContent = `$${avgCredit.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+    // Calculate disallowed credits (using Requested Credits)
+    const disallowedCredits = claims
+        .filter(claim => claim['Claim Status'] === 'Disallowed')
+        .reduce((sum, claim) => {
+            const amount = parseFloat(claim['Requested Credits']) || 0;
+            return sum + amount;
+        }, 0);
 
-        // Calculate max credit
-        const maxCredit = Math.max(...data.map(claim => parseFloat(claim['Credited Amount']) || 0));
-        document.getElementById('maxCredit').textContent = `$${maxCredit.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+    // Calculate percentages for credits
+    const approvedCreditsPercentage = totalCredits > 0 ? (approvedCredits / totalCredits * 100).toFixed(1) : 0;
+    const disallowedCreditsPercentage = totalCredits > 0 ? (disallowedCredits / totalCredits * 100).toFixed(1) : 0;
 
-        // Calculate TAT statistics
-        const tatValues = data.map(claim => parseFloat(claim['TAT']) || 0).filter(tat => !isNaN(tat));
-        const avgTAT = tatValues.length > 0 ? tatValues.reduce((a, b) => a + b, 0) / tatValues.length : 0;
-        const minTAT = tatValues.length > 0 ? Math.min(...tatValues) : 0;
-        const maxTAT = tatValues.length > 0 ? Math.max(...tatValues) : 0;
+    // Update approved and disallowed credits with percentages
+    document.getElementById('approvedCredits').textContent = `$${approvedCredits.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} (${approvedCreditsPercentage}%)`;
+    document.getElementById('disallowedCredits').textContent = `$${disallowedCredits.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} (${disallowedCreditsPercentage}%)`;
 
-        document.getElementById('avgTAT').textContent = `${Math.round(avgTAT)} days`;
-        document.getElementById('minTAT').textContent = `${Math.round(minTAT)} days`;
-        document.getElementById('maxTAT').textContent = `${Math.round(maxTAT)} days`;
+    // Calculate TAT statistics
+    const tatValues = claims
+        .filter(claim => claim['TAT'] !== null && !isNaN(claim['TAT']))
+        .map(claim => parseFloat(claim['TAT']));
+    
+    const avgTAT = tatValues.length > 0 ? tatValues.reduce((a, b) => a + b, 0) / tatValues.length : 0;
+    const minTAT = tatValues.length > 0 ? Math.min(...tatValues) : 0;
+    const maxTAT = tatValues.length > 0 ? Math.max(...tatValues) : 0;
 
-    } catch (error) {
-        console.error('Error updating dashboard stats:', error);
-        throw error;
-    }
+    // Update TAT statistics
+    document.getElementById('avgTAT').textContent = `${avgTAT.toFixed(1)} days`;
+    document.getElementById('minTAT').textContent = `${minTAT.toFixed(1)} days`;
+    document.getElementById('maxTAT').textContent = `${maxTAT.toFixed(1)} days`;
 }
 
 // Function to initialize all charts
 function initializeCharts(data) {
     try {
-        // Initialize Claim Status Distribution Chart
-        const claimStatusCtx = document.getElementById('claimStatusChart').getContext('2d');
-        
-        // Process claim status data
-        const statusCount = {};
-        data.forEach(claim => {
-            const status = claim['Claim Status'] || 'Unknown';
-            statusCount[status] = (statusCount[status] || 0) + 1;
-        });
-        
-        // Sort statuses for consistent display
-        const sortedStatuses = Object.keys(statusCount).sort();
-        const statusColors = {
-            'Approved': '#28a745',
-            'Pending': '#ffc107',
-            'Disallowed': '#dc3545',
-            'Unknown': '#6c757d'
-        };
-        
-        if (charts.claimStatus) {
-            charts.claimStatus.destroy();
-        }
-        
-        charts.claimStatus = new Chart(claimStatusCtx, {
-            type: 'doughnut',
-            data: {
-                labels: sortedStatuses,
-                datasets: [{
-                    data: sortedStatuses.map(status => statusCount[status]),
-                    backgroundColor: sortedStatuses.map(status => statusColors[status] || '#6c757d')
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            boxWidth: 12,
-                            padding: 15
-                        }
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                const value = context.raw;
-                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                const percentage = ((value / total) * 100).toFixed(1);
-                                return `${context.label}: ${value} (${percentage}%)`;
-                            }
-                        }
-                    }
-                }
-            }
-        });
-
         // Generate word cloud for disallowed item comments
         generateWordCloud(data);
 
@@ -567,7 +531,9 @@ function initializeCharts(data) {
             
             try {
                 console.log(`Processing claim ${index} - Date: ${claim['Claim Submitted Date']}`);
-                const date = new Date(claim['Claim Submitted Date']);
+                // Parse the date string properly
+                const dateStr = claim['Claim Submitted Date'].split(' ')[0]; // Get just the date part
+                const date = new Date(dateStr);
                 
                 if (isNaN(date.getTime())) {
                     console.log(`Skipping claim ${index} - Invalid date: ${claim['Claim Submitted Date']}`);
@@ -577,11 +543,15 @@ function initializeCharts(data) {
                 const monthKey = date.toLocaleString('default', { month: 'short', year: 'numeric' });
                 console.log(`Claim ${index} - Month key: ${monthKey}`);
                 
-                const amount = typeof claim['Credited Amount'] === 'string'
-                    ? parseFloat(claim['Credited Amount'].replace(/[^0-9.-]+/g, ''))
-                    : parseFloat(claim['Credited Amount']);
-                
-                console.log(`Claim ${index} - Amount: ${amount}`);
+                // Handle amount parsing more carefully
+                let amount = 0;
+                if (typeof claim['Credited Amount'] === 'string') {
+                    // Remove any currency symbols and commas
+                    const cleanAmount = claim['Credited Amount'].replace(/[^0-9.-]+/g, '');
+                    amount = parseFloat(cleanAmount) || 0;
+                } else if (typeof claim['Credited Amount'] === 'number') {
+                    amount = claim['Credited Amount'];
+                }
                 
                 if (!isNaN(amount)) {
                     monthlyData[monthKey] = (monthlyData[monthKey] || 0) + amount;
@@ -710,16 +680,12 @@ function initializeCharts(data) {
         const claimsByMonth = {};
         
         console.log('Initializing Claims by Month Chart with data length:', data.length);
-        if (data.length > 0) {
-            console.log('First record:', data[0]);
-            console.log('Available fields:', Object.keys(data[0]));
-            console.log('Sample submission date:', data[0]['Claim Submitted Date']);
-        }
         
-        // Process data for claims by month
+        // Process data for claims by month and status
         let validDates = 0;
         let invalidDates = 0;
         
+        // Initialize data structure for each month
         data.forEach((claim, index) => {
             const submissionDate = claim['Claim Submitted Date'];
             if (!submissionDate) {
@@ -729,10 +695,10 @@ function initializeCharts(data) {
             }
             
             try {
-                console.log(`Processing claim ${index} - Date: ${submissionDate}, type: ${typeof submissionDate}`);
+                // Parse the date string properly
+                const dateStr = submissionDate.split(' ')[0]; // Get just the date part
+                const date = new Date(dateStr);
                 
-                // Parse the date string (format: YYYY-MM-DD)
-                const date = new Date(submissionDate);
                 if (isNaN(date.getTime())) {
                     console.log(`Skipping claim ${index} - Invalid date: ${submissionDate}`);
                     invalidDates++;
@@ -740,19 +706,26 @@ function initializeCharts(data) {
                 }
                 
                 const monthKey = date.toLocaleString('default', { month: 'short', year: 'numeric' });
-                console.log(`Claim ${index} - Month key: ${monthKey}`);
                 
-                claimsByMonth[monthKey] = (claimsByMonth[monthKey] || 0) + 1;
+                // Initialize month data if not exists
+                if (!claimsByMonth[monthKey]) {
+                    claimsByMonth[monthKey] = {
+                        'Approved': 0,
+                        'Disallowed': 0,
+                        'Pending': 0
+                    };
+                }
+                
+                // Increment the count for the claim's status
+                const status = claim['Claim Status'] || 'Pending';
+                claimsByMonth[monthKey][status]++;
                 validDates++;
-                console.log(`Updated claims count for ${monthKey}: ${claimsByMonth[monthKey]}`);
+                
             } catch (error) {
                 console.error(`Error processing claim ${index}:`, error);
                 invalidDates++;
             }
         });
-        
-        console.log(`Date processing summary: ${validDates} valid dates, ${invalidDates} invalid dates`);
-        console.log('Final claims by month data:', claimsByMonth);
         
         // Sort months chronologically
         const sortedClaimMonths = Object.keys(claimsByMonth).sort((a, b) => {
@@ -761,8 +734,6 @@ function initializeCharts(data) {
             return dateA - dateB;
         });
         
-        console.log('Sorted months:', sortedClaimMonths);
-        
         if (charts.claimsByMonth) {
             charts.claimsByMonth.destroy();
         }
@@ -770,38 +741,214 @@ function initializeCharts(data) {
         // Only create chart if we have data
         if (Object.keys(claimsByMonth).length > 0) {
             console.log('Creating claims by month chart with data');
+            
+            // Check if there are any pending claims
+            const hasPendingClaims = sortedClaimMonths.some(month => claimsByMonth[month]['Pending'] > 0);
+            
+            // Prepare datasets
+            const datasets = [
+                {
+                    label: 'Approved',
+                    data: sortedClaimMonths.map(month => claimsByMonth[month]['Approved']),
+                    backgroundColor: 'rgba(40, 167, 69, 0.8)',
+                    borderColor: 'rgba(40, 167, 69, 1)',
+                    borderWidth: 1,
+                    stack: 'Claims',
+                    borderRadius: 4,
+                    hoverBackgroundColor: 'rgba(40, 167, 69, 1)',
+                    hoverBorderColor: 'rgba(40, 167, 69, 1)',
+                    hoverBorderWidth: 2
+                },
+                {
+                    label: 'Disallowed',
+                    data: sortedClaimMonths.map(month => claimsByMonth[month]['Disallowed']),
+                    backgroundColor: 'rgba(220, 53, 69, 0.8)',
+                    borderColor: 'rgba(220, 53, 69, 1)',
+                    borderWidth: 1,
+                    stack: 'Claims',
+                    borderRadius: 4,
+                    hoverBackgroundColor: 'rgba(220, 53, 69, 1)',
+                    hoverBorderColor: 'rgba(220, 53, 69, 1)',
+                    hoverBorderWidth: 2
+                }
+            ];
+
+            // Only add Pending dataset if there are pending claims
+            if (hasPendingClaims) {
+                datasets.push({
+                    label: 'Pending',
+                    data: sortedClaimMonths.map(month => claimsByMonth[month]['Pending']),
+                    backgroundColor: 'rgba(255, 193, 7, 0.8)',
+                    borderColor: 'rgba(255, 193, 7, 1)',
+                    borderWidth: 1,
+                    stack: 'Claims',
+                    borderRadius: 4,
+                    hoverBackgroundColor: 'rgba(255, 193, 7, 1)',
+                    hoverBorderColor: 'rgba(255, 193, 7, 1)',
+                    hoverBorderWidth: 2
+                });
+            }
+
+            // Add Total Claims line
+            datasets.push({
+                label: 'Total Claims',
+                data: sortedClaimMonths.map(month => 
+                    claimsByMonth[month]['Approved'] + 
+                    claimsByMonth[month]['Disallowed'] + 
+                    (hasPendingClaims ? claimsByMonth[month]['Pending'] : 0)
+                ),
+                type: 'line',
+                borderColor: 'rgba(13, 110, 253, 1)',
+                backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                borderWidth: 3,
+                pointBackgroundColor: 'rgba(13, 110, 253, 1)',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 5,
+                pointHoverRadius: 7,
+                pointHoverBackgroundColor: 'rgba(13, 110, 253, 1)',
+                pointHoverBorderColor: '#fff',
+                pointHoverBorderWidth: 3,
+                tension: 0.4,
+                fill: true,
+                yAxisID: 'y',
+                order: 0
+            });
+
             charts.claimsByMonth = new Chart(claimsByMonthCtx, {
                 type: 'bar',
                 data: {
                     labels: sortedClaimMonths,
-                    datasets: [{
-                        label: 'Number of Claims',
-                        data: sortedClaimMonths.map(month => claimsByMonth[month]),
-                        backgroundColor: '#0d6efd'
-                    }]
+                    datasets: datasets
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeInOutQuart'
+                    },
                     plugins: {
+                        title: {
+                            display: true,
+                            text: 'Claims by Month and Status',
+                            font: {
+                                size: 18,
+                                weight: 'bold',
+                                family: "'Inter', sans-serif"
+                            },
+                            padding: {
+                                top: 10,
+                                bottom: 20
+                            },
+                            color: '#333'
+                        },
                         legend: {
-                            display: false
+                            position: 'top',
+                            align: 'center',
+                            labels: {
+                                boxWidth: 12,
+                                padding: 15,
+                                font: {
+                                    size: 12,
+                                    family: "'Inter', sans-serif"
+                                },
+                                usePointStyle: true,
+                                pointStyle: 'circle'
+                            }
                         },
                         tooltip: {
+                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                            titleColor: '#333',
+                            bodyColor: '#666',
+                            borderColor: '#ddd',
+                            borderWidth: 1,
+                            padding: 12,
+                            cornerRadius: 8,
+                            displayColors: true,
+                            usePointStyle: true,
                             callbacks: {
                                 label: function(context) {
-                                    return `${context.raw} claims`;
+                                    const label = context.dataset.label || '';
+                                    const value = context.raw;
+                                    if (context.dataset.type === 'line') {
+                                        return `${label}: ${value}`;
+                                    }
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = ((value / total) * 100).toFixed(1);
+                                    return `${label}: ${value} (${percentage}%)`;
                                 }
                             }
                         }
                     },
                     scales: {
-                        y: {
-                            beginAtZero: true,
+                        x: {
+                            stacked: true,
+                            grid: {
+                                display: false
+                            },
+                            border: {
+                                display: true,
+                                color: '#ddd'
+                            },
                             ticks: {
-                                stepSize: 1
+                                font: {
+                                    family: "'Inter', sans-serif",
+                                    size: 12
+                                },
+                                color: '#666'
+                            },
+                            title: {
+                                display: true,
+                                text: 'Month',
+                                font: {
+                                    family: "'Inter', sans-serif",
+                                    size: 14,
+                                    weight: 'bold'
+                                },
+                                padding: {
+                                    top: 10
+                                },
+                                color: '#333'
+                            }
+                        },
+                        y: {
+                            stacked: true,
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)',
+                                drawBorder: false
+                            },
+                            border: {
+                                display: true,
+                                color: '#ddd'
+                            },
+                            ticks: {
+                                stepSize: 1,
+                                font: {
+                                    family: "'Inter', sans-serif",
+                                    size: 12
+                                },
+                                color: '#666'
+                            },
+                            title: {
+                                display: true,
+                                text: 'Number of Claims',
+                                font: {
+                                    family: "'Inter', sans-serif",
+                                    size: 14,
+                                    weight: 'bold'
+                                },
+                                padding: {
+                                    bottom: 10
+                                },
+                                color: '#333'
                             }
                         }
+                    },
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
                     }
                 }
             });
@@ -815,9 +962,7 @@ function initializeCharts(data) {
                     <small class="text-muted">
                         Valid dates: ${validDates}<br>
                         Invalid dates: ${invalidDates}<br>
-                        Total records: ${data.length}<br>
-                        Sample date: ${data.length > 0 ? data[0]['Claim Submitted Date'] : 'No data'}<br>
-                        Available fields: ${data.length > 0 ? Object.keys(data[0]).join(', ') : 'No data'}
+                        Total records: ${data.length}
                     </small>
                 </div>
             `;
@@ -931,15 +1076,8 @@ document.addEventListener('DOMContentLoaded', async function() {
         
         // Update summary statistics
         document.getElementById('totalClaims').textContent = summary.total_claims;
-        document.getElementById('approvedClaims').textContent = summary.approved_claims;
-        document.getElementById('disallowedClaims').textContent = summary.disallowed_claims;
         document.getElementById('totalCredits').textContent = `$${summary.total_credits.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
         document.getElementById('avgTAT').textContent = `${Math.round(summary.avg_tat)} days`;
-        
-        // Update success rate statistics
-        document.getElementById('successRate').textContent = `${summary.success_rate}%`;
-        document.getElementById('approvalRate').textContent = `${summary.approval_rate}%`;
-        document.getElementById('rejectionRate').textContent = `${summary.rejection_rate}%`;
         
         // Start loading data
         await loadData(1);
