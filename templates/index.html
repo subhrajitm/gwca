@@ -11,6 +11,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
     <script src="{{ url_for('static', filename='js/dashboard.js') }}" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/wordcloud@1.2.2/src/wordcloud2.min.js"></script>
     <style>
         .loading-spinner {
             position: fixed;
@@ -244,7 +245,7 @@
                                 <button class="btn btn-sm btn-outline-secondary">Export</button>
                             </div>
                             <div class="chart-body">
-                                <div id="wordCloudChart"></div>
+                                <canvas id="wordCloudCanvas" width="600" height="300" style="width:100%;height:300px;"></canvas>
                             </div>
                         </div>
                     </div>

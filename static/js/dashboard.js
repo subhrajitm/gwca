@@ -43,21 +43,15 @@ function processTextForWordCloud(text) {
 // Function to generate word cloud
 function generateWordCloud(data) {
     try {
-        console.log('Starting word cloud generation with data length:', data.length);
-        
         // Get all disallowed item comments
         const comments = data
             .filter(claim => claim['Claim Status'] === 'Disallowed' && claim['Disallowed Item Comment'])
             .map(claim => processTextForWordCloud(claim['Disallowed Item Comment']))
             .join(' ');
 
-        console.log('Processed comments length:', comments.length);
-
         // Split into words and count frequencies using a Map for better performance
         const wordCounts = new Map();
         const words = comments.split(/\s+/);
-        
-        // Extended list of stop words
         const stopWords = new Set([
             'the', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'a', 'an',
             'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'do', 'does', 'did',
@@ -72,105 +66,48 @@ function generateWordCloud(data) {
             'such', 'same', 'other', 'another', 'either', 'neither', 'both', 'each', 'every', 'any',
             'all', 'some', 'none', 'no', 'such', 'same', 'other', 'another'
         ]);
-        
-        // Common warranty-related words to keep
-        const importantWords = new Set([
-            'warranty', 'claim', 'damage', 'repair', 'replace', 'defect', 'fault', 'broken', 'damaged',
-            'failed', 'failure', 'issue', 'problem', 'error', 'malfunction', 'worn', 'wear', 'tear',
-            'crack', 'cracked', 'leak', 'leaking', 'rust', 'rusted', 'corrosion', 'corroded', 'dent',
-            'dented', 'scratch', 'scratched', 'bent', 'broken', 'missing', 'loose', 'tight', 'stuck',
-            'jammed', 'blocked', 'clogged', 'frozen', 'seized', 'burned', 'burnt', 'overheated',
-            'electrical', 'mechanical', 'structural', 'cosmetic', 'functional', 'operational'
-        ]);
-        
         words.forEach(word => {
             if (word.length > 2 && !stopWords.has(word)) {
-                // Keep important words regardless of frequency
-                if (importantWords.has(word)) {
-                    wordCounts.set(word, (wordCounts.get(word) || 0) + 2); // Give higher weight to important words
-                } else {
-                    wordCounts.set(word, (wordCounts.get(word) || 0) + 1);
-                }
+                wordCounts.set(word, (wordCounts.get(word) || 0) + 1);
             }
         });
-
-        console.log('Unique words count:', wordCounts.size);
-
         // Convert to array and sort by frequency
         const wordData = Array.from(wordCounts.entries())
-            .map(([text, size]) => ({ 
-                text, 
-                size,
-                frequency: size,
-                percentage: 0 // Will be calculated below
-            }))
-            .sort((a, b) => b.size - a.size)
+            .map(([text, size]) => [text, size])
+            .sort((a, b) => b[1] - a[1])
             .slice(0, 50); // Limit to top 50 words
-
-        // Calculate percentage of total
-        const totalWords = wordData.reduce((sum, word) => sum + word.frequency, 0);
-        wordData.forEach(word => {
-            word.percentage = ((word.frequency / totalWords) * 100).toFixed(1);
-        });
-
-        console.log('Final word data length:', wordData.length);
 
         // Clear previous word cloud
         const container = document.getElementById('wordCloudChart');
-        container.innerHTML = '';
-
-        // Create a table to display the words
-        const table = document.createElement('table');
-        table.className = 'table table-hover';
-        table.style.width = '100%';
-        
-        // Create table header
-        const thead = document.createElement('thead');
-        thead.innerHTML = `
-            <tr>
-                <th>Word</th>
-                <th>Frequency</th>
-                <th>Percentage</th>
-            </tr>
-        `;
-        table.appendChild(thead);
-
-        // Create table body
-        const tbody = document.createElement('tbody');
-        wordData.forEach(word => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${word.text}</td>
-                <td>${word.frequency}</td>
-                <td>${word.percentage}%</td>
-            `;
-            tbody.appendChild(tr);
-        });
-        table.appendChild(tbody);
-
-        // Add the table to the container
-        container.appendChild(table);
-
-        // Add resize handler
-        let resizeTimeout;
-        const handleResize = () => {
-            clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(() => {
-                generateWordCloud(data);
-            }, 500);
-        };
-
-        window.addEventListener('resize', handleResize);
-
+        if (container) container.innerHTML = '';
+        const canvas = document.getElementById('wordCloudCanvas');
+        if (canvas) {
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            WordCloud(canvas, {
+                list: wordData,
+                gridSize: Math.round(16 * canvas.width / 1024),
+                weightFactor: function (size) {
+                    return Math.pow(size, 1.5) * canvas.width / 1024;
+                },
+                fontFamily: 'Inter, Arial, sans-serif',
+                color: 'random-dark',
+                backgroundColor: '#fff',
+                rotateRatio: 0.2,
+                rotationSteps: 2,
+                drawOutOfBound: false,
+                shuffle: true,
+                click: function(item) {
+                    // Optional: show alert or tooltip with word and count
+                }
+            });
+        }
     } catch (error) {
         console.error('Error generating word cloud:', error);
         const container = document.getElementById('wordCloudChart');
-        container.innerHTML = `
-            <div class="alert alert-danger">
-                <p>Error generating word cloud</p>
-                <small>${error.message}</small>
-            </div>
-        `;
+        if (container) {
+            container.innerHTML = `<div class="alert alert-danger"><p>Error generating word cloud</p><small>${error.message}</small></div>`;
+        }
     }
 }
 
