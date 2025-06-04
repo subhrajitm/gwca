@@ -229,7 +229,7 @@ function updateDashboardStats(claims) {
         }
         return sum + amount;
     }, 0);
-    document.getElementById('totalCredits').textContent = `$${totalCredits.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+    document.getElementById('totalCredits').textContent = `$${(totalCredits / 1000000).toFixed(2)}M`;
 
     // Calculate approved credits (using Credited Amount)
     const approvedCredits = claims
@@ -252,8 +252,8 @@ function updateDashboardStats(claims) {
     const disallowedCreditsPercentage = totalCredits > 0 ? (disallowedCredits / totalCredits * 100).toFixed(1) : 0;
 
     // Update approved and disallowed credits with percentages
-    document.getElementById('approvedCredits').textContent = `$${approvedCredits.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} (${approvedCreditsPercentage}%)`;
-    document.getElementById('disallowedCredits').textContent = `$${disallowedCredits.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} (${disallowedCreditsPercentage}%)`;
+    document.getElementById('approvedCredits').textContent = `$${(approvedCredits / 1000000).toFixed(2)}M (${approvedCreditsPercentage}%)`;
+    document.getElementById('disallowedCredits').textContent = `$${(disallowedCredits / 1000000).toFixed(2)}M (${disallowedCreditsPercentage}%)`;
 
     // Calculate TAT statistics
     const tatValues = claims
@@ -503,7 +503,8 @@ function initializeCharts(data) {
                     claimsByMonth[monthKey] = {
                         'Approved': { count: 0, amount: 0 },
                         'Disallowed': { count: 0, amount: 0 },
-                        'Pending': { count: 0, amount: 0 }
+                        'Pending': { count: 0, amount: 0 },
+                        'TAT': { sum: 0, count: 0 } // Add TAT tracking
                     };
                 }
                 
@@ -516,6 +517,13 @@ function initializeCharts(data) {
                     claimsByMonth[monthKey][status].amount += parseFloat(claim['Credited Amount']) || 0;
                 } else if (status === 'Disallowed') {
                     claimsByMonth[monthKey][status].amount += parseFloat(claim['Requested Credits']) || 0;
+                }
+
+                // Add TAT to the monthly data
+                const tat = parseFloat(claim['TAT']) || 0;
+                if (!isNaN(tat)) {
+                    claimsByMonth[monthKey]['TAT'].sum += tat;
+                    claimsByMonth[monthKey]['TAT'].count++;
                 }
                 
                 validDates++;
@@ -552,7 +560,6 @@ function initializeCharts(data) {
                     backgroundColor: 'rgba(40, 167, 69, 0.8)',
                     borderColor: 'rgba(40, 167, 69, 1)',
                     borderWidth: 1,
-                    stack: 'Claims',
                     borderRadius: 4,
                     hoverBackgroundColor: 'rgba(40, 167, 69, 1)',
                     hoverBorderColor: 'rgba(40, 167, 69, 1)',
@@ -565,7 +572,6 @@ function initializeCharts(data) {
                     backgroundColor: 'rgba(220, 53, 69, 0.8)',
                     borderColor: 'rgba(220, 53, 69, 1)',
                     borderWidth: 1,
-                    stack: 'Claims',
                     borderRadius: 4,
                     hoverBackgroundColor: 'rgba(220, 53, 69, 1)',
                     hoverBorderColor: 'rgba(220, 53, 69, 1)',
@@ -582,7 +588,6 @@ function initializeCharts(data) {
                     backgroundColor: 'rgba(255, 193, 7, 0.8)',
                     borderColor: 'rgba(255, 193, 7, 1)',
                     borderWidth: 1,
-                    stack: 'Claims',
                     borderRadius: 4,
                     hoverBackgroundColor: 'rgba(255, 193, 7, 1)',
                     hoverBorderColor: 'rgba(255, 193, 7, 1)',
@@ -617,23 +622,23 @@ function initializeCharts(data) {
                 order: 0
             });
 
-            // Add Amount line
+            // Add TAT line
             datasets.push({
-                label: 'Total Amount',
-                data: sortedClaimMonths.map(month => 
-                    claimsByMonth[month]['Approved'].amount + 
-                    claimsByMonth[month]['Disallowed'].amount
-                ),
+                label: 'Average TAT',
+                data: sortedClaimMonths.map(month => {
+                    const tatData = claimsByMonth[month]['TAT'];
+                    return tatData.count > 0 ? (tatData.sum / tatData.count) : 0;
+                }),
                 type: 'line',
-                borderColor: 'rgba(111, 66, 193, 1)',
-                backgroundColor: 'rgba(111, 66, 193, 0.1)',
+                borderColor: 'rgba(23, 162, 184, 1)',
+                backgroundColor: 'rgba(23, 162, 184, 0.1)',
                 borderWidth: 3,
-                pointBackgroundColor: 'rgba(111, 66, 193, 1)',
+                pointBackgroundColor: 'rgba(23, 162, 184, 1)',
                 pointBorderColor: '#fff',
                 pointBorderWidth: 2,
                 pointRadius: 5,
                 pointHoverRadius: 7,
-                pointHoverBackgroundColor: 'rgba(111, 66, 193, 1)',
+                pointHoverBackgroundColor: 'rgba(23, 162, 184, 1)',
                 pointHoverBorderColor: '#fff',
                 pointHoverBorderWidth: 3,
                 tension: 0.4,
@@ -700,45 +705,31 @@ function initializeCharts(data) {
                                     const value = context.raw;
                                     const month = context.label;
                                     
-                                    if (label === 'Total Amount') {
-                                        return `${label}: $${value.toLocaleString('en-US', {
-                                            minimumFractionDigits: 2,
-                                            maximumFractionDigits: 2
-                                        })}`;
+                                    if (label === 'Average TAT') {
+                                        return `${label}: ${value.toFixed(1)} days`;
                                     }
                                     
                                     if (context.dataset.type === 'line' && label === 'Total Claims') {
-                                        return `${label}: ${value}`;
+                                        return `${label}: ${value} claims`;
                                     }
                                     
                                     // For bar charts, show percentage
                                     const total = context.dataset.data.reduce((a, b) => a + b, 0);
                                     const percentage = ((value / total) * 100).toFixed(1);
                                     
-                                    // Get amount for the status
-                                    let amount = 0;
                                     if (label === 'Approved') {
-                                        amount = claimsByMonth[month]['Approved'].amount;
+                                        return `${label}: ${value} claims (${percentage}%)`;
                                     } else if (label === 'Disallowed') {
-                                        amount = claimsByMonth[month]['Disallowed'].amount;
+                                        return `${label}: ${value} claims (${percentage}%)`;
                                     } else if (label === 'Pending') {
-                                        amount = claimsByMonth[month]['Pending'].amount;
+                                        return `${label}: ${value} claims (${percentage}%)`;
                                     }
-                                    
-                                    return [
-                                        `${label}: ${value} (${percentage}%)`,
-                                        `Amount: $${amount.toLocaleString('en-US', {
-                                            minimumFractionDigits: 2,
-                                            maximumFractionDigits: 2
-                                        })}`
-                                    ];
                                 }
                             }
                         }
                     },
                     scales: {
                         x: {
-                            stacked: true,
                             grid: {
                                 display: false
                             },
@@ -768,7 +759,6 @@ function initializeCharts(data) {
                             }
                         },
                         y: {
-                            stacked: true,
                             beginAtZero: true,
                             grid: {
                                 color: 'rgba(0, 0, 0, 0.05)',
@@ -811,7 +801,7 @@ function initializeCharts(data) {
                             },
                             ticks: {
                                 callback: function(value) {
-                                    return '$' + value.toLocaleString();
+                                    return value.toFixed(1) + ' days';
                                 },
                                 font: {
                                     family: "'Inter', sans-serif",
@@ -821,7 +811,7 @@ function initializeCharts(data) {
                             },
                             title: {
                                 display: true,
-                                text: 'Total Amount ($)',
+                                text: 'Average TAT (days)',
                                 font: {
                                     family: "'Inter', sans-serif",
                                     size: 14,
@@ -837,7 +827,10 @@ function initializeCharts(data) {
                     interaction: {
                         mode: 'index',
                         intersect: false
-                    }
+                    },
+                    barPercentage: 1.0,
+                    categoryPercentage: 0.7,
+                    borderRadius: 0
                 }
             });
         } else {
@@ -966,7 +959,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         document.getElementById('totalClaims').textContent = summary.total_claims;
         document.getElementById('approvedClaims').textContent = summary.approved_claims;
         document.getElementById('disallowedClaims').textContent = summary.disallowed_claims;
-        document.getElementById('totalCredits').textContent = `$${summary.total_credits.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        document.getElementById('totalCredits').textContent = `$${(summary.total_credits / 1000000).toFixed(2)}M`;
         document.getElementById('avgTAT').textContent = `${Math.round(summary.avg_tat)} days`;
         
         // Update rates
