@@ -102,284 +102,75 @@ function generateWordCloud(data) {
                 text, 
                 size,
                 frequency: size,
-                percentage: 0, // Will be calculated below
-                displayText: '' // Will be set below
+                percentage: 0 // Will be calculated below
             }))
             .sort((a, b) => b.size - a.size)
             .slice(0, 50); // Limit to top 50 words
 
-        // Calculate percentage of total and set display text
+        // Calculate percentage of total
         const totalWords = wordData.reduce((sum, word) => sum + word.frequency, 0);
         wordData.forEach(word => {
             word.percentage = ((word.frequency / totalWords) * 100).toFixed(1);
-            word.displayText = `${word.text} (${word.frequency})`; // Add frequency to display text
         });
 
         console.log('Final word data length:', wordData.length);
 
         // Clear previous word cloud
-        const container = d3.select("#wordCloudChart");
-        container.selectAll("*").remove();
+        const container = document.getElementById('wordCloudChart');
+        container.innerHTML = '';
 
-        // Get container dimensions
-        const containerWidth = container.node().getBoundingClientRect().width;
-        const containerHeight = container.node().getBoundingClientRect().height;
+        // Create a table to display the words
+        const table = document.createElement('table');
+        table.className = 'table table-hover';
+        table.style.width = '100%';
+        
+        // Create table header
+        const thead = document.createElement('thead');
+        thead.innerHTML = `
+            <tr>
+                <th>Word</th>
+                <th>Frequency</th>
+                <th>Percentage</th>
+            </tr>
+        `;
+        table.appendChild(thead);
 
-        console.log('Container dimensions:', containerWidth, 'x', containerHeight);
+        // Create table body
+        const tbody = document.createElement('tbody');
+        wordData.forEach(word => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${word.text}</td>
+                <td>${word.frequency}</td>
+                <td>${word.percentage}%</td>
+            `;
+            tbody.appendChild(tr);
+        });
+        table.appendChild(tbody);
 
-        // Set up the word cloud layout with optimized settings
-        const layout = d3.layout.cloud()
-            .size([containerWidth, containerHeight])
-            .words(wordData)
-            .padding(3)
-            .rotate(() => {
-                // Fixed rotation angles for stability
-                const angles = [0, 90, -90];
-                return angles[Math.floor(Math.random() * angles.length)];
-            })
-            .font("Inter")
-            .fontSize(d => Math.sqrt(d.size) * 5)
-            .on("end", draw);
+        // Add the table to the container
+        container.appendChild(table);
 
-        // Start the layout calculation
-        layout.start();
-
-        function draw(words) {
-            console.log('Drawing word cloud with', words.length, 'words');
-            
-            const svg = container
-                .append("svg")
-                .attr("width", containerWidth)
-                .attr("height", containerHeight);
-
-            const g = svg.append("g")
-                .attr("transform", `translate(${containerWidth / 2},${containerHeight / 2})`);
-
-            // Create tooltip with enhanced styling
-            const tooltip = d3.select("body")
-                .append("div")
-                .attr("class", "word-cloud-tooltip")
-                .style("position", "absolute")
-                .style("visibility", "hidden")
-                .style("background-color", "rgba(255, 255, 255, 0.95)")
-                .style("border", "1px solid #ddd")
-                .style("border-radius", "8px")
-                .style("padding", "12px")
-                .style("font-size", "13px")
-                .style("box-shadow", "0 4px 8px rgba(0,0,0,0.1)")
-                .style("z-index", "1000")
-                .style("transition", "all 0.2s ease-in-out")
-                .style("backdrop-filter", "blur(4px)");
-
-            // Create a group for each word to handle both text and background
-            const wordGroups = g.selectAll("g")
-                .data(words)
-                .enter()
-                .append("g")
-                .attr("transform", d => `translate(${d.x},${d.y}) rotate(${d.rotate})`);
-
-            // Add background rectangle for hover effect
-            wordGroups.append("rect")
-                .attr("x", d => -d.size * 0.6)
-                .attr("y", d => -d.size * 0.4)
-                .attr("width", d => d.size * 1.2)
-                .attr("height", d => d.size * 0.8)
-                .style("fill", "transparent")
-                .style("rx", "6")
-                .style("ry", "6")
-                .style("transition", "all 0.2s ease-in-out");
-
-            // Enhanced color palette
-            const colorPalette = {
-                high: ['#1f77b4', '#2ca02c', '#ff7f0e', '#d62728', '#9467bd'],
-                medium: ['#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'],
-                low: ['#aec7e8', '#ffbb78', '#98df8a', '#ff9896', '#c5b0d5']
-            };
-
-            // Add text with enhanced styling
-            wordGroups.append("text")
-                .style("font-size", d => `${d.size}px`)
-                .style("font-family", "Inter")
-                .style("fill", d => {
-                    const frequency = d.frequency;
-                    if (frequency > 10) {
-                        return colorPalette.high[Math.floor(Math.random() * colorPalette.high.length)];
-                    }
-                    if (frequency > 5) {
-                        return colorPalette.medium[Math.floor(Math.random() * colorPalette.medium.length)];
-                    }
-                    return colorPalette.low[Math.floor(Math.random() * colorPalette.low.length)];
-                })
-                .style("font-weight", d => d.frequency > 10 ? "600" : "400")
-                .attr("text-anchor", "middle")
-                .attr("dominant-baseline", "middle")
-                .text(d => d.displayText)
-                .style("transition", "all 0.2s ease-in-out")
-                .style("text-shadow", "0 1px 2px rgba(0,0,0,0.1)");
-
-            // Enhanced hover effects
-            wordGroups
-                .on("mouseover", function(event, d) {
-                    const group = d3.select(this);
-                    
-                    // Animate the group with a more pronounced effect
-                    group.transition()
-                        .duration(200)
-                        .attr("transform", `translate(${d.x},${d.y}) rotate(${d.rotate}) scale(1.15)`);
-
-                    // Show background with enhanced styling
-                    group.select("rect")
-                        .transition()
-                        .duration(200)
-                        .style("fill", "rgba(255, 255, 255, 0.95)")
-                        .style("stroke", "#ddd")
-                        .style("stroke-width", "1px")
-                        .style("filter", "drop-shadow(0 2px 4px rgba(0,0,0,0.1))");
-
-                    // Enhance text
-                    group.select("text")
-                        .transition()
-                        .duration(200)
-                        .style("font-weight", "700")
-                        .style("filter", "drop-shadow(0 2px 4px rgba(0,0,0,0.2))");
-
-                    // Show tooltip with enhanced content
-                    tooltip
-                        .style("visibility", "visible")
-                        .style("opacity", 0)
-                        .html(`
-                            <div style="text-align: center; margin-bottom: 8px;">
-                                <strong style="font-size: 16px; color: ${d3.select(this).select("text").style("fill")};">${d.text}</strong>
-                            </div>
-                            <div style="display: grid; grid-template-columns: auto 1fr; gap: 8px; font-size: 12px;">
-                                <span style="color: #666;">Frequency:</span>
-                                <span style="font-weight: 500;">${d.frequency} occurrences</span>
-                                <span style="color: #666;">Percentage:</span>
-                                <span style="font-weight: 500;">${d.percentage}%</span>
-                                <span style="color: #666;">Size:</span>
-                                <span style="font-weight: 500;">${d.size}px</span>
-                            </div>
-                        `)
-                        .style("left", (event.pageX + 15) + "px")
-                        .style("top", (event.pageY - 15) + "px")
-                        .transition()
-                        .duration(200)
-                        .style("opacity", 1)
-                        .style("transform", "translateY(0)");
-                })
-                .on("mouseout", function() {
-                    const group = d3.select(this);
-                    
-                    // Reset group transform
-                    group.transition()
-                        .duration(200)
-                        .attr("transform", d => `translate(${d.x},${d.y}) rotate(${d.rotate})`);
-
-                    // Hide background
-                    group.select("rect")
-                        .transition()
-                        .duration(200)
-                        .style("fill", "transparent")
-                        .style("stroke", "none")
-                        .style("filter", "none");
-
-                    // Reset text
-                    group.select("text")
-                        .transition()
-                        .duration(200)
-                        .style("font-weight", d => d.frequency > 10 ? "600" : "400")
-                        .style("filter", "drop-shadow(0 1px 2px rgba(0,0,0,0.1))");
-
-                    // Hide tooltip with fade effect
-                    tooltip
-                        .transition()
-                        .duration(200)
-                        .style("opacity", 0)
-                        .style("transform", "translateY(10px)")
-                        .end()
-                        .then(() => tooltip.style("visibility", "hidden"));
-                });
-
-            // Add legend with enhanced styling
-            const legend = svg.append("g")
-                .attr("class", "legend")
-                .attr("transform", `translate(10, ${containerHeight - 80})`);
-
-            const legendItems = [
-                { color: colorPalette.high[0], label: "High Frequency (>10)" },
-                { color: colorPalette.medium[0], label: "Medium Frequency (5-10)" },
-                { color: colorPalette.low[0], label: "Low Frequency (<5)" }
-            ];
-
-            legendItems.forEach((item, i) => {
-                const legendItem = legend.append("g")
-                    .attr("transform", `translate(0, ${i * 25})`)
-                    .style("cursor", "pointer")
-                    .on("mouseover", function() {
-                        d3.select(this)
-                            .transition()
-                            .duration(200)
-                            .attr("transform", `translate(5, ${i * 25})`);
-                    })
-                    .on("mouseout", function() {
-                        d3.select(this)
-                            .transition()
-                            .duration(200)
-                            .attr("transform", `translate(0, ${i * 25})`);
-                    });
-
-                legendItem.append("rect")
-                    .attr("width", 14)
-                    .attr("height", 14)
-                    .style("fill", item.color)
-                    .style("rx", "3")
-                    .style("ry", "3")
-                    .style("transition", "all 0.2s ease-in-out");
-
-                legendItem.append("text")
-                    .attr("x", 20)
-                    .attr("y", 12)
-                    .style("font-size", "11px")
-                    .style("fill", "#666")
-                    .text(item.label)
-                    .style("transition", "all 0.2s ease-in-out");
-            });
-
-            console.log('Word cloud drawing completed');
-        }
-
-        // Add resize handler with debouncing and size threshold
+        // Add resize handler
         let resizeTimeout;
-        let lastWidth = containerWidth;
-        const resizeObserver = new ResizeObserver(entries => {
+        const handleResize = () => {
             clearTimeout(resizeTimeout);
             resizeTimeout = setTimeout(() => {
-                for (let entry of entries) {
-                    const newWidth = entry.contentRect.width;
-                    // Only regenerate if width change is significant (more than 50px)
-                    if (Math.abs(newWidth - lastWidth) > 50) {
-                        console.log('Container resized significantly, regenerating word cloud');
-                        lastWidth = newWidth;
-                        generateWordCloud(data);
-                    }
-                }
-            }, 500); // Increased debounce time
-        });
+                generateWordCloud(data);
+            }, 500);
+        };
 
-        resizeObserver.observe(container.node());
+        window.addEventListener('resize', handleResize);
 
     } catch (error) {
         console.error('Error generating word cloud:', error);
-        const container = d3.select("#wordCloudChart");
-        container.selectAll("*").remove();
-        container.append("div")
-            .style("text-align", "center")
-            .style("padding", "20px")
-            .style("color", "#666")
-            .html(`
+        const container = document.getElementById('wordCloudChart');
+        container.innerHTML = `
+            <div class="alert alert-danger">
                 <p>Error generating word cloud</p>
                 <small>${error.message}</small>
-            `);
+            </div>
+        `;
     }
 }
 
