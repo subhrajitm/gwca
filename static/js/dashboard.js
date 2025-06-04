@@ -916,7 +916,7 @@ function showLoadingIndicator() {
     }
     loadingDiv.innerHTML = `
         <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
+        
         </div>
         <p>Loading data... ${Math.round((currentPage / totalPages) * 100)}%</p>
     `;
