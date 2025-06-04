@@ -36,7 +36,7 @@ def load_data():
     
     try:
         current_dir = os.path.dirname(os.path.abspath(__file__))
-        excel_path = os.path.join(current_dir, 'data', 'claims_data.xlsx')
+        excel_path = os.path.join(current_dir, 'data', 'claims_data1.xlsx')
         
         if not os.path.exists(excel_path):
             print(f"Excel file not found at: {excel_path}")

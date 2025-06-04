@@ -560,7 +560,7 @@ function initializeCharts(data) {
                     backgroundColor: 'rgba(40, 167, 69, 0.8)',
                     borderColor: 'rgba(40, 167, 69, 1)',
                     borderWidth: 1,
-                    borderRadius: 4,
+                    borderRadius: 0,
                     hoverBackgroundColor: 'rgba(40, 167, 69, 1)',
                     hoverBorderColor: 'rgba(40, 167, 69, 1)',
                     hoverBorderWidth: 2,
@@ -572,7 +572,7 @@ function initializeCharts(data) {
                     backgroundColor: 'rgba(220, 53, 69, 0.8)',
                     borderColor: 'rgba(220, 53, 69, 1)',
                     borderWidth: 1,
-                    borderRadius: 4,
+                    borderRadius: 0,
                     hoverBackgroundColor: 'rgba(220, 53, 69, 1)',
                     hoverBorderColor: 'rgba(220, 53, 69, 1)',
                     hoverBorderWidth: 2,
@@ -588,39 +588,13 @@ function initializeCharts(data) {
                     backgroundColor: 'rgba(255, 193, 7, 0.8)',
                     borderColor: 'rgba(255, 193, 7, 1)',
                     borderWidth: 1,
-                    borderRadius: 4,
+                    borderRadius: 0,
                     hoverBackgroundColor: 'rgba(255, 193, 7, 1)',
                     hoverBorderColor: 'rgba(255, 193, 7, 1)',
                     hoverBorderWidth: 2,
                     yAxisID: 'y'
                 });
             }
-
-            // Add Total Claims line
-            datasets.push({
-                label: 'Total Claims',
-                data: sortedClaimMonths.map(month => 
-                    claimsByMonth[month]['Approved'].count + 
-                    claimsByMonth[month]['Disallowed'].count + 
-                    (hasPendingClaims ? claimsByMonth[month]['Pending'].count : 0)
-                ),
-                type: 'line',
-                borderColor: 'rgba(13, 110, 253, 1)',
-                backgroundColor: 'rgba(13, 110, 253, 0.1)',
-                borderWidth: 3,
-                pointBackgroundColor: 'rgba(13, 110, 253, 1)',
-                pointBorderColor: '#fff',
-                pointBorderWidth: 2,
-                pointRadius: 5,
-                pointHoverRadius: 7,
-                pointHoverBackgroundColor: 'rgba(13, 110, 253, 1)',
-                pointHoverBorderColor: '#fff',
-                pointHoverBorderWidth: 3,
-                tension: 0.4,
-                fill: true,
-                yAxisID: 'y',
-                order: 0
-            });
 
             // Add TAT line
             datasets.push({
@@ -707,10 +681,6 @@ function initializeCharts(data) {
                                     
                                     if (label === 'Average TAT') {
                                         return `${label}: ${value.toFixed(1)} days`;
-                                    }
-                                    
-                                    if (context.dataset.type === 'line' && label === 'Total Claims') {
-                                        return `${label}: ${value} claims`;
                                     }
                                     
                                     // For bar charts, show percentage
