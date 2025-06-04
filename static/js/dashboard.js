@@ -651,7 +651,7 @@ function initializeCharts(data) {
                     },
                     plugins: {
                         title: {
-                            display: true,
+                            display: false,
                             text: 'Claims by Month and Status',
                             font: {
                                 size: 18,
