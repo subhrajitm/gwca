@@ -133,14 +133,14 @@ function generateWordCloud(data) {
         const layout = d3.layout.cloud()
             .size([containerWidth, containerHeight])
             .words(wordData)
-            .padding(3) // Increased padding for better spacing
+            .padding(3)
             .rotate(() => {
-                // More varied rotation angles for visual interest
-                const angles = [0, 90, -90, 45, -45];
+                // Fixed rotation angles for stability
+                const angles = [0, 90, -90];
                 return angles[Math.floor(Math.random() * angles.length)];
             })
             .font("Inter")
-            .fontSize(d => Math.sqrt(d.size) * 5) // Increased base size
+            .fontSize(d => Math.sqrt(d.size) * 5)
             .on("end", draw);
 
         // Start the layout calculation
@@ -350,19 +350,22 @@ function generateWordCloud(data) {
             console.log('Word cloud drawing completed');
         }
 
-        // Add resize handler with debouncing
+        // Add resize handler with debouncing and size threshold
         let resizeTimeout;
+        let lastWidth = containerWidth;
         const resizeObserver = new ResizeObserver(entries => {
             clearTimeout(resizeTimeout);
             resizeTimeout = setTimeout(() => {
                 for (let entry of entries) {
                     const newWidth = entry.contentRect.width;
-                    if (newWidth !== containerWidth) {
-                        console.log('Container resized, regenerating word cloud');
+                    // Only regenerate if width change is significant (more than 50px)
+                    if (Math.abs(newWidth - lastWidth) > 50) {
+                        console.log('Container resized significantly, regenerating word cloud');
+                        lastWidth = newWidth;
                         generateWordCloud(data);
                     }
                 }
-            }, 250);
+            }, 500); // Increased debounce time
         });
 
         resizeObserver.observe(container.node());
