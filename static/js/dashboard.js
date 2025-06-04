@@ -710,15 +710,23 @@ function initializeCharts(data) {
                 // Initialize month data if not exists
                 if (!claimsByMonth[monthKey]) {
                     claimsByMonth[monthKey] = {
-                        'Approved': 0,
-                        'Disallowed': 0,
-                        'Pending': 0
+                        'Approved': { count: 0, amount: 0 },
+                        'Disallowed': { count: 0, amount: 0 },
+                        'Pending': { count: 0, amount: 0 }
                     };
                 }
                 
-                // Increment the count for the claim's status
+                // Increment the count and amount for the claim's status
                 const status = claim['Claim Status'] || 'Pending';
-                claimsByMonth[monthKey][status]++;
+                claimsByMonth[monthKey][status].count++;
+                
+                // Add amount based on status
+                if (status === 'Approved') {
+                    claimsByMonth[monthKey][status].amount += parseFloat(claim['Credited Amount']) || 0;
+                } else if (status === 'Disallowed') {
+                    claimsByMonth[monthKey][status].amount += parseFloat(claim['Requested Credits']) || 0;
+                }
+                
                 validDates++;
                 
             } catch (error) {
@@ -743,13 +751,13 @@ function initializeCharts(data) {
             console.log('Creating claims by month chart with data');
             
             // Check if there are any pending claims
-            const hasPendingClaims = sortedClaimMonths.some(month => claimsByMonth[month]['Pending'] > 0);
+            const hasPendingClaims = sortedClaimMonths.some(month => claimsByMonth[month]['Pending'].count > 0);
             
             // Prepare datasets
             const datasets = [
                 {
                     label: 'Approved',
-                    data: sortedClaimMonths.map(month => claimsByMonth[month]['Approved']),
+                    data: sortedClaimMonths.map(month => claimsByMonth[month]['Approved'].count),
                     backgroundColor: 'rgba(40, 167, 69, 0.8)',
                     borderColor: 'rgba(40, 167, 69, 1)',
                     borderWidth: 1,
@@ -757,11 +765,12 @@ function initializeCharts(data) {
                     borderRadius: 4,
                     hoverBackgroundColor: 'rgba(40, 167, 69, 1)',
                     hoverBorderColor: 'rgba(40, 167, 69, 1)',
-                    hoverBorderWidth: 2
+                    hoverBorderWidth: 2,
+                    yAxisID: 'y'
                 },
                 {
                     label: 'Disallowed',
-                    data: sortedClaimMonths.map(month => claimsByMonth[month]['Disallowed']),
+                    data: sortedClaimMonths.map(month => claimsByMonth[month]['Disallowed'].count),
                     backgroundColor: 'rgba(220, 53, 69, 0.8)',
                     borderColor: 'rgba(220, 53, 69, 1)',
                     borderWidth: 1,
@@ -769,7 +778,8 @@ function initializeCharts(data) {
                     borderRadius: 4,
                     hoverBackgroundColor: 'rgba(220, 53, 69, 1)',
                     hoverBorderColor: 'rgba(220, 53, 69, 1)',
-                    hoverBorderWidth: 2
+                    hoverBorderWidth: 2,
+                    yAxisID: 'y'
                 }
             ];
 
@@ -777,7 +787,7 @@ function initializeCharts(data) {
             if (hasPendingClaims) {
                 datasets.push({
                     label: 'Pending',
-                    data: sortedClaimMonths.map(month => claimsByMonth[month]['Pending']),
+                    data: sortedClaimMonths.map(month => claimsByMonth[month]['Pending'].count),
                     backgroundColor: 'rgba(255, 193, 7, 0.8)',
                     borderColor: 'rgba(255, 193, 7, 1)',
                     borderWidth: 1,
@@ -785,7 +795,8 @@ function initializeCharts(data) {
                     borderRadius: 4,
                     hoverBackgroundColor: 'rgba(255, 193, 7, 1)',
                     hoverBorderColor: 'rgba(255, 193, 7, 1)',
-                    hoverBorderWidth: 2
+                    hoverBorderWidth: 2,
+                    yAxisID: 'y'
                 });
             }
 
@@ -793,9 +804,9 @@ function initializeCharts(data) {
             datasets.push({
                 label: 'Total Claims',
                 data: sortedClaimMonths.map(month => 
-                    claimsByMonth[month]['Approved'] + 
-                    claimsByMonth[month]['Disallowed'] + 
-                    (hasPendingClaims ? claimsByMonth[month]['Pending'] : 0)
+                    claimsByMonth[month]['Approved'].count + 
+                    claimsByMonth[month]['Disallowed'].count + 
+                    (hasPendingClaims ? claimsByMonth[month]['Pending'].count : 0)
                 ),
                 type: 'line',
                 borderColor: 'rgba(13, 110, 253, 1)',
@@ -813,6 +824,31 @@ function initializeCharts(data) {
                 fill: true,
                 yAxisID: 'y',
                 order: 0
+            });
+
+            // Add Amount line
+            datasets.push({
+                label: 'Total Amount',
+                data: sortedClaimMonths.map(month => 
+                    claimsByMonth[month]['Approved'].amount + 
+                    claimsByMonth[month]['Disallowed'].amount
+                ),
+                type: 'line',
+                borderColor: 'rgba(111, 66, 193, 1)',
+                backgroundColor: 'rgba(111, 66, 193, 0.1)',
+                borderWidth: 3,
+                pointBackgroundColor: 'rgba(111, 66, 193, 1)',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 5,
+                pointHoverRadius: 7,
+                pointHoverBackgroundColor: 'rgba(111, 66, 193, 1)',
+                pointHoverBorderColor: '#fff',
+                pointHoverBorderWidth: 3,
+                tension: 0.4,
+                fill: true,
+                yAxisID: 'y1',
+                order: 1
             });
 
             charts.claimsByMonth = new Chart(claimsByMonthCtx, {
@@ -871,12 +907,40 @@ function initializeCharts(data) {
                                 label: function(context) {
                                     const label = context.dataset.label || '';
                                     const value = context.raw;
-                                    if (context.dataset.type === 'line') {
+                                    const month = context.label;
+                                    
+                                    if (label === 'Total Amount') {
+                                        return `${label}: $${value.toLocaleString('en-US', {
+                                            minimumFractionDigits: 2,
+                                            maximumFractionDigits: 2
+                                        })}`;
+                                    }
+                                    
+                                    if (context.dataset.type === 'line' && label === 'Total Claims') {
                                         return `${label}: ${value}`;
                                     }
+                                    
+                                    // For bar charts, show percentage
                                     const total = context.dataset.data.reduce((a, b) => a + b, 0);
                                     const percentage = ((value / total) * 100).toFixed(1);
-                                    return `${label}: ${value} (${percentage}%)`;
+                                    
+                                    // Get amount for the status
+                                    let amount = 0;
+                                    if (label === 'Approved') {
+                                        amount = claimsByMonth[month]['Approved'].amount;
+                                    } else if (label === 'Disallowed') {
+                                        amount = claimsByMonth[month]['Disallowed'].amount;
+                                    } else if (label === 'Pending') {
+                                        amount = claimsByMonth[month]['Pending'].amount;
+                                    }
+                                    
+                                    return [
+                                        `${label}: ${value} (${percentage}%)`,
+                                        `Amount: $${amount.toLocaleString('en-US', {
+                                            minimumFractionDigits: 2,
+                                            maximumFractionDigits: 2
+                                        })}`
+                                    ];
                                 }
                             }
                         }
@@ -934,6 +998,39 @@ function initializeCharts(data) {
                             title: {
                                 display: true,
                                 text: 'Number of Claims',
+                                font: {
+                                    family: "'Inter', sans-serif",
+                                    size: 14,
+                                    weight: 'bold'
+                                },
+                                padding: {
+                                    bottom: 10
+                                },
+                                color: '#333'
+                            }
+                        },
+                        y1: {
+                            position: 'right',
+                            beginAtZero: true,
+                            grid: {
+                                display: false
+                            },
+                            border: {
+                                display: false
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString();
+                                },
+                                font: {
+                                    family: "'Inter', sans-serif",
+                                    size: 12
+                                },
+                                color: '#666'
+                            },
+                            title: {
+                                display: true,
+                                text: 'Total Amount ($)',
                                 font: {
                                     family: "'Inter', sans-serif",
                                     size: 14,
