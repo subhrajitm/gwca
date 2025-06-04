@@ -594,29 +594,6 @@ function initializeCharts(data) {
                 }
             ];
 
-            // Only add Pending dataset if there are pending claims
-            if (hasPendingClaims) {
-                datasets.push({
-                    label: 'Pending',
-                    data: sortedClaimMonths.map(month => claimsByMonth[month]['Pending'].count),
-                    type: 'line',
-                    borderColor: 'rgba(255, 193, 7, 1)',
-                    backgroundColor: 'rgba(255, 193, 7, 0.15)',
-                    borderWidth: 3,
-                    pointBackgroundColor: 'rgba(255, 193, 7, 1)',
-                    pointBorderColor: '#fff',
-                    pointBorderWidth: 2,
-                    pointRadius: 5,
-                    pointHoverRadius: 7,
-                    pointHoverBackgroundColor: 'rgba(255, 193, 7, 1)',
-                    pointHoverBorderColor: '#fff',
-                    pointHoverBorderWidth: 3,
-                    tension: 0.4,
-                    fill: false,
-                    yAxisID: 'y'
-                });
-            }
-
             // Add TAT as a bar
             datasets.push({
                 label: 'Average TAT',
@@ -705,8 +682,6 @@ function initializeCharts(data) {
                                     if (label === 'Approved') {
                                         return `${label}: ${value} claims (${percentage}%)`;
                                     } else if (label === 'Disallowed') {
-                                        return `${label}: ${value} claims (${percentage}%)`;
-                                    } else if (label === 'Pending') {
                                         return `${label}: ${value} claims (${percentage}%)`;
                                     }
                                 }
