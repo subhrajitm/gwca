@@ -964,8 +964,15 @@ document.addEventListener('DOMContentLoaded', async function() {
         
         // Update summary statistics
         document.getElementById('totalClaims').textContent = summary.total_claims;
+        document.getElementById('approvedClaims').textContent = summary.approved_claims;
+        document.getElementById('disallowedClaims').textContent = summary.disallowed_claims;
         document.getElementById('totalCredits').textContent = `$${summary.total_credits.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
         document.getElementById('avgTAT').textContent = `${Math.round(summary.avg_tat)} days`;
+        
+        // Update rates
+        document.getElementById('successRate').textContent = `${summary.success_rate}%`;
+        document.getElementById('approvalRate').textContent = `${summary.approval_rate}%`;
+        document.getElementById('rejectionRate').textContent = `${summary.rejection_rate}%`;
         
         // Start loading data
         await loadData(1);
