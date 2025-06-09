@@ -1802,7 +1802,7 @@ body {
     display: flex;
     align-items: center;
     gap: 1rem;
-    border-bottom: 1px solid rgba(0,0,0,.05);
+    border-bottom: 1px solid #E5E7EB;
 }
 
 .user-avatar img {
@@ -1872,7 +1872,7 @@ body {
 
 .sidebar-footer {
     padding: 1rem 1.5rem;
-    border-top: 1px solid rgba(0,0,0,.05);
+    border-top: 1px solid #E5E7EB;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -2244,6 +2244,7 @@ body {
     position: relative;
     overflow: hidden;
     background: #fff;
+    min-height: 300px;
 }
 
 #wordCloudChart svg {
@@ -2258,6 +2259,7 @@ body {
     cursor: pointer;
     transition: all 0.2s ease;
     font-family: 'Inter', sans-serif;
+    font-weight: 500;
 }
 
 #wordCloudChart text:hover {
@@ -2270,6 +2272,7 @@ canvas {
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
+    display: block;
 }
 
 /* Row Styles */

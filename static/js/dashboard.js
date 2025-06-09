@@ -49,7 +49,7 @@ function generateWordCloud(data) {
             .map(claim => processTextForWordCloud(claim['Disallowed Item Comment']))
             .join(' ');
 
-        // Split into words and count frequencies using a Map for better performance
+        // Split into words and count frequencies
         const wordCounts = new Map();
         const words = comments.split(/\s+/);
         const stopWords = new Set([
@@ -66,42 +66,48 @@ function generateWordCloud(data) {
             'such', 'same', 'other', 'another', 'either', 'neither', 'both', 'each', 'every', 'any',
             'all', 'some', 'none', 'no', 'such', 'same', 'other', 'another'
         ]);
+
         words.forEach(word => {
             if (word.length > 2 && !stopWords.has(word)) {
                 wordCounts.set(word, (wordCounts.get(word) || 0) + 1);
             }
         });
+
         // Convert to array and sort by frequency
         const wordData = Array.from(wordCounts.entries())
             .map(([text, size]) => [text, size])
             .sort((a, b) => b[1] - a[1])
             .slice(0, 50); // Limit to top 50 words
 
-        // Clear previous word cloud
-        const container = document.getElementById('wordCloudChart');
-        if (container) container.innerHTML = '';
+        // Get the canvas element
         const canvas = document.getElementById('wordCloudCanvas');
-        if (canvas) {
-            canvas.width = canvas.offsetWidth;
-            canvas.height = canvas.offsetHeight;
-            WordCloud(canvas, {
-                list: wordData,
-                gridSize: Math.round(16 * canvas.width / 1024),
-                weightFactor: function (size) {
-                    return Math.pow(size, 1.5) * canvas.width / 1024;
-                },
-                fontFamily: 'Inter, Arial, sans-serif',
-                color: 'random-dark',
-                backgroundColor: '#fff',
-                rotateRatio: 0.2,
-                rotationSteps: 2,
-                drawOutOfBound: false,
-                shuffle: true,
-                click: function(item) {
-                    // Optional: show alert or tooltip with word and count
-                }
-            });
+        if (!canvas) {
+            console.error('Word cloud canvas not found');
+            return;
         }
+
+        // Set canvas dimensions
+        canvas.width = 800;
+        canvas.height = 400;
+
+        // Generate word cloud with fixed configuration
+        WordCloud(canvas, {
+            list: wordData,
+            gridSize: 16,
+            weightFactor: 50,
+            fontFamily: 'Hiragino Sans GB, Microsoft YaHei',
+            color: '#000000',
+            hover: window.drawBox,
+            click: function(item) {
+                console.log(item[0], item[1]);
+            },
+            backgroundColor: '#ffffff',
+            rotateRatio: 0.5,
+            rotationSteps: 2,
+            minSize: 14,
+            maxSize: 80
+        });
+
     } catch (error) {
         console.error('Error generating word cloud:', error);
         const container = document.getElementById('wordCloudChart');
@@ -110,6 +116,23 @@ function generateWordCloud(data) {
         }
     }
 }
+
+// Add this helper function for hover effect
+window.drawBox = function(item, dimension) {
+    if (!dimension) {
+        return;
+    }
+    const x = dimension.x;
+    const y = dimension.y;
+    const w = dimension.w;
+    const h = dimension.h;
+    const ctx = this.getContext('2d');
+    ctx.save();
+    ctx.strokeStyle = '#000000';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x, y, w, h);
+    ctx.restore();
+};
 
 // Initialize dashboard with data passed from Flask
 function initializeDashboard(claimsData) {
