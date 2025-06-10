@@ -90,22 +90,56 @@ function generateWordCloud(data) {
         canvas.width = 800;
         canvas.height = 400;
 
-        // Generate word cloud with fixed configuration
+        // Color function for better word coloring
+        const colorFunction = function(word, weight) {
+            // Define a set of vibrant colors
+            const colors = [
+                '#1f77b4', // blue
+                '#ff7f0e', // orange
+                '#2ca02c', // green
+                '#d62728', // red
+                '#9467bd', // purple
+                '#8c564b', // brown
+                '#e377c2', // pink
+                '#7f7f7f', // gray
+                '#bcbd22', // yellow-green
+                '#17becf'  // cyan
+            ];
+            // Use weight to determine color intensity
+            return colors[Math.floor(Math.random() * colors.length)];
+        };
+
+        // Generate word cloud with improved configuration
         WordCloud(canvas, {
             list: wordData,
-            gridSize: 16,
-            weightFactor: 50,
-            fontFamily: 'Hiragino Sans GB, Microsoft YaHei',
-            color: '#000000',
-            hover: window.drawBox,
+            gridSize: 12,
+            weightFactor: 100,
+            fontFamily: 'Inter, Arial, sans-serif',
+            color: colorFunction,
+            backgroundColor: '#ffffff',
+            rotateRatio: 0.3,
+            rotationSteps: 3,
+            minSize: 16,
+            maxSize: 80,
+            hover: function(item, dimension) {
+                if (!dimension) {
+                    return;
+                }
+                const ctx = this.getContext('2d');
+                ctx.save();
+                ctx.strokeStyle = '#000000';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(dimension.x, dimension.y, dimension.w, dimension.h);
+                ctx.restore();
+            },
             click: function(item) {
                 console.log(item[0], item[1]);
             },
-            backgroundColor: '#ffffff',
-            rotateRatio: 0.5,
-            rotationSteps: 2,
-            minSize: 14,
-            maxSize: 80
+            drawOutOfBound: false,
+            shrinkToFit: true,
+            shuffle: true,
+            shape: 'circle',
+            ellipticity: 0.65
         });
 
     } catch (error) {
