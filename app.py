@@ -333,5 +333,9 @@ def get_summary():
             'avg_tat': 0
         })
 
+@app.route('/claim-assist')
+def claim_assist():
+    return render_template('claim_assist.html')
+
 if __name__ == '__main__':
     app.run(debug=True, port=5001, host='0.0.0.0') 
