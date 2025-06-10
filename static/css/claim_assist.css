@@ -223,6 +223,19 @@
     background: #f3f6fa;
     color: #7a7a8c;
 }
+.invoice-table tfoot tr {
+    background: #e3eafc;
+    color: #22223b;
+    font-size: 1.08em;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(80,120,200,0.10);
+}
+.invoice-table tfoot td:first-child {
+    border-bottom-left-radius: 14px;
+}
+.invoice-table tfoot td:last-child {
+    border-bottom-right-radius: 14px;
+}
 .pill-badge {
     display: inline-block;
     padding: 0.22em 0.85em;
@@ -236,6 +249,14 @@
 .pill-badge.due { background: #ffeaea; color: #d32f2f; }
 .pill-badge.issued { background: #e7fbe9; color: #388e3c; }
 .pill-badge.upcoming { background: #fff8e1; color: #fbc02d; }
+.pill-badge.issued, .total-issued {
+    background: #198754 !important;
+    color: #fff !important;
+    font-weight: 700;
+    margin-right: 0.18em;
+    border-radius: 999px;
+    text-align: center;
+}
 .issued-btn {
     display: inline-flex;
     align-items: center;
