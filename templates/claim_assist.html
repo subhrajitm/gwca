@@ -108,6 +108,11 @@
                     </div>
                 </div>
             </div>
+            <div class="steps-indicator d-flex align-items-center gap-2 mb-3">
+                <div class="step step-1 active">1</div>
+                <div class="step-line"></div>
+                <div class="step step-2">2</div>
+            </div>
             <div class="card mb-3 modern-table-card">
                 <div class="card-body p-3">
                     <div class="modern-table-header">
@@ -162,19 +167,79 @@
                                 <!-- <tr class="no-data-row"><td colspan="6">No data found</td></tr> -->
                             </tbody>
                             <tfoot>
-                                <tr>
-                                    <td><b>Total</b></td>
+                                <tr class="table-total-row">
+                                    <td><strong>Total</strong></td>
                                     <td>-</td>
-                                    <td>16</td>
-                                    <td>5 <button class="issued-arrow-btn" title="Details"><i class="fas fa-arrow-right"></i></button></td>
-                                    <td>2</td>
+                                    <td><strong>16</strong></td>
+                                    <td><strong>5</strong> <button class="issued-arrow-btn" title="Details"><i class="fas fa-arrow-right"></i></button></td>
+                                    <td><strong>2</strong></td>
                                 </tr>
                             </tfoot>
                         </table>
                     </div>
                     <div class="note mt-2">
-                        <div>* Click on any value of issued invoices columns to see Warranty details.</div>
+                        <div>* Click on total value of issued invoices columns to see Warranty details.</div>
                         <div>* Scroll below to see the Warranty Status of these issued invoices.</div>
+                    </div>
+                </div>
+            </div>
+            <div id="warranty-claim-table" class="card mb-3 modern-table-card warranty-claim-table hide-table">
+                <div class="card-body p-3">
+                    <div class="modern-table-header">
+                        <button class="btn btn-outline-secondary me-2 back-to-invoice"><i class="fas fa-arrow-left me-1"></i>Back</button>
+                        <span class="header-title">Warranty Claim Status - Issued</span>
+                        <div class="d-flex align-items-center gap-2 ms-auto flex-wrap">
+                            <div class="search-group">
+                                <span class="search-icon"><i class="fas fa-search"></i></span>
+                                <input type="text" class="form-control search-box warranty-search-box" placeholder="Search shop...">
+                            </div>
+                            <button class="export-btn warranty-export-btn" title="Export"><i class="fas fa-file-export"></i></button>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table invoice-table mb-0" id="warranty-table">
+                            <thead>
+                                <tr>
+                                    <th class="sortable">SHOP</th>
+                                    <th class="sortable">TO BE ASSESSED</th>
+                                    <th class="sortable">NO OPPORTUNITY</th>
+                                    <th class="sortable">IN PROGRESS</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="lead-cell">Shop1</td>
+                                    <td data-tooltip="Click to see Warranty Opportunity">1*</td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                </tr>
+                                <tr>
+                                    <td class="lead-cell">Shop2</td>
+                                    <td data-tooltip="Click to see Warranty Opportunity">1*</td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                </tr>
+                                <tr>
+                                    <td class="lead-cell">Shop3</td>
+                                    <td data-tooltip="Click to see Warranty Opportunity">3*</td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr class="table-total-row">
+                                    <td><strong>Total</strong></td>
+                                    <td>5</td>
+                                    <td>0</td>
+                                    <td>0</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    <div class="note mt-2">
+                        <div>Note:</div>
+                        <div>* Click on any value of this asses columns to see the Warranty Opportunity.</div>
+                        <div>* Click on any value of this Inprogress columns to see the Claim in progress.</div>
                     </div>
                 </div>
             </div>
@@ -182,4 +247,5 @@
     </main>
 </div>
 </body>
+<script src="{{ url_for('static', filename='js/claim_assist.js') }}"></script>
 </html> 
