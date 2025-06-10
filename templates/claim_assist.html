@@ -108,10 +108,11 @@
             font-size: 0.92rem;
         }
         .modern-table-card {
-            border-radius: 16px;
-            box-shadow: 0 2px 12px rgba(80,120,200,0.07);
+            border-radius: 18px;
+            box-shadow: 0 4px 24px 0 rgba(31, 38, 135, 0.10);
             border: none;
             margin-bottom: 1.5rem;
+            background: #fff;
         }
         .modern-table-header {
             display: flex;
@@ -119,45 +120,181 @@
             align-items: center;
             justify-content: space-between;
             gap: 0.5rem;
-            margin-bottom: 0.7rem;
+            margin-bottom: 0.5rem;
+            padding: 0.5rem 0.7rem 0.5rem 0.7rem;
+            background: #f8fafd;
+            border-radius: 12px 12px 0 0;
+            border-bottom: 1.5px solid #e6eaf3;
+        }
+        .modern-table-header .header-title {
+            font-size: 1.08em;
+            font-weight: 700;
+            color: #22223b;
+            margin-right: 1.2rem;
+        }
+        .modern-table-header .dropdown, .modern-table-header .form-switch, .modern-table-header .search-box, .modern-table-header .export-btn {
+            margin-bottom: 0;
+        }
+        .modern-table-header .dropdown-toggle {
+            font-size: 0.97em;
+            padding: 0.25rem 1.2rem 0.25rem 0.7rem;
+            border-radius: 8px;
+            background: #fff;
+            border: 1px solid #e6eaf3;
+            color: #22223b;
+            font-weight: 500;
+        }
+        .modern-table-header .dropdown-toggle:focus, .modern-table-header .dropdown-toggle:hover {
+            border-color: #b3c6e6;
+            background: #f3f6fa;
+        }
+        .modern-table-header .form-switch {
+            margin-left: 0.7rem;
+        }
+        .modern-table-header .form-switch .form-check-input {
+            width: 2.2em;
+            height: 1.1em;
+        }
+        .modern-table-header .search-group {
+            position: relative;
+            max-width: 200px;
         }
         .modern-table-header .search-box {
-            max-width: 220px;
-        }
-        .modern-table-header .export-btn {
-            font-size: 0.98em;
-        }
-        .invoice-table {
-            border-radius: 12px;
-            overflow: hidden;
+            padding-left: 2rem;
+            font-size: 0.97em;
+            border-radius: 8px;
+            border: 1px solid #e6eaf3;
             background: #fff;
         }
+        .modern-table-header .search-box:focus {
+            border-color: #b3c6e6;
+            background: #f3f6fa;
+        }
+        .modern-table-header .search-icon {
+            position: absolute;
+            left: 0.7em;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #b3b3b3;
+            font-size: 1em;
+        }
+        .modern-table-header .export-btn {
+            border: none;
+            background: transparent;
+            color: #7a7a8c;
+            font-size: 1.2em;
+            margin-left: 0.5rem;
+            border-radius: 8px;
+            padding: 0.3em 0.5em;
+            transition: background 0.15s;
+        }
+        .modern-table-header .export-btn:hover, .modern-table-header .export-btn:focus {
+            background: #f3f6fa;
+            color: #1565c0;
+        }
+        .invoice-table {
+            border-radius: 14px;
+            overflow: hidden;
+            background: #fff;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-bottom: 0;
+        }
         .invoice-table th, .invoice-table td {
-            text-align: center;
+            text-align: left;
             vertical-align: middle;
-            font-size: 0.97em;
-            padding: 0.45rem 0.5rem;
+            font-size: 1.01em;
+            padding: 0.7rem 1rem;
+            border: none;
         }
         .invoice-table th {
-            background: #1565c0;
-            color: #fff;
-            position: sticky;
-            top: 0;
-            z-index: 2;
-            font-weight: 600;
-            letter-spacing: 0.01em;
-            border-bottom: 2px solid #e6eaf3;
+            background: #fff;
+            color: #7a7a8c;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.93em;
+            letter-spacing: 0.04em;
+            border-bottom: 2px solid #f3f6fa;
         }
-        .invoice-table tbody tr:nth-child(even) {
+        .invoice-table td {
+            background: #fff;
+            color: #22223b;
+            font-weight: 500;
+        }
+        .invoice-table tbody tr:nth-child(even) td {
             background: #f8fafd;
         }
-        .invoice-table tbody tr:hover {
-            background: #e3eafc;
+        .invoice-table tbody tr:hover td {
+            background: #f1f5fb;
             transition: background 0.18s;
         }
         .invoice-table tfoot td {
             font-weight: bold;
             background: #f3f6fa;
+            color: #7a7a8c;
+        }
+        .pill-badge {
+            display: inline-block;
+            padding: 0.22em 0.85em;
+            font-size: 0.93em;
+            font-weight: 600;
+            border-radius: 999px;
+            letter-spacing: 0.01em;
+            background: #f3f6fa;
+            color: #7a7a8c;
+        }
+        .pill-badge.due { background: #ffeaea; color: #d32f2f; }
+        .pill-badge.issued { background: #e7fbe9; color: #388e3c; }
+        .pill-badge.upcoming { background: #fff8e1; color: #fbc02d; }
+        .issued-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4em;
+            background: transparent;
+            border: none;
+            padding: 0;
+        }
+        .issued-arrow-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.7em;
+            height: 1.7em;
+            border-radius: 8px;
+            background: #1976d2;
+            color: #fff;
+            border: 2px solid #1976d2;
+            margin-left: 0.13em;
+            font-size: 1.08em;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(25, 118, 210, 0.13);
+            transition: background 0.15s, color 0.15s, transform 0.13s, box-shadow 0.13s;
+        }
+        .issued-arrow-btn:hover, .issued-arrow-btn:focus {
+            background: #115293;
+            border-color: #115293;
+            color: #fff;
+            transform: scale(1.11);
+            box-shadow: 0 4px 16px rgba(25, 118, 210, 0.18);
+        }
+        .pill-badge.issued {
+            background: #1976d2;
+            color: #fff;
+            font-weight: 700;
+            margin-right: 0.18em;
+        }
+        .checkbox-col {
+            width: 36px;
+            text-align: center;
+        }
+        .invoice-table .lead-cell {
+            font-weight: 700;
+            color: #22223b;
+        }
+        .invoice-table .email-cell {
+            font-size: 0.97em;
+            color: #7a7a8c;
+            font-weight: 400;
         }
         .no-data-row td {
             text-align: center;
@@ -267,46 +404,58 @@
             <div class="card mb-3 modern-table-card">
                 <div class="card-body p-3">
                     <div class="modern-table-header">
-                        <h3 class="mb-0 fs-5">Final Invoice Status</h3>
-                        <div class="d-flex gap-2 align-items-center ms-auto">
-                            <input type="text" class="form-control form-control-sm search-box" placeholder="Search shop..." disabled>
-                            <button class="btn btn-outline-secondary btn-sm export-btn" disabled><i class="fas fa-file-export me-1"></i>Export</button>
+                        <span class="header-title">Final Invoice Status</span>
+                        <div class="d-flex align-items-center gap-2 ms-auto flex-wrap">
+                            <div class="search-group">
+                                <span class="search-icon"><i class="fas fa-search"></i></span>
+                                <input type="text" class="form-control search-box" placeholder="Search shop..." disabled>
+                            </div>
+                            <button class="export-btn" title="Export" disabled><i class="fas fa-file-export"></i></button>
                         </div>
                     </div>
                     <div class="table-responsive">
-                        <table class="table table-bordered invoice-table mb-0">
+                        <table class="table invoice-table mb-0">
                             <thead>
                                 <tr>
-                                    <th><i class="fas fa-store me-1"></i>SHOP</th>
-                                    <th><i class="fas fa-cogs me-1"></i># OF ENGINES</th>
-                                    <th><i class="fas fa-exclamation-circle me-1"></i>DUE</th>
-                                    <th><i class="fas fa-check-circle me-1"></i>ISSUED</th>
-                                    <th><i class="fas fa-clock me-1"></i>UPCOMING</th>
+                                    <th>Shop</th>
+                                    <th># of Engines</th>
+                                    <th>Due</th>
+                                    <th>Issued</th>
+                                    <th>Upcoming</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>Shop1</td>
+                                    <td class="lead-cell">Shop1</td>
                                     <td>12</td>
-                                    <td>10</td>
-                                    <td><a href="#" style="color: #1565c0; text-decoration: underline;">1*</a></td>
-                                    <td>1</td>
+                                    <td><span class="pill-badge due">10</span></td>
+                                    <td>
+                                        <span class="pill-badge issued">1</span>
+                                        <button class="issued-arrow-btn" title="Details"><i class="fas fa-arrow-right"></i></button>
+                                    </td>
+                                    <td><span class="pill-badge upcoming">1</span></td>
                                 </tr>
                                 <tr>
-                                    <td>Shop2</td>
+                                    <td class="lead-cell">Shop2</td>
                                     <td>7</td>
-                                    <td>5</td>
-                                    <td><a href="#" style="color: #1565c0; text-decoration: underline;">1*</a></td>
-                                    <td>1</td>
+                                    <td><span class="pill-badge due">5</span></td>
+                                    <td>
+                                        <span class="pill-badge issued">1</span>
+                                        <button class="issued-arrow-btn" title="Details"><i class="fas fa-arrow-right"></i></button>
+                                    </td>
+                                    <td><span class="pill-badge upcoming">1</span></td>
                                 </tr>
                                 <tr>
-                                    <td>Shop3</td>
+                                    <td class="lead-cell">Shop3</td>
                                     <td>4</td>
-                                    <td>1</td>
-                                    <td><a href="#" style="color: #1565c0; text-decoration: underline;">3*</a></td>
-                                    <td>0</td>
+                                    <td><span class="pill-badge due">1</span></td>
+                                    <td>
+                                        <span class="pill-badge issued">3</span>
+                                        <button class="issued-arrow-btn" title="Details"><i class="fas fa-arrow-right"></i></button>
+                                    </td>
+                                    <td><span class="pill-badge upcoming">0</span></td>
                                 </tr>
-                                <!-- <tr class="no-data-row"><td colspan="5">No data found</td></tr> -->
+                                <!-- <tr class="no-data-row"><td colspan="6">No data found</td></tr> -->
                             </tbody>
                             <tfoot>
                                 <tr>
