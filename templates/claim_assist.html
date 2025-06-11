@@ -1,251 +1,249 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Claim Assist | Genpact</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
-    <link href="{{ url_for('static', filename='css/claim_assist.css') }}" rel="stylesheet">
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Claim Assist | WCA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <style type="text/tailwindcss">
+        :root {
+            --primary-color: #4f46e5;
+            --secondary-color: #e0e7ff;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .sidebar-item.active {
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
+        }
+        .sidebar-item.active .material-icons {
+            color: var(--primary-color);
+        }
+        .step {
+            @apply w-7 h-7 rounded-full flex items-center justify-center font-semibold text-xs border-2 border-gray-200 bg-gray-100 text-gray-500;
+        }
+        .step.active {
+            @apply border-indigo-600 bg-indigo-600 text-white;
+        }
+        .step-line {
+            @apply w-10 h-0.5 bg-gray-200 mx-1;
+        }
+    </style>
 </head>
-<body>
-<div class="dashboard">
-    <!-- Sidebar -->
-    <aside class="sidebar">
-        <div class="sidebar-header">
-            <div class="logo-container">
-                <span class="logo-text">WCA</span>
+<body class="bg-gray-100 flex">
+<aside class="w-56 bg-white p-4 space-y-4 border-r border-gray-200 flex flex-col justify-between h-screen fixed top-0 left-0">
+    <div>
+        <div class="text-xl font-bold text-gray-800 mb-6">WCA</div>
+        <div class="mb-3">
+            <div class="relative">
+                <span class="material-icons absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 text-base">search</span>
+                <input class="w-full pl-8 pr-3 py-1.5 bg-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 border border-gray-200 text-xs" placeholder="Search..." type="text"/>
             </div>
-            <button class="sidebar-close d-md-none" id="sidebar-close">
-                <i class="fas fa-times"></i>
-            </button>
         </div>
-        <div class="sidebar-divider">
-            <span>MAIN MENU</span>
-        </div>
-        <ul class="sidebar-menu">
-            <li>
-                <a href="/">
-                    <i class="fas fa-th-large"></i>
-                    <span>Dashboard</span>
-                </a>
+        <nav>
+            <p class="text-[10px] text-gray-500 uppercase tracking-wider mb-2">Main Menu</p>
+            <ul>
+                <li class="sidebar-item flex items-center space-x-2 p-1.5 rounded-md cursor-pointer hover:bg-gray-100">
+                    <span class="material-icons text-gray-600 text-lg">dashboard</span>
+                    <a href="/" class="text-xs font-medium text-gray-700">Dashboard</a>
+                </li>
+                <li class="sidebar-item active flex items-center space-x-2 p-1.5 rounded-md cursor-pointer hover:bg-gray-100">
+                    <span class="material-icons text-gray-600 text-lg">support_agent</span>
+                    <a href="{{ url_for('claim_assist') }}" class="text-xs font-medium">Claim Assist</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <nav>
+        <ul>
+            <li class="border-t border-gray-200 pt-2 mt-2 flex items-center space-x-2 p-1.5 rounded-md cursor-pointer hover:bg-gray-100">
+                <span class="material-icons text-gray-600 text-lg">logout</span>
+                <span class="text-xs font-medium text-gray-700">Logout</span>
             </li>
-            <li class="active">
-                <a href="{{ url_for('claim_assist') }}">
-                    <i class="fas fa-file-invoice"></i>
-                    <span>Claim Assist</span>
-                </a>
+            <li class="flex items-center space-x-2 p-1.5 rounded-md cursor-pointer hover:bg-gray-100">
+                <span class="material-icons text-gray-600 text-lg">settings</span>
+                <span class="text-xs font-medium text-gray-700">Settings</span>
             </li>
         </ul>
-        <div class="sidebar-footer">
-            <a href="#" class="logout-btn">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Logout</span>
-            </a>
-            <span class="version">v1.0.0</span>
-        </div>
-    </aside>
-    <!-- Main Content -->
-    <main class="main-content">
-        <!-- Header -->
-        <header class="header d-flex align-items-center justify-content-between gap-2">
-            <div class="breadcrumb-wrapper">
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb mb-1">
-                        <li class="breadcrumb-item"><a href="/">Home</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Claim Assist</li>
-                    </ol>
-                </nav>
-                <h1 class="page-title mb-0">Claim Assist</h1>
-            </div>
-            <div class="header-actions d-flex align-items-center gap-2 ms-auto">
-                <div class="dropdown">
-                    <button class="d-flex align-items-center border-0 bg-transparent dropdown-toggle p-0" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="https://ui-avatars.com/api/?name=John+Doe&background=0066FF&color=fff" alt="User" class="rounded-circle" width="36" height="36">
-                        <div class="d-none d-md-block text-start ms-2">
-                            <div class="fw-semibold" style="font-size:1em;line-height:1.1;">John Doe</div>
-                            <div class="text-muted" style="font-size:0.85em;line-height:1;">Administrator</div>
-                        </div>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-                        <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>My Profile</a></li>
-                        <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Account Settings</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
-                    </ul>
+    </nav>
+</aside>
+<main class="flex-1 p-4 ml-56">
+    <header class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-semibold text-gray-800">Claim Assist</h1>
+        <div class="flex items-center space-x-3">
+            <span class="material-icons text-gray-500 cursor-pointer hover:text-gray-700 text-xl">notifications_none</span>
+            <span class="material-icons text-gray-500 cursor-pointer hover:text-gray-700 text-xl">access_time</span>
+            <div class="flex items-center space-x-1.5">
+                <img alt="John Doe avatar" class="w-7 h-7 rounded-full" src="https://ui-avatars.com/api/?name=John+Doe&background=0066FF&color=fff"/>
+                <div>
+                    <p class="text-xs font-medium text-gray-800">John Doe</p>
+                    <p class="text-[10px] text-gray-500">Administrator</p>
                 </div>
-            </div>
-        </header>
-        <div class="content-wrapper">
-            <div class="row g-2 mb-3">
-                <div class="col-12 col-md-4">
-                    <div class="summary-card due">
-                        <span class="icon text-danger"><i class="fas fa-exclamation-circle"></i></span>
-                        <div>
-                            <div class="desc text-danger">16 Due</div>
-                            <div class="percent">70% of total</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 col-md-4">
-                    <div class="summary-card issued">
-                        <span class="icon text-success"><i class="fas fa-check-circle"></i></span>
-                        <div>
-                            <div class="desc text-success">5 Issued</div>
-                            <div class="percent">22% of total</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 col-md-4">
-                    <div class="summary-card upcoming">
-                        <span class="icon text-warning"><i class="fas fa-clock"></i></span>
-                        <div>
-                            <div class="desc text-warning">2 Upcoming</div>
-                            <div class="percent">9% of total</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="steps-indicator d-flex align-items-center gap-2 mb-3">
-                <div class="step step-1 active">1</div>
-                <div class="step-line"></div>
-                <div class="step step-2">2</div>
-            </div>
-            <div class="card mb-3 modern-table-card">
-                <div class="card-body p-3">
-                    <div class="modern-table-header">
-                        <span class="header-title">Final Invoice Status</span>
-                        <div class="d-flex align-items-center gap-2 ms-auto flex-wrap">
-                            <div class="search-group">
-                                <span class="search-icon"><i class="fas fa-search"></i></span>
-                                <input type="text" class="form-control search-box" placeholder="Search shop..." disabled>
-                            </div>
-                            <button class="export-btn" title="Export" disabled><i class="fas fa-file-export"></i></button>
-                        </div>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table invoice-table mb-0">
-                            <thead>
-                                <tr>
-                                    <th>Shop</th>
-                                    <th># of Engines</th>
-                                    <th>Due</th>
-                                    <th>Issued</th>
-                                    <th>Upcoming</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="lead-cell">Shop1</td>
-                                    <td>12</td>
-                                    <td><span class="pill-badge due">10</span></td>
-                                    <td>
-                                        <span class="pill-badge issued">1</span>
-                                    </td>
-                                    <td><span class="pill-badge upcoming">1</span></td>
-                                </tr>
-                                <tr>
-                                    <td class="lead-cell">Shop2</td>
-                                    <td>7</td>
-                                    <td><span class="pill-badge due">5</span></td>
-                                    <td>
-                                        <span class="pill-badge issued">1</span>
-                                    </td>
-                                    <td><span class="pill-badge upcoming">1</span></td>
-                                </tr>
-                                <tr>
-                                    <td class="lead-cell">Shop3</td>
-                                    <td>4</td>
-                                    <td><span class="pill-badge due">1</span></td>
-                                    <td>
-                                        <span class="pill-badge issued">3</span>
-                                    </td>
-                                    <td><span class="pill-badge upcoming">0</span></td>
-                                </tr>
-                                <!-- <tr class="no-data-row"><td colspan="6">No data found</td></tr> -->
-                            </tbody>
-                            <tfoot>
-                                <tr class="table-total-row">
-                                    <td><strong>Total</strong></td>
-                                    <td>-</td>
-                                    <td><strong>16</strong></td>
-                                    <td><strong>5</strong> <button class="issued-arrow-btn" title="Details"><i class="fas fa-arrow-right"></i></button></td>
-                                    <td><strong>2</strong></td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </div>
-                    <div class="note mt-2">
-                        <div>* Click on total value of issued invoices columns to see Warranty details.</div>
-                        <div>* Scroll below to see the Warranty Status of these issued invoices.</div>
-                    </div>
-                </div>
-            </div>
-            <div id="warranty-claim-table" class="card mb-3 modern-table-card warranty-claim-table hide-table">
-                <div class="card-body p-3">
-                    <div class="modern-table-header">
-                        <button class="btn btn-outline-secondary me-2 back-to-invoice"><i class="fas fa-arrow-left me-1"></i>Back</button>
-                        <span class="header-title">Warranty Claim Status - Issued</span>
-                        <div class="d-flex align-items-center gap-2 ms-auto flex-wrap">
-                            <div class="search-group">
-                                <span class="search-icon"><i class="fas fa-search"></i></span>
-                                <input type="text" class="form-control search-box warranty-search-box" placeholder="Search shop...">
-                            </div>
-                            <button class="export-btn warranty-export-btn" title="Export"><i class="fas fa-file-export"></i></button>
-                        </div>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table invoice-table mb-0" id="warranty-table">
-                            <thead>
-                                <tr>
-                                    <th class="sortable">SHOP</th>
-                                    <th class="sortable">TO BE ASSESSED</th>
-                                    <th class="sortable">NO OPPORTUNITY</th>
-                                    <th class="sortable">IN PROGRESS</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="lead-cell">Shop1</td>
-                                    <td data-tooltip="Click to see Warranty Opportunity">1*</td>
-                                    <td>-</td>
-                                    <td>-</td>
-                                </tr>
-                                <tr>
-                                    <td class="lead-cell">Shop2</td>
-                                    <td data-tooltip="Click to see Warranty Opportunity">1*</td>
-                                    <td>-</td>
-                                    <td>-</td>
-                                </tr>
-                                <tr>
-                                    <td class="lead-cell">Shop3</td>
-                                    <td data-tooltip="Click to see Warranty Opportunity">3*</td>
-                                    <td>-</td>
-                                    <td>-</td>
-                                </tr>
-                            </tbody>
-                            <tfoot>
-                                <tr class="table-total-row">
-                                    <td><strong>Total</strong></td>
-                                    <td>5</td>
-                                    <td>0</td>
-                                    <td>0</td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </div>
-                    <div class="note mt-2">
-                        <div>Note:</div>
-                        <div>* Click on any value of this asses columns to see the Warranty Opportunity.</div>
-                        <div>* Click on any value of this Inprogress columns to see the Claim in progress.</div>
-                    </div>
-                </div>
+                <span class="material-icons text-gray-500 cursor-pointer hover:text-gray-700 text-xl">expand_more</span>
             </div>
         </div>
-    </main>
-</div>
+    </header>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+        <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+            <h3 class="text-xs font-medium text-gray-500 mb-0.5">DUE INVOICES</h3>
+            <p class="text-2xl font-semibold text-gray-800 mb-1">16</p>
+            <div class="flex justify-between items-center text-xs">
+                <span class="text-red-500 font-medium">70% of total</span>
+                <span class="text-[10px] text-gray-500">Requires Attention</span>
+            </div>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+            <h3 class="text-xs font-medium text-gray-500 mb-0.5">ISSUED INVOICES</h3>
+            <p class="text-2xl font-semibold text-gray-800 mb-1">5</p>
+            <div class="flex justify-between items-center text-xs">
+                <span class="text-green-500 font-medium">22% of total</span>
+                <span class="text-[10px] text-gray-500">Completed</span>
+            </div>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+            <h3 class="text-xs font-medium text-gray-500 mb-0.5">UPCOMING INVOICES</h3>
+            <p class="text-2xl font-semibold text-gray-800 mb-1">2</p>
+            <div class="flex justify-between items-center text-xs">
+                <span class="text-yellow-500 font-medium">9% of total</span>
+                <span class="text-[10px] text-gray-500">Scheduled</span>
+            </div>
+        </div>
+    </div>
+    <div class="flex items-center gap-2 mb-4">
+        <div class="step step-1 active">1</div>
+        <div class="step-line"></div>
+        <div class="step step-2">2</div>
+    </div>
+    <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 mb-4">
+        <div class="flex justify-between items-center mb-3">
+            <h3 class="text-base font-semibold text-gray-800">Final Invoice Status</h3>
+            <div class="flex items-center space-x-1.5">
+                <div class="relative">
+                    <span class="material-icons absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm">search</span>
+                    <input class="pl-8 pr-2 py-1 border border-gray-300 rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-indigo-500" placeholder="Search shop..." type="text"/>
+                </div>
+                <button class="flex items-center space-x-1 px-2.5 py-1 border border-gray-300 rounded-md text-xs font-medium text-gray-700 hover:bg-gray-50">
+                    <span class="material-icons text-sm">file_download</span>
+                    <span>Export</span>
+                </button>
+            </div>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-xs">
+                <thead>
+                    <tr class="text-left text-[10px] text-gray-500 uppercase border-b border-gray-200">
+                        <th class="p-2 font-medium">Shop</th>
+                        <th class="p-2 font-medium"># of Engines</th>
+                        <th class="p-2 font-medium">Due</th>
+                        <th class="p-2 font-medium">Issued</th>
+                        <th class="p-2 font-medium">Upcoming</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    <tr class="hover:bg-gray-50">
+                        <td class="p-2 text-gray-700 font-medium">Shop1</td>
+                        <td class="p-2 text-gray-700">12</td>
+                        <td class="p-2"><span class="px-1.5 py-0.5 text-[10px] font-medium text-red-700 bg-red-100 rounded-full">10</span></td>
+                        <td class="p-2"><span class="px-1.5 py-0.5 text-[10px] font-medium text-green-700 bg-green-100 rounded-full">1</span></td>
+                        <td class="p-2"><span class="px-1.5 py-0.5 text-[10px] font-medium text-yellow-700 bg-yellow-100 rounded-full">1</span></td>
+                    </tr>
+                    <tr class="hover:bg-gray-50">
+                        <td class="p-2 text-gray-700 font-medium">Shop2</td>
+                        <td class="p-2 text-gray-700">7</td>
+                        <td class="p-2"><span class="px-1.5 py-0.5 text-[10px] font-medium text-red-700 bg-red-100 rounded-full">5</span></td>
+                        <td class="p-2"><span class="px-1.5 py-0.5 text-[10px] font-medium text-green-700 bg-green-100 rounded-full">1</span></td>
+                        <td class="p-2"><span class="px-1.5 py-0.5 text-[10px] font-medium text-yellow-700 bg-yellow-100 rounded-full">1</span></td>
+                    </tr>
+                    <tr class="hover:bg-gray-50">
+                        <td class="p-2 text-gray-700 font-medium">Shop3</td>
+                        <td class="p-2 text-gray-700">4</td>
+                        <td class="p-2"><span class="px-1.5 py-0.5 text-[10px] font-medium text-red-700 bg-red-100 rounded-full">1</span></td>
+                        <td class="p-2"><span class="px-1.5 py-0.5 text-[10px] font-medium text-green-700 bg-green-100 rounded-full">3</span></td>
+                        <td class="p-2"><span class="px-1.5 py-0.5 text-[10px] font-medium text-yellow-700 bg-yellow-100 rounded-full">0</span></td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr class="font-semibold bg-gray-50">
+                        <td class="p-2">Total</td>
+                        <td class="p-2">-</td>
+                        <td class="p-2">16</td>
+                        <td class="p-2">5</td>
+                        <td class="p-2">2</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        <div class="text-xs text-gray-500 mt-2">
+            * Click on total value of issued invoices columns to see Warranty details.<br/>
+            * Scroll below to see the Warranty Status of these issued invoices.
+        </div>
+    </div>
+    <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 mb-4">
+        <div class="flex justify-between items-center mb-3">
+            <div class="flex items-center gap-2">
+                <button class="flex items-center space-x-1 px-2.5 py-1 border border-gray-300 rounded-md text-xs font-medium text-gray-700 hover:bg-gray-50"><span class="material-icons text-sm">arrow_back</span>Back</button>
+                <h3 class="text-base font-semibold text-gray-800">Warranty Claim Status - Issued</h3>
+            </div>
+            <div class="flex items-center space-x-1.5">
+                <div class="relative">
+                    <span class="material-icons absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm">search</span>
+                    <input class="pl-8 pr-2 py-1 border border-gray-300 rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-indigo-500" placeholder="Search shop..." type="text"/>
+                </div>
+                <button class="flex items-center space-x-1 px-2.5 py-1 border border-gray-300 rounded-md text-xs font-medium text-gray-700 hover:bg-gray-50">
+                    <span class="material-icons text-sm">file_download</span>
+                    <span>Export</span>
+                </button>
+            </div>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-xs">
+                <thead>
+                    <tr class="text-left text-[10px] text-gray-500 uppercase border-b border-gray-200">
+                        <th class="p-2 font-medium">SHOP</th>
+                        <th class="p-2 font-medium">TO BE ASSESSED</th>
+                        <th class="p-2 font-medium">NO OPPORTUNITY</th>
+                        <th class="p-2 font-medium">IN PROGRESS</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    <tr class="hover:bg-gray-50">
+                        <td class="p-2 text-gray-700 font-medium">Shop1</td>
+                        <td class="p-2 text-indigo-700 font-medium cursor-pointer">1*</td>
+                        <td class="p-2">-</td>
+                        <td class="p-2">-</td>
+                    </tr>
+                    <tr class="hover:bg-gray-50">
+                        <td class="p-2 text-gray-700 font-medium">Shop2</td>
+                        <td class="p-2 text-indigo-700 font-medium cursor-pointer">1*</td>
+                        <td class="p-2">-</td>
+                        <td class="p-2">-</td>
+                    </tr>
+                    <tr class="hover:bg-gray-50">
+                        <td class="p-2 text-gray-700 font-medium">Shop3</td>
+                        <td class="p-2 text-indigo-700 font-medium cursor-pointer">3*</td>
+                        <td class="p-2">-</td>
+                        <td class="p-2">-</td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr class="font-semibold bg-gray-50">
+                        <td class="p-2">Total</td>
+                        <td class="p-2">5</td>
+                        <td class="p-2">0</td>
+                        <td class="p-2">0</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        <div class="text-xs text-gray-500 mt-2">
+            Note:<br/>
+            * Click on any value of this asses columns to see the Warranty Opportunity.<br/>
+            * Click on any value of this Inprogress columns to see the Claim in progress.
+        </div>
+    </div>
+</main>
 </body>
-<script src="{{ url_for('static', filename='js/claim_assist.js') }}"></script>
 </html> 

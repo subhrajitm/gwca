@@ -2303,6 +2303,36 @@ canvas {
     border-top: 1px solid rgba(0,0,0,0.05);
 }
 
+/* Stats Icon Gradient Backgrounds */
+.stats-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bg-primary-gradient {
+    background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+}
+
+.bg-success-gradient {
+    background: linear-gradient(135deg, #1cc88a 0%, #13855c 100%);
+}
+
+.bg-info-gradient {
+    background: linear-gradient(135deg, #36b9cc 0%, #258391 100%);
+}
+
+.bg-warning-gradient {
+    background: linear-gradient(135deg, #f6c23e 0%, #dda20a 100%);
+}
+
+.bg-danger-gradient {
+    background: linear-gradient(135deg, #e74a3b 0%, #be2617 100%);
+}
+
 /* Responsive Adjustments */
 @media (max-width: 768px) {
     .chart-card {
